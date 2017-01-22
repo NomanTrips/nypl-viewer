@@ -1,0 +1,37 @@
+<!-- Container #1 (see wireframe) -->
+<md-toolbar layout="row" class="md-toolbar-tools">
+	<md-button class="menu md-icon-button" hide-gt-sm ng-click="app.toggleList()" aria-label="Show User List">
+		<md-icon md-svg-icon="menu"></md-icon>
+	</md-button>
+	<h1>Angular Material - Starter App</h1>
+</md-toolbar>
+
+<!-- Container #2 -->
+<div flex layout="row">
+
+	<!-- Container #4 -->
+	<md-content flex id="content" ng-controller="GridListCtrl as gridlist">
+		<md-slider-container>
+			<span>Year</span>
+			<md-slider flex="" min="1624" max="2017" ng-model="gridlist.year" aria-label="year" id="year-slider" ng-mouseup="gridlist.refresh()">
+			</md-slider>
+			<md-input-container>
+				<input flex="" type="number" ng-model="gridlist.year" aria-label="year" aria-controls="year-slider">
+			</md-input-container>
+		</md-slider-container>
+		<!-- Custom UserDetails component -->
+		<div flex="" ng-cloak="" class="gridListdemoDynamicTiles">
+			<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-row-height-gt-md="1:1" md-row-height="4:3" md-gutter="8px"
+				md-gutter-gt-sm="4px">
+
+				<md-grid-tile ng-repeat="tile in gridlist.tiles track by $index" ng-class="tile.background" ng-click="tile.showImageDialog($event, tile)">
+					<img src="{{tile.image}}" style="height:140px;">
+					<md-grid-tile-footer>
+						<p>{{tile.title}}</p>
+					</md-grid-tile-footer>
+				</md-grid-tile>
+			</md-grid-list>
+		</div>
+	</md-content>
+
+</div>
