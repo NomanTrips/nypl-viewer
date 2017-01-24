@@ -1,6 +1,6 @@
 'use strict';
 
-var nyplViewer = angular.module('nyplViewer', ['ngMaterial', 'base64', 'CanvasViewer', 'ui.router', 'ui.layout'])
+var nyplViewer = angular.module('nyplViewer', ['ngMaterial', 'base64', 'CanvasViewer', 'ui.router', 'ui.layout', 'angularGrid'])
   .config(function ($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise('');
 

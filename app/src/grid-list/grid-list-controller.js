@@ -1,3 +1,41 @@
+nyplViewer.controller('GridListCtrl', function ($http, NyplApiCalls, $location, $state, $scope, angularGridInstance) {
+    ctrl = this;
+    ctrl.getItemThumbnails = function (response) {
+        var results = [];
+        angular.forEach(response, function (value, key) {
+
+            NyplApiCalls.getImage(value)
+                .then(function (itemWithImageUrl) {
+                    var thumbnail = {};
+                    thumbnail.data = itemWithImageUrl.item;
+                    thumbnail.image = itemWithImageUrl.thumbnailUrl;
+                    thumbnail.title = itemWithImageUrl.title;
+                    thumbnail.fullImageUrl = itemWithImageUrl.fullImageUrl;
+                    //var desc = thumbnail.title,
+                      //  width = 343,//desc.match(/width="(.*?)"/)[1],
+                        //height = 513;//desc.match(/height="(.*?)"/)[1];
+                    thumbnail.actualHeight = 513;
+                    thumbnail.actualWidth = 343;
+                    results.push(thumbnail);
+                }).catch(function (error) {
+                    console.log(error);
+                }).finally(function () {
+
+                });
+
+        });
+
+        return results;
+    }
+
+    NyplApiCalls.nyplSearch('1776').then(function (response) {
+        ctrl.pics = ctrl.getItemThumbnails(response);
+    });
+    ctrl.refresh = function () {
+        angularGridInstance.gallery.refresh();
+    }
+});
+/** 
 nyplViewer.controller('GridListCtrl', function ($http, NyplApiCalls, $mdMedia, $mdDialog, $location, $state) {
     ctrl = this;
     ctrl.year = 1776;
@@ -25,7 +63,7 @@ nyplViewer.controller('GridListCtrl', function ($http, NyplApiCalls, $mdMedia, $
             }, function () {
                 ctrl.status = 'You cancelled the dialog.';
             });
-        */
+        
     };
 
     ctrl.nyplItems = NyplApiCalls.nyplSearch(ctrl.year)
@@ -87,3 +125,4 @@ nyplViewer.controller('GridListCtrl', function ($http, NyplApiCalls, $mdMedia, $
     }
 
 })
+*/

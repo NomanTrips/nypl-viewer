@@ -1,4 +1,4 @@
-<!-- Container #1 (see wireframe) -->
+<!-- Container #1 (see wireframe) 
 <md-toolbar layout="row" class="md-toolbar-tools">
 	<md-button class="menu md-icon-button" hide-gt-sm ng-click="app.toggleList()" aria-label="Show User List">
 		<md-icon md-svg-icon="menu"></md-icon>
@@ -6,10 +6,10 @@
 	<h1>Angular Material - Starter App</h1>
 </md-toolbar>
 
-<!-- Container #2 -->
+<!-- Container #2 
 <div flex layout="row">
 
-	<!-- Container #4 -->
+	<!-- Container #4 
 	<md-content flex id="content" ng-controller="GridListCtrl as gridlist">
 		<md-slider-container>
 			<span>Year</span>
@@ -19,7 +19,7 @@
 				<input flex="" type="number" ng-model="gridlist.year" aria-label="year" aria-controls="year-slider">
 			</md-input-container>
 		</md-slider-container>
-		<!-- Custom UserDetails component -->
+		<!-- Custom UserDetails component
 		<div flex="" ng-cloak="" class="gridListdemoDynamicTiles">
 			<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-row-height-gt-md="1:1" md-row-height="4:3" md-gutter="8px"
 				md-gutter-gt-sm="4px">
@@ -34,4 +34,13 @@
 		</div>
 	</md-content>
 
+</div>
+-->
+<div ng-controller="GridListCtrl as gridlist">
+	<ul class="dynamic-grid" angular-grid="gridlist.pics" grid-width="300" gutter-size="10" angular-grid-id="gallery" refresh-on-img-load="false">
+		<li data-ng-repeat="pic in gridlist.pics" class="grid">
+			<img src="{{pic.fullImageUrl}}" class="grid-img" data-actual-width="{{pic.actualWidth}}" data-actual-height="{{pic.actualHeight}}"
+			/>
+		</li>
+	</ul>
 </div>
