@@ -11,11 +11,13 @@ nyplViewer.controller('GridListCtrl', function ($http, NyplApiCalls, $location, 
                     thumbnail.image = itemWithImageUrl.thumbnailUrl;
                     thumbnail.title = itemWithImageUrl.title;
                     thumbnail.fullImageUrl = itemWithImageUrl.fullImageUrl;
+                    var img = new Image();
+                    img.src = thumbnail.fullImageUrl;
                     //var desc = thumbnail.title,
                       //  width = 343,//desc.match(/width="(.*?)"/)[1],
                         //height = 513;//desc.match(/height="(.*?)"/)[1];
-                    thumbnail.actualHeight = 513;
-                    thumbnail.actualWidth = 343;
+                    thumbnail.actualHeight = img.height;//1032;//513;
+                    thumbnail.actualWidth = img.width;//343;
                     results.push(thumbnail);
                 }).catch(function (error) {
                     console.log(error);

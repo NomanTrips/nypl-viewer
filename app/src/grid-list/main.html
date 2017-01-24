@@ -37,7 +37,7 @@
 </div>
 -->
 <div ng-controller="GridListCtrl as gridlist">
-	<ul class="dynamic-grid" angular-grid="gridlist.pics" grid-width="300" gutter-size="10" angular-grid-id="gallery" refresh-on-img-load="false">
+	<ul class="dynamic-grid" angular-grid="gridlist.pics" grid-width="350" gutter-size="15" angular-grid-id="gallery" refresh-on-img-load="false">
 		<li data-ng-repeat="pic in gridlist.pics" class="grid">
 			<img src="{{pic.fullImageUrl}}" class="grid-img" data-actual-width="{{pic.actualWidth}}" data-actual-height="{{pic.actualHeight}}"
 			/>
