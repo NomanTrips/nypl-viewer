@@ -215,6 +215,7 @@ span.name {
             display: block;
         }
         .grid {
+           border-radius: 10px;
             border: 1px solid #cccccc;
             position: absolute;
             list-style: none;
@@ -226,6 +227,7 @@ span.name {
             overflow: hidden;
         }
         .grid-img {
+          
             width: 100%;
             vertical-align: middle;
             -webkit-transition: opacity 0.6s ease-out;
@@ -235,6 +237,7 @@ span.name {
             visibility: hidden;
         }
         .grid-img.img-loaded{
+         
             visibility: visible;
             opacity: 1;
         }
