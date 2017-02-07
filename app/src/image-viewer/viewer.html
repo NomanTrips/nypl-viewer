@@ -88,12 +88,22 @@
 	<div ui-layout-container>
 		<div ui-layout="{flow : 'column'}">
 			<div ui-layout-container>
-				<div  id="OGimage">
+				<div id="OGimage">
 					<img class="image" src="{{imageViewer.fullImageUrl}}" alt="Picture" style="height:500px;">
 				</div>
 			</div>
 
 			<div ui-layout-container>
+				<div class="panel panel-default">
+					<div class="panel-heading">{{imageViewer.title}}</div>
+					<div class="panel-body">
+						Transcribe
+						<form method="post">
+							<textarea ui-tinymce ng-model="imageViewer.tinymceModel"></textarea>
+						</form>
+					</div>
+				</div>
+<!--
 				<md-card md-theme="{{ showDarkTheme ? 'dark-orange' : 'default' }}" md-theme-watch="">
 					<md-card-title>
 						<md-card-title-text>
@@ -118,7 +128,9 @@
 							</md-button>
 						</md-card-actions>
 					</md-card-content>
+					
 				</md-card>
+				-->
 			</div>
 		</div>
 	</div>

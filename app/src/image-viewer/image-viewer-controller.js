@@ -1,8 +1,10 @@
 nyplViewer.controller('ImageViewerCtrl', function ($scope, $timeout, $stateParams) {
     ctrl = this;
+    console.log($stateParams.myParam);
     ctrl.fullImageUrl = $stateParams.myParam.fullImageUrl;
     ctrl.thumbNail = $stateParams.myParam.image;
     ctrl.title = $stateParams.myParam.title;
+    ctrl.tinymceModel = '';
     //ctrl.isViewerBuilt = false;
     //var element = document.getElementById("OGimage");
     var options = {

@@ -1,5 +1,7 @@
 nyplViewer.factory('NyplApiCalls', function ($http, $q, $base64) {
     var factory = this;
+    factory.page = 1;
+    factory.resultCount = 0;
     var auth = $base64.encode("NomanTrips:water1bury");
     var headers = { "Authorization": "Token " + "token=\"" + auth + "\"" };
     //console.log(headers);
@@ -23,11 +25,23 @@ nyplViewer.factory('NyplApiCalls', function ($http, $q, $base64) {
         }
     }
 
+    factory.incrementResultPage = function () {
+        factory.page = factory.page + 1;
+        //factory.resultCount = response.data.nyplAPI.response.numResults;
+    }
+
     return {
-        nyplSearch: function (year) {
-            var nyplUrl = 'http://api.repo.nypl.org/api/v1/items/search?q=new york city ' + year +'&publicDomainOnly=true';
+        nyplSearch: function (searchText) {
+            var pagingQueryParam = '';
+            if (factory.page > 1) {
+                pagingQueryParam = '&page=' + factory.page;
+            }
+            var nyplUrl = 'http://api.repo.nypl.org/api/v1/items/search?q=' + searchText + '&publicDomainOnly=true' + pagingQueryParam + '&per_page=20';
+            factory.incrementResultPage();
+            console.log(nyplUrl);
             var deferred = $q.defer();
             $http(buildHttpRequest(nyplUrl), { headers: headers }).then(function successCallback(response) {
+                console.log(response);          
                 deferred.resolve(extract(response));
             }, function errorCallback(response) {
                 deferred.reject(response);
@@ -35,20 +49,28 @@ nyplViewer.factory('NyplApiCalls', function ($http, $q, $base64) {
             return deferred.promise;
         },
         getImage: function (item) {
+            //console.log(item.title);
             var deferred = $q.defer();
+
             $http(buildHttpRequest(item.apiItemDetailURL), { headers: headers }).then(function successCallback(response) {
-                //console.log(response);
                 var data = response.data;
-                //console.log(data);
-                if (data.nyplAPI.response.sibling_captures.capture.imageLinks != undefined) {
-                    var thumbnailUrl = data.nyplAPI.response.sibling_captures.capture.imageLinks.imageLink[4].$;
-                    var fullImageUrl = data.nyplAPI.response.sibling_captures.capture.imageLinks.imageLink[0].$;
+                var image ={};
+                if ((data.nyplAPI.response.sibling_captures.capture.imageLinks != undefined) &&
+                (data.nyplAPI.response.sibling_captures.capture.imageLinks.imageLink != undefined) &&
+                (Object.keys(data.nyplAPI.response.sibling_captures.capture.imageLinks.imageLink).length != 0)) {
+                    image.thumbnailUrl= data.nyplAPI.response.sibling_captures.capture.imageLinks.imageLink[4].$;
+                    image.fullImageUrl = data.nyplAPI.response.sibling_captures.capture.imageLinks.imageLink[0].$;
+                    image.title = item.title;
+                } else if ((data.nyplAPI.response.sibling_captures.capture[0] != undefined) &&
+                (data.nyplAPI.response.sibling_captures.capture[0].imageLinks.imageLink != undefined) &&
+                (Object.keys(data.nyplAPI.response.sibling_captures.capture[0].imageLinks.imageLink).length != 0)) {
+                    image.thumbnailUrl = data.nyplAPI.response.sibling_captures.capture[0].imageLinks.imageLink[4].$;
+                    image.fullImageUrl = data.nyplAPI.response.sibling_captures.capture[0].imageLinks.imageLink[0].$;
+                    image.title = item.title;
                 } else {
-                    var thumbnailUrl = data.nyplAPI.response.sibling_captures.capture[0].imageLinks.imageLink[4].$;
-                    var fullImageUrl = data.nyplAPI.response.sibling_captures.capture[0].imageLinks.imageLink[0].$;
+                    console.log('setting undefined');
+                    image = undefined;
                 }
-                item.fullImageUrl = fullImageUrl;
-                item.thumbnailUrl = thumbnailUrl;
                 /*
                 $http(buildHttpRequest(thumbnailUrl), { headers: headers }).then(function successCallback(response) {
                     console.log(response);
@@ -58,8 +80,9 @@ nyplViewer.factory('NyplApiCalls', function ($http, $q, $base64) {
                 });
                 
 */              //console.log(thumbnailUrl);
-                deferred.resolve(item);
+                deferred.resolve(image);
             }, function errorCallback(response) {
+                console.log('error in servive');
                 deferred.reject(response);
             });
             return deferred.promise;

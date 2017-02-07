@@ -1,4 +1,3 @@
-'use strict';
 
 nyplViewer.controller('ImageDialogCtrl',
   function ($mdDialog, event, tile) {

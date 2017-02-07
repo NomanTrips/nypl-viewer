@@ -1,41 +1,127 @@
-nyplViewer.controller('GridListCtrl', function ($http, NyplApiCalls, $location, $state, $scope, angularGridInstance) {
-    ctrl = this;
-    ctrl.getItemThumbnails = function (response) {
-        var results = [];
-        angular.forEach(response, function (value, key) {
+nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $location, $state, $scope, angularGridInstance) {
 
-            NyplApiCalls.getImage(value)
-                .then(function (itemWithImageUrl) {
+    ctrl = this;
+    ctrl.searchText = 'new york city 1776';
+    ctrl.pics = [];
+
+    ctrl.search = function () {
+        NyplApiCalls.nyplSearch(ctrl.searchText).then(function (response) {
+            // if (ctrl.pics === undefined){
+            //   ctrl.pics = [];
+            //}
+            //ctrl.getItemThumbnails(response);
+            //ctrl.response = response;
+            //console.log(response);
+            ctrl.getItemThumbnails(response);
+
+            //.then(function (results) {
+            //  ctrl.pics = ctrl.pics.concat(results);
+            // })
+        });
+    }
+
+    ctrl.loadMore = function () {
+        console.log('firing');
+        ctrl.search();
+    }
+    ctrl.getPics = function () {
+        console.log(ctrl.pics);
+    }
+
+    ctrl.getThumbnail = function (item) {
+        if (item.imageID != undefined) {
+            var thumbnail = {};
+            thumbnail.data = item;
+            thumbnail.title = item.title;
+            thumbnail.fullImageUrl = 'https://images.nypl.org/index.php?id=' + item.imageID + '&t=w';
+            var img = new Image();
+            img.src = thumbnail.fullImageUrl;
+            //thumbnail.actualHeight = img.height;//1032;//513;
+            thumbnail.actualHeight = ~~(Math.random() * 500) + 100;
+            thumbnail.actualWidth = img.width;//343;
+            thumbnail.showImageDetail = ctrl.showImageDetail;
+            //console.log(thumbnail.title);
+            ctrl.pics.push(thumbnail);
+        }
+
+        //results.push(thumbnail);
+        //console.log(item.title);
+        /** 
+        return NyplApiCalls.getImage(item)
+            .then(function (itemWithImageUrl) {
+                if (itemWithImageUrl != undefined) {
+                    //console.log(itemWithImageUrl);
                     var thumbnail = {};
                     thumbnail.data = itemWithImageUrl.item;
                     thumbnail.image = itemWithImageUrl.thumbnailUrl;
                     thumbnail.title = itemWithImageUrl.title;
-                    thumbnail.fullImageUrl = itemWithImageUrl.fullImageUrl;
+
                     var img = new Image();
                     img.src = thumbnail.fullImageUrl;
-                    //var desc = thumbnail.title,
-                      //  width = 343,//desc.match(/width="(.*?)"/)[1],
-                        //height = 513;//desc.match(/height="(.*?)"/)[1];
-                    thumbnail.actualHeight = img.height;//1032;//513;
+                    //thumbnail.actualHeight = img.height;//1032;//513;
+                    thumbnail.actualHeight = ~~(Math.random() * 500) + 100;
                     thumbnail.actualWidth = img.width;//343;
-                    results.push(thumbnail);
-                }).catch(function (error) {
-                    console.log(error);
-                }).finally(function () {
+                    thumbnail.fullImageUrl = itemWithImageUrl.fullImageUrl;
+                    thumbnail.showImageDetail = ctrl.showImageDetail;
+                    //console.log(thumbnail.title);
+                    ctrl.pics.push(thumbnail);
+                    //results.push(thumbnail);
 
-                });
+                }
+                return thumbnail;
 
-        });
+            }).catch(function (error) {
+                console.log(error);
+            }).finally(function () {
 
-        return results;
+            });
+            */
     }
 
-    NyplApiCalls.nyplSearch('1776').then(function (response) {
-        ctrl.pics = ctrl.getItemThumbnails(response);
-    });
+    ctrl.isDuplicate = function (item) {
+        return (item.title === String(this));
+    }
+
+    ctrl.getItemThumbnails = function (response) {
+        //console.log(response);
+        var promises = [];
+        angular.forEach(response, function (item, key) {
+            //console.log(item.title);
+            if (! ctrl.pics.find(ctrl.isDuplicate, item.title)) {
+                ctrl.getThumbnail(item);
+            }
+            //var itemCopy = item;
+            //promises.push(ctrl.getThumbnail(itemCopy, function (thumbnail) {
+            //ctrl.pics.push(thumbnail);
+            //}));
+        });
+        //$q.all(promises).then(function () {
+        //callback();
+        //  console.log('fin...');
+        //});
+
+        //console.log(response);
+        //var deferred = $q.defer();
+        //var numReturned = 0;
+        //var results = [];
+        //angular.forEach(response, function (value, key) {
+
+        //});
+        //return deferred.promise;
+    }
+
+    ctrl.showImageDetail = function (pic) {
+        //console.log(pic);
+        $state.go('image', { myParam: pic })
+        var url = '/image/' + 999;
+        $location.path(url);
+    };
+
     ctrl.refresh = function () {
         angularGridInstance.gallery.refresh();
     }
+
+    ctrl.search();
 });
 /** 
 nyplViewer.controller('GridListCtrl', function ($http, NyplApiCalls, $mdMedia, $mdDialog, $location, $state) {
