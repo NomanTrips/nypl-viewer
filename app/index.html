@@ -7,85 +7,53 @@
 	<meta name="description" content="">
 	<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
 
-	<title>Angular Material - Starter App</title>
-	<link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Roboto:400,700'>
-	<link rel="stylesheet" href="./jspm_packages/github/angular/bower-material@master/angular-material.css" />
+	<title>nypl viewer app</title>
 	<link rel="stylesheet" href="./assets/app.css" />
 
 	<script data-require="jquery@*" data-semver="3.1.1" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
 
 	<script data-require="angular.js@1.5.8" data-semver="1.5.8" src="https://code.angularjs.org/1.5.8/angular.js"></script>
-	<link data-require="angular-material@*" data-semver="1.1.0" rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css"
-	/>
+	<link data-require="angular-material@*" data-semver="1.1.0" rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css"/>
 	<script data-require="angular-material@*" data-semver="1.1.0" src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
 	<script data-require="angular-animate@1.5.5" data-semver="1.5.5" src="https://code.angularjs.org/1.5.5/angular-animate.js"></script>
 	<script data-require="angular-aria@1.5.5" data-semver="1.5.5" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
 	<script data-require="angular-messages@1.5.5" data-semver="1.5.5" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
 	<script>document.write('<base href="' + document.location + '" />');</script>
+	
 	<script src="../node_modules/angular-base64/angular-base64.js"></script>
-	<link rel="stylesheet" href="../node_modules/angular-canvas-viewer/CanvasViewer.min.css">
-	<script src="../node_modules/angular-canvas-viewer/CanvasViewer.all.min.js" type="text/javascript" charset="utf-8"></script>
-
-	<link rel="stylesheet" href="../node_modules/photoswipe/dist/photoswipe.css">
-
-	<!-- Skin CSS file (styling of UI - buttons, caption, etc.)
-     In the folder of skin CSS file there are also:
-     - .png and .svg icons sprite, 
-     - preloader.gif (for browsers that do not support CSS animations) -->
-	<link rel="stylesheet" href="../node_modules/photoswipe/dist/default-skin/default-skin.css">
-
-	<!-- Core JS file -->
-	<script src="../node_modules/photoswipe/dist/photoswipe.min.js"></script>
-
-	<!-- UI JS file -->
-	<script src="../node_modules/photoswipe/dist/photoswipe-ui-default.min.js"></script>
 
 	<link href="../node_modules/imageviewer/dist/viewer.css" rel="stylesheet">
+	<script src="../node_modules/imageviewer/dist/viewer.js"></script>
 
 	<script src="../node_modules/angular-ui-layout/src/ui-layout.js"></script>
 	<link href="../node_modules/angular-ui-layout/src/ui-layout.css" rel="stylesheet">
-	<!--
-	<script src="../node_modules/angular-touch/angular-touch.js"></script>
-
-
-	<script src="../node_modules/ui-bootstrap/ui-bootstrap-tpls-2.4.0.js"></script>
--->
-	<script src="../node_modules/angulargrid/angulargrid.js"></script>
-
+	
 	<script src="../node_modules/tinymce/tinymce.js"></script>
 	<script src="../node_modules/angular-ui-tinymce/dist/tinymce.min.js"></script>
 
-	<script src="../node_modules/imageviewer/dist/viewer.js"></script>
-
 	<script src="../node_modules/angular-ui-router/release/angular-ui-router.js"></script>
 
-	<link data-require="bootstrap-css@3.3.6" data-semver="3.3.6" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css"
-	/>
+	<link data-require="bootstrap-css@3.3.6" data-semver="3.3.6" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css"/>
 	<script data-require="angularui-bootstrap@*" data-semver="1.1.2" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.1.2/ui-bootstrap-tpls.js"></script>
 	<script data-require="angular-animate@1.5.8" data-semver="1.5.8" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-animate.js"></script>
 	<script data-require="angular-touch@*" data-semver="1.5.8" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-touch.js"></script>
 
 	<script src="../node_modules/ng-infinite-scroll/build/ng-infinite-scroll.js"></script>
 
-
-	<script src="../node_modules/angular-masonry/deps/jquery.bridget.js"></script>
-	<script src="../node_modules/angular-masonry/deps/get-style-property.js"></script>
-	<script src="../node_modules/angular-masonry/deps/get-size.js"></script>
-	<script src="../node_modules/angular-masonry/deps/EventEmitter.js"></script>
-	<script src="../node_modules/angular-masonry/deps/eventie.js"></script>
-	<script src="../node_modules/angular-masonry/deps/doc-ready.js"></script>
-	<script src="../node_modules/angular-masonry/deps/matches-selector.js"></script>
-	<script src="../node_modules/angular-masonry/deps/item.js"></script>
-	<script src="../node_modules/angular-masonry/deps/outlayer.js"></script>
+	<!--Angular-masonry & deps-->
+	<script src="./assets/js/masonry-deps/jquery.bridget.js"></script>
+	<script src="./assets/js/masonry-deps/get-style-property.js"></script>
+	<script src="./assets/js/masonry-deps/get-size.js"></script>
+	<script src="./assets/js/masonry-deps/EventEmitter.js"></script>
+	<script src="./assets/js/masonry-deps/eventie.js"></script>
+	<script src="./assets/js/masonry-deps/doc-ready.js"></script>
+	<script src="./assets/js/masonry-deps/matches-selector.js"></script>
+	<script src="./assets/js/masonry-deps/item.js"></script>
+	<script src="./assets/js/masonry-deps/outlayer.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/masonry/3.1.2/masonry.pkgd.min.js"></script>
-	<!--<script src="../node_modules/angular-masonry/deps/masonry.js"></script> -->
-	<script src="../node_modules/angular-masonry/deps/imagesloaded.js"></script>
+	<script src="./assets/js/masonry-deps/imagesloaded.js"></script>
 	<script src="../node_modules/angular-masonry/angular-masonry.js"></script>
-	<!--
-	<link data-require="bootstrap@*" data-semver="4.0.5" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"/>
-	<link data-require="fontawesome@*" data-semver="4.5.0" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.css"/>
-	<script data-require="bootstrap@*" data-semver="4.0.5" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js"></script>
--->
+	<!--end Angular-masonry & deps-->
 
 	<script src="src/app.js"></script>
 	<script src="src/grid-list/grid-list-controller.js"></script>

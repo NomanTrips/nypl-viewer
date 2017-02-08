@@ -1,5 +1,5 @@
 
-var nyplViewer = angular.module('nyplViewer', ['ngMaterial', 'base64', 'CanvasViewer', 'ui.router', 'ui.layout', 'angularGrid', 'ui.tinymce', 'infinite-scroll', 'wu.masonry'])
+var nyplViewer = angular.module('nyplViewer', ['ngMaterial', 'base64', 'ui.router', 'ui.layout', 'ui.tinymce', 'infinite-scroll', 'wu.masonry'])
   angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
   .config(function ($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise('');

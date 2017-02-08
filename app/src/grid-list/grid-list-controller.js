@@ -1,4 +1,4 @@
-nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $location, $state, $scope, angularGridInstance) {
+nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $location, $state, $scope) {
 
     ctrl = this;
     ctrl.searchText = 'new york city 1776';
@@ -111,15 +111,16 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     }
 
     ctrl.showImageDetail = function (pic) {
-        //console.log(pic);
+        console.log('running show image detail');
+        console.log(pic);
         $state.go('image', { myParam: pic })
         var url = '/image/' + 999;
         $location.path(url);
     };
 
-    ctrl.refresh = function () {
-        angularGridInstance.gallery.refresh();
-    }
+   // ctrl.refresh = function () {
+     //   angularGridInstance.gallery.refresh();
+    //}
 
     ctrl.search();
 });
