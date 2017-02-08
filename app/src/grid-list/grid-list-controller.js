@@ -115,7 +115,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         console.log(pic);
         $state.go('image', { myParam: pic })
         var url = '/image/' + 999;
-        $location.path(url);
+        //$location.path(url);
     };
 
    // ctrl.refresh = function () {

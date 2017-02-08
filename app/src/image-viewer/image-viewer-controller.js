@@ -1,6 +1,6 @@
 nyplViewer.controller('ImageViewerCtrl', function ($scope, $timeout, $stateParams) {
     ctrl = this;
-    console.log($stateParams.myParam);
+    console.log($stateParams);
     ctrl.fullImageUrl = $stateParams.myParam.fullImageUrl;
     ctrl.thumbNail = $stateParams.myParam.image;
     ctrl.title = $stateParams.myParam.title;
