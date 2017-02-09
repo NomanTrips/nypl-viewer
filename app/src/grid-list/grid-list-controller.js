@@ -33,7 +33,9 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
             var thumbnail = {};
             thumbnail.data = item;
             thumbnail.title = item.title;
-            thumbnail.fullImageUrl = 'https://images.nypl.org/index.php?id=' + item.imageID + '&t=w';
+            //thumbnail.fullImageUrl = 'https://images.nypl.org/index.php?id=' + item.imageID + '&t=w';
+            thumbnail.fullImageUrl = 'https://images.nypl.org/index.php?id=' + item.imageID + '&t=q';
+            thumbnail.cropped = 'https://images.nypl.org/index.php?id=' + item.imageID + '&t=r';
             var img = new Image();
             img.src = thumbnail.fullImageUrl;
             //thumbnail.actualHeight = img.height;//1032;//513;
@@ -111,8 +113,6 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     }
 
     ctrl.showImageDetail = function (pic) {
-        console.log('running show image detail');
-        console.log(pic);
         $state.go('image', { myParam: pic })
         var url = '/image/' + 999;
         //$location.path(url);
