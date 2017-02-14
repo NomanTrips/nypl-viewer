@@ -4,6 +4,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     ctrl.searchText = 'new york city 1776';
     ctrl.pics = [];
 
+
     ctrl.search = function () {
         NyplApiCalls.nyplSearch(ctrl.searchText).then(function (response) {
             // if (ctrl.pics === undefined){
