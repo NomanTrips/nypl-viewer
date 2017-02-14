@@ -34,7 +34,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
             thumbnail.data = item;
             thumbnail.title = item.title;
             //thumbnail.fullImageUrl = 'https://images.nypl.org/index.php?id=' + item.imageID + '&t=w';
-            thumbnail.fullImageUrl = 'https://images.nypl.org/index.php?id=' + item.imageID + '&t=q';
+            thumbnail.fullImageUrl = 'https://images.nypl.org/index.php?id=' + item.imageID + '&t=w';
             thumbnail.cropped = 'https://images.nypl.org/index.php?id=' + item.imageID + '&t=r';
             var img = new Image();
             img.src = thumbnail.fullImageUrl;
@@ -43,6 +43,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
             thumbnail.actualWidth = img.width;//343;
             thumbnail.showImageDetail = ctrl.showImageDetail;
             //console.log(thumbnail.title);
+            thumbnail.imageID = item.imageID;
             ctrl.pics.push(thumbnail);
         }
 
@@ -89,7 +90,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         var promises = [];
         angular.forEach(response, function (item, key) {
             //console.log(item.title);
-            if (! ctrl.pics.find(ctrl.isDuplicate, item.title)) {
+            if (!ctrl.pics.find(ctrl.isDuplicate, item.title)) {
                 ctrl.getThumbnail(item);
             }
             //var itemCopy = item;
@@ -111,15 +112,39 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         //});
         //return deferred.promise;
     }
+    ctrl.isImageClicked = false;
+
+    ctrl.showModal = function (pic) {
+        console.log(pic.imageID);
+        var options = {
+            //minHeight: 500,
+            //minWidth: element.offsetWidth,
+            url: 'data-original',
+            inline: false,
+            build: function (e) {
+                //console.log(e.type);
+                ctrl.isViewerBuilt = false;
+            },
+            built: function (e) {
+                //console.log(e.type);
+                ctrl.isViewerBuilt = true;
+                $scope.$apply();
+            },
+        };
+        $('.image').viewer(options);
+    }
 
     ctrl.showImageDetail = function (pic) {
-        $state.go('image', { myParam: pic })
-        var url = '/image/' + 999;
+       // ctrl.fullImageUrl = pic.fullImageUrl;
+        ctrl.isImageClicked = true;
+        ctrl.showModal(pic);
+       // $state.go('image', { myParam: pic })
+       // var url = '/image/' + 999;
         //$location.path(url);
     };
 
-   // ctrl.refresh = function () {
-     //   angularGridInstance.gallery.refresh();
+    // ctrl.refresh = function () {
+    //   angularGridInstance.gallery.refresh();
     //}
 
     ctrl.search();
