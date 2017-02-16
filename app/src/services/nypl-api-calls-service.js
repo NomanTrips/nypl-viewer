@@ -31,13 +31,12 @@ nyplViewer.factory('NyplApiCalls', function ($http, $q, $base64) {
     }
 
     return {
-        nyplSearch: function (searchText) {
+        nyplSearch: function (searchText, page) {
+            //console.log(searchText);
             var pagingQueryParam = '';
-            if (factory.page > 1) {
-                pagingQueryParam = '&page=' + factory.page;
-            }
+            pagingQueryParam = '&page=' + page;
             var nyplUrl = 'http://api.repo.nypl.org/api/v1/items/search?q=' + searchText + '&publicDomainOnly=true' + pagingQueryParam + '&per_page=20';
-            factory.incrementResultPage();
+            //factory.incrementResultPage();
             var deferred = $q.defer();
             $http(buildHttpRequest(nyplUrl), { headers: headers }).then(function successCallback(response) {       
                 deferred.resolve(extract(response));

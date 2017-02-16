@@ -3,10 +3,17 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     ctrl = this;
     ctrl.searchText = 'new york city 1776';
     ctrl.pics = [];
+    ctrl.page = 0;
 
+    ctrl.searchTextChange = function (){
+        ctrl.page = 0;
+        ctrl.pics =[];
+        ctrl.search();
+    }
 
     ctrl.search = function () {
-        NyplApiCalls.nyplSearch(ctrl.searchText).then(function (response) {
+        ctrl.page = ctrl.page + 1;
+        NyplApiCalls.nyplSearch(ctrl.searchText, ctrl.page).then(function (response) {
             // if (ctrl.pics === undefined){
             //   ctrl.pics = [];
             //}
@@ -86,7 +93,6 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     }
 
     ctrl.getItemThumbnails = function (response) {
-        //console.log(response);
         var promises = [];
         angular.forEach(response, function (item, key) {
             //console.log(item.title);
