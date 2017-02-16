@@ -22,7 +22,6 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     }
 
     ctrl.loadMore = function () {
-        console.log('firing');
         ctrl.search();
     }
     ctrl.getPics = function () {
@@ -116,7 +115,6 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     ctrl.isImageClicked = false;
 
     ctrl.showModal = function (pic) {
-        console.log(pic.imageID);
         var options = {
             //minHeight: 500,
             //minWidth: element.offsetWidth,

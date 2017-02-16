@@ -38,10 +38,8 @@ nyplViewer.factory('NyplApiCalls', function ($http, $q, $base64) {
             }
             var nyplUrl = 'http://api.repo.nypl.org/api/v1/items/search?q=' + searchText + '&publicDomainOnly=true' + pagingQueryParam + '&per_page=20';
             factory.incrementResultPage();
-            console.log(nyplUrl);
             var deferred = $q.defer();
-            $http(buildHttpRequest(nyplUrl), { headers: headers }).then(function successCallback(response) {
-                console.log(response);          
+            $http(buildHttpRequest(nyplUrl), { headers: headers }).then(function successCallback(response) {       
                 deferred.resolve(extract(response));
             }, function errorCallback(response) {
                 deferred.reject(response);
