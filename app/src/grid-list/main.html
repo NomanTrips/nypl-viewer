@@ -72,7 +72,7 @@
 	<div infinite-scroll="gridList.loadMore()" infinite-scroll-distance="1">
 		<div masonry masonry-options="{ gutter: 20 }">
 			<div class="masonry-brick" ng-repeat="pic in gridList.pics" style="margin-bottom: 20px;" ng-click="pic.showImageDetail(pic)">
-				<img class="image" ng-src="{{ pic.cropped }}" data-original="{{pic.fullImageUrl}}" alt="{{pic.title}}" style="width:280px;height:{{pic.actualHeight}};">
+				<img class="image" ng-src="{{ pic.cropped }}" data-original="{{pic.fullImageUrl}}" alt="{{pic.title}}" style="width:280px;height:{{pic.actualHeight}};border-radius:10px;">
 			</div>
 		</div>
 	</div>
