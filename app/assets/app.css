@@ -241,3 +241,12 @@ span.name {
             visibility: visible;
             opacity: 1;
         }
+
+#loadingbar {
+  width: 100%;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 61; /* to sit ontop of sidenav which has a z-index of 60*/
+}

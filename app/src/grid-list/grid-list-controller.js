@@ -4,6 +4,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     ctrl.searchText = 'new york city 1776';
     ctrl.pics = [];
     ctrl.page = 0;
+    ctrl.isLoadingDone = true;
 
     ctrl.searchTextChange = function (){
         ctrl.page = 0;
@@ -12,6 +13,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     }
 
     ctrl.search = function () {
+        ctrl.isLoadingDone = false;
         ctrl.page = ctrl.page + 1;
         NyplApiCalls.nyplSearch(ctrl.searchText, ctrl.page).then(function (response) {
             // if (ctrl.pics === undefined){
@@ -21,7 +23,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
             //ctrl.response = response;
             //console.log(response);
             ctrl.getItemThumbnails(response);
-
+            ctrl.isLoadingDone = true;
             //.then(function (results) {
             //  ctrl.pics = ctrl.pics.concat(results);
             // })

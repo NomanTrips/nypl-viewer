@@ -1,6 +1,14 @@
 
-var nyplViewer = angular.module('nyplViewer', ['ngMaterial', 'base64', 'ui.router', 'ui.layout', 'ui.tinymce', 'infinite-scroll', 'wu.masonry'])
-  angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
+var nyplViewer = angular.module('nyplViewer', [
+  'ngMaterial',
+  'base64',
+  'ui.router',
+  'ui.layout',
+  'ui.tinymce',
+  'infinite-scroll',
+  'wu.masonry',
+])
+angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
   .config(function ($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise('');
 
@@ -18,6 +26,23 @@ var nyplViewer = angular.module('nyplViewer', ['ngMaterial', 'base64', 'ui.route
         controllerAs: 'imageViewer',
         params: { myParam: null },
       });
+  })
+  .directive('stickyLoadingbar', function ($mdSticky, $compile) {
+    var LOADINGBAR_TEMPLATE =
+      '<div id="loadingbar" ng-hide="isloading" sticky>' +
+      '<md-progress-linear md-mode="indeterminate" md-theme="dark-yellow"></md-progress-linear>' +
+      '</div>';
+    return {
+      restrict: 'E',
+      scope: {
+        isloading: '='
+      },
+      replace: true,
+      template: LOADINGBAR_TEMPLATE,
+      link: function (scope, element) {
+        $mdSticky(scope, element, $compile(LOADINGBAR_TEMPLATE)(scope));
+      }
+    };
   })
   .config(
   [
@@ -39,6 +64,10 @@ var nyplViewer = angular.module('nyplViewer', ['ngMaterial', 'base64', 'ui.route
       $mdThemingProvider.theme('default')
         .primaryPalette('brown')
         .accentPalette('red');
+
+      $mdThemingProvider.theme('dark-yellow').primaryPalette('yellow', {
+        'default': '700'
+      });
     }
   ]
   );
