@@ -31,6 +31,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     }
 
     ctrl.loadMore = function () {
+        console.log('firing load more');
         ctrl.search();
     }
     ctrl.getPics = function () {

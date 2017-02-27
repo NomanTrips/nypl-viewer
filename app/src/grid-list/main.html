@@ -45,8 +45,28 @@
 -->
 <sticky-loadingbar isloading="gridList.isLoadingDone"></sticky-loadingbar>
 
-<div class="container-fluid">
+<div layout="column" class="relative" layout-fill role="main">
+   <md-toolbar class="md-hue-3" md-whiteframe="2">
+        <div class="md-toolbar-tools">
+          <md-button class="md-icon-button" aria-label="Search" ng-click="gridList.searchTextChange()">
+            <md-icon md-svg-icon="search"></md-icon>
+          </md-button>
+          <md-input-container class="md-accent" flex style="height:40px;">
+            <label>&nbsp;</label>
+            <input ng-model="gridList.searchText" placeholder="enter search" ng-change="gridList.searchTextChange()" ng-model-options="{updateOn : 'change blur'}">
+          </md-input-container>
+          <md-button class="md-icon-button" aria-label="Open Settings" ng-click="showListBottomSheet($event)">
+            <md-icon md-svg-icon="settings"></md-icon>
+          </md-button>
+        </div>
+       
+      </md-toolbar>
+</div>
+<md-content flex layout-padding="" id="inf-wrapper">
 
+
+
+	<!--
 	<div class="row" style="padding-top:25px;padding-bottom:25px;">
 		<div class="col-lg-12">
 			<div class="input-group">
@@ -65,19 +85,21 @@
 	<div>
 		<button ng-click="gridList.getPics()"></button>
 	</div>
-	<!--
+
 	<div id="OGimage">
 		<img class="image" src="{{gridList.fullImageUrl}}" alt="Picture" >
 	</div>
 	-->
-	<div infinite-scroll="gridList.loadMore()" infinite-scroll-distance="1">
+
+	<div infinite-scroll="gridList.loadMore()" infinite-scroll-distance="1" infinite-scroll-container="'#inf-wrapper'"> 
 		<div masonry masonry-options="{ gutter: 20 }">
 			<div class="masonry-brick" ng-repeat="pic in gridList.pics" style="margin-bottom: 20px;" ng-click="pic.showImageDetail(pic)">
 				<img class="image" ng-src="{{ pic.cropped }}" data-original="{{pic.fullImageUrl}}" alt="{{pic.title}}" style="width:280px;height:{{pic.actualHeight}};border-radius:10px;">
 			</div>
 		</div>
 	</div>
-</div>
+
+</md-content>
 <!--
 <div id="gallery-wrap" style="height:900px;">
 	<ul class="dynamic-grid" angular-grid="gridList.pics" ag-grid-width="300" ag-gutter-size="15" ag-id="gallery" ag-refresh-on-img-load="false"
