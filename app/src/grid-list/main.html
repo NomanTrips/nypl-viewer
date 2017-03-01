@@ -65,7 +65,7 @@
 			<label>&nbsp;</label>
 			<input ng-model="gridList.searchText" placeholder="enter search" ng-change="gridList.searchTextChange()" ng-model-options="{updateOn : 'change blur'}">
 		</md-input-container>
-		<md-button class="md-icon-button" aria-label="Open Settings" ng-click="showListBottomSheet($event)">
+		<md-button class="md-icon-button" aria-label="Open Settings" ng-click="gridList.showSettings($event)">
 			<md-icon md-svg-icon="settings"></md-icon>
 		</md-button>
 	</div>

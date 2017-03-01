@@ -1,4 +1,4 @@
-nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $location, $state, $scope) {
+nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $location, $state, $scope, $mdMedia, $mdDialog) {
 
     ctrl = this;
     ctrl.searchText = 'new york city 1776';
@@ -6,9 +6,9 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     ctrl.page = 0;
     ctrl.isLoadingDone = true;
 
-    ctrl.searchTextChange = function (){
+    ctrl.searchTextChange = function () {
         ctrl.page = 0;
-        ctrl.pics =[];
+        ctrl.pics = [];
         ctrl.search();
     }
 
@@ -56,6 +56,24 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
             thumbnail.imageID = item.imageID;
             ctrl.pics.push(thumbnail);
         }
+
+        ctrl.showSettings = function (ev) {
+            var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'));
+            $mdDialog.show({
+                controller: 'SettingsDialogCtrl',
+                controllerAs: 'settingsCtrl',
+                templateUrl: 'src/grid-list/settings-dialog.html',
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: true,
+                fullscreen: useFullScreen
+            })
+                .then(function (answer) {
+                    ctrl.status = 'You said the information was "' + answer + '".';
+                }, function () {
+                    ctrl.status = 'You cancelled the dialog.';
+                });
+        };
 
         //results.push(thumbnail);
         //console.log(item.title);
@@ -143,11 +161,11 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     }
 
     ctrl.showImageDetail = function (pic) {
-       // ctrl.fullImageUrl = pic.fullImageUrl;
+        // ctrl.fullImageUrl = pic.fullImageUrl;
         ctrl.isImageClicked = true;
         ctrl.showModal(pic);
-       // $state.go('image', { myParam: pic })
-       // var url = '/image/' + 999;
+        // $state.go('image', { myParam: pic })
+        // var url = '/image/' + 999;
         //$location.path(url);
     };
 
