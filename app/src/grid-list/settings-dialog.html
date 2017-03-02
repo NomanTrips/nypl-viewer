@@ -12,9 +12,10 @@
 
         <md-dialog-content>
             <div class="md-dialog-content">
+                <h4>Historical interests:</h4>
                 <form name="fruitForm">
                     <md-chips ng-model="settingsCtrl.interests" name="interest" readonly="false" md-removable="true" md-max-chips="7"
-                        placeholder="Enter a historical interest...">
+                        placeholder="Enter a new interest...">
                         <md-chip-template>
                             <strong>{{$chip}}</strong>
                         </md-chip-template>

@@ -5,6 +5,32 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     ctrl.pics = [];
     ctrl.page = 0;
     ctrl.isLoadingDone = true;
+    ctrl.interests = [
+        {
+            name: 'steam engine',
+            page: 1
+        },
+        {
+            name: 'jaeger',
+            page: 1
+        },
+        {
+            name: 'musket',
+            page: 1
+        },
+        {
+            name: 'george washington',
+            page: 1
+        },
+        {
+            name: 'brooklyn bridge',
+            page: 1
+        },
+        {
+            name: 'clock',
+            page: 1
+        }
+    ];
 
     ctrl.searchTextChange = function () {
         ctrl.page = 0;
@@ -15,18 +41,17 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     ctrl.search = function () {
         ctrl.isLoadingDone = false;
         ctrl.page = ctrl.page + 1;
-        NyplApiCalls.nyplSearch(ctrl.searchText, ctrl.page).then(function (response) {
-            // if (ctrl.pics === undefined){
-            //   ctrl.pics = [];
-            //}
-            //ctrl.getItemThumbnails(response);
-            //ctrl.response = response;
-            //console.log(response);
+        var interestOne = ctrl.interests[Math.floor(Math.random() * ctrl.interests.length)]; // just a random element from interest arr
+        NyplApiCalls.nyplSearch(interestOne.name, interestOne.page).then(function (response) {
             ctrl.getItemThumbnails(response);
-            ctrl.isLoadingDone = true;
-            //.then(function (results) {
-            //  ctrl.pics = ctrl.pics.concat(results);
-            // })
+            interestOne.page = interestOne.page + 1;
+            var interestTwo = ctrl.interests[Math.floor(Math.random() * ctrl.interests.length)];
+            NyplApiCalls.nyplSearch(interestTwo.name, interestTwo.page).then(function (response) {
+                ctrl.getItemThumbnails(response);
+                interestTwo.page = interestTwo.page + 1;
+                ctrl.isLoadingDone = true;
+            });
+
         });
     }
 
