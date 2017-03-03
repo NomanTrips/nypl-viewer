@@ -1,4 +1,4 @@
-nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $location, $state, $scope, $mdMedia, $mdDialog) {
+nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $location, $state, $scope, $mdMedia, $mdDialog, lodash) {
 
     ctrl = this;
     ctrl.searchText = 'new york city 1776';
@@ -32,6 +32,9 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         }
     ];
 
+    ctrl.showInterests = function () {
+        console.log(ctrl.interests);
+    }
     ctrl.searchTextChange = function () {
         ctrl.page = 0;
         ctrl.pics = [];
@@ -39,6 +42,14 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     }
 
     ctrl.search = function () {
+        ctrl.runApiSearches(ctrl.interests).then(function (results) {
+            angular.forEach(results, function (item, key) {
+                if (!ctrl.pics.find(ctrl.isDuplicate, item.title)) {
+                    ctrl.getThumbnail(item);
+                }
+            });
+        })
+        /** 
         ctrl.isLoadingDone = false;
         ctrl.page = ctrl.page + 1;
         var interestOne = ctrl.interests[Math.floor(Math.random() * ctrl.interests.length)]; // just a random element from interest arr
@@ -53,6 +64,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
             });
 
         });
+        */
     }
 
     ctrl.loadMore = function () {
@@ -138,6 +150,43 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         return (item.title === String(this));
     }
 
+    function extract(result) {
+        console.log(result);
+        if (result.data === undefined) {
+            return [];
+        } else {
+            return result.data.nyplAPI.response.result;
+        }
+    }
+
+    ctrl.runApiSearches = function (interests) {
+        var promises = [];
+        var interestsResults = [];
+        angular.forEach(interests, function (interest) {
+            var search = NyplApiCalls.nyplSearch(interest.name, interest.page);
+            promises.push(search);
+        });
+
+        var defer = $q.defer();
+
+        $q.all(promises).then(
+            function (results) {
+                angular.forEach(results, function (result, index) {
+                    var items = extract(result);
+                    angular.forEach(items, function (item, key) {
+                        interestsResults.push(item);
+                    });
+                    ctrl.interests[index].page = ctrl.interests[index].page + 1;
+                });
+                defer.resolve(lodash.shuffle(interestsResults));
+                // Handle success
+            }, function (err) {
+                // Handle errors
+            });
+
+        return defer.promise;
+    }
+
     ctrl.getItemThumbnails = function (response) {
         var promises = [];
         angular.forEach(response, function (item, key) {
@@ -198,7 +247,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     //   angularGridInstance.gallery.refresh();
     //}
 
-    ctrl.search();
+    //ctrl.search();
 });
 /** 
 nyplViewer.controller('GridListCtrl', function ($http, NyplApiCalls, $mdMedia, $mdDialog, $location, $state) {
