@@ -35,7 +35,7 @@ nyplViewer.factory('NyplApiCalls', function ($http, $q, $base64) {
             //console.log(searchText);
             var pagingQueryParam = '';
             pagingQueryParam = '&page=' + page;
-            var nyplUrl = 'http://api.repo.nypl.org/api/v1/items/search?q=' + searchText + '&publicDomainOnly=true' + pagingQueryParam + '&per_page=10';
+            var nyplUrl = 'http://api.repo.nypl.org/api/v1/items/search?q=' + searchText + '&publicDomainOnly=true' + pagingQueryParam + '&per_page=20';
             //factory.incrementResultPage();
             var deferred = $q.defer();
             var request = $http(buildHttpRequest(nyplUrl), { headers: headers });
