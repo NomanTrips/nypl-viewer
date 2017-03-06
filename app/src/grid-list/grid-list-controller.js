@@ -7,19 +7,13 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     ctrl.isLoadingDone = true;
     ctrl.interests = [
         {
-            name: 'steam engine',
+            name: 'steamboats',
             startPage: 1,
             currentPage: 1,
             totalPages: 0,
         },
         {
-            name: 'jaeger',
-            startPage: 1,
-            currentPage: 1,
-            totalPages: 0,
-        },
-        {
-            name: 'musket',
+            name: 'firearms',
             startPage: 1,
             currentPage: 1,
             totalPages: 0,
@@ -30,18 +24,6 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
             currentPage: 1,
             totalPages: 0,
         },
-        {
-            name: 'philidelphia',
-            startPage: 1,
-            currentPage: 1,
-            totalPages: 0,
-        },
-        {
-            name: 'clock',
-            startPage: 1,
-            currentPage: 1,
-            totalPages: 0,
-        }
     ];
     ctrl.isPaginationInfoRetrieved = false;
     ctrl.isMoreItems = true;
@@ -63,7 +45,14 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     }
 
     ctrl.generateRandomStartPageNum = function (totalPages) {
-        return lodash.random(1, totalPages);
+        //lodash.round(4.006, 0);
+        var lowRandomNum = (lodash.random(1, totalPages));
+        // lowRandomNum = Math.round(lowRandomNum);
+        //if (lowRandomNum <1 ){
+        //  lowRandomNum = 1;
+        //}
+        //console.log(lowRandomNum);
+        return lowRandomNum;
     }
 
     ctrl.incrementCurrentPage = function (interest) {
@@ -77,28 +66,54 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         }
         interest.currentPage = nextPageNum;
     }
+    ctrl.loadCount = 0;
+    ctrl.loadSection2 = function () {
+        var apiURL = "http://..."
+        return ctrl.runApiSearches(ctrl.interests)
+            .then(function (results) {
+                console.log('api search returned');
+                angular.forEach(results, function (item, key) {
+                    if (!ctrl.pics.find(ctrl.isDuplicate, item.title)) {
+                        ctrl.getThumbnail(item);
+                    }
+                });
+
+                ctrl.loadCount++;
+                if (ctrl.loadCount > 20 || ctrl.isMoreItems == false) {
+                    return;
+                }
+                if (ctrl.pics.length < 20) {
+                    //newSectionArray.push(response.data);
+                    return ctrl.loadSection2();
+                }
+                //loadCount = 0;
+            });
+
+    };
 
     ctrl.search = function () {
-        ctrl.runApiSearches(ctrl.interests).then(function (results) {
-            angular.forEach(results, function (item, key) {
-                if (!ctrl.pics.find(ctrl.isDuplicate, item.title)) {
-                    ctrl.getThumbnail(item);
-                }
-            });
-            
-            /** 
-            if (ctrl.pics.length < 20) {
-                ctrl.runApiSearches(ctrl.interests).then(function (results) {
-                    angular.forEach(results, function (item, key) {
-                        if (!ctrl.pics.find(ctrl.isDuplicate, item.title)) {
-                            ctrl.getThumbnail(item);
-                        }
-                    });
-                })
-            }*/
-
-        })
-
+        ctrl.loadSection2();
+        /**    
+          ctrl.runApiSearches(ctrl.interests).then(function (results) {
+              angular.forEach(results, function (item, key) {
+                  if (!ctrl.pics.find(ctrl.isDuplicate, item.title)) {
+                      ctrl.getThumbnail(item);
+                  }
+              });
+  
+             
+              if (ctrl.pics.length < 20) {
+                  ctrl.runApiSearches(ctrl.interests).then(function (results) {
+                      angular.forEach(results, function (item, key) {
+                          if (!ctrl.pics.find(ctrl.isDuplicate, item.title)) {
+                              ctrl.getThumbnail(item);
+                          }
+                      });
+                  })
+              }
+  
+          })
+  */
 
         /** 
         ctrl.isLoadingDone = false;
