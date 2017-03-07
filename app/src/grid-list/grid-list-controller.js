@@ -5,6 +5,8 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     ctrl.pics = [];
     ctrl.page = 0;
     ctrl.isLoadingDone = true;
+    ctrl.isStraightSearchModeOn = false;
+    ctrl.modeDescription = 'Shuffle'
     ctrl.interests = [
         {
             name: 'steamboats',
@@ -30,7 +32,11 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
 
     ctrl.initStartPageNums = function (interests) {
         angular.forEach(interests, function (interest, key) {
-            interest.startPage = ctrl.generateRandomStartPageNum(interest.totalPages);
+            if (ctrl.isStraightSearchModeOn) {
+                interest.startPage = 1;
+            } else { // Load random items for interest
+                interest.startPage = ctrl.generateRandomStartPageNum(interest.totalPages);
+            }
             interest.currentPage = interest.startPage;
         })
     };
@@ -38,20 +44,34 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     ctrl.showInterests = function () {
         console.log(ctrl.interests);
     }
+
+    ctrl.modeChange = function () {
+        ctrl.pics =[];
+        if (ctrl.isStraightSearchModeOn) {
+            ctrl.modeDescription = 'Straight search';
+            ctrl.searchTextChange();
+        } else {
+            ctrl.modeDescription = 'Shuffle';
+            ctrl.loadThumbnails();
+        }
+    }
+
     ctrl.searchTextChange = function () {
-        ctrl.page = 0;
-        ctrl.pics = [];
-        ctrl.search();
+        ctrl.pics =[];
+        ctrl.isStraightSearchModeOn = true;
+        ctrl.interests = [
+            {
+                name: ctrl.searchText,
+                startPage: 1,
+                currentPage: 1,
+                totalPages: 0,
+            }
+        ]
+        ctrl.loadThumbnails();
     }
 
     ctrl.generateRandomStartPageNum = function (totalPages) {
-        //lodash.round(4.006, 0);
         var lowRandomNum = (lodash.random(1, totalPages));
-        // lowRandomNum = Math.round(lowRandomNum);
-        //if (lowRandomNum <1 ){
-        //  lowRandomNum = 1;
-        //}
-        //console.log(lowRandomNum);
         return lowRandomNum;
     }
 
@@ -66,9 +86,10 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         }
         interest.currentPage = nextPageNum;
     }
-    ctrl.loadCount = 0;
-    ctrl.loadSection2 = function () {
-        var apiURL = "http://..."
+
+    ctrl.search = function () {
+        ctrl.isLoadingDone = false;
+        var loadCount = 0;
         return ctrl.runApiSearches(ctrl.interests)
             .then(function (results) {
                 console.log('api search returned');
@@ -78,62 +99,20 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
                     }
                 });
 
-                ctrl.loadCount++;
-                if (ctrl.loadCount > 20 || ctrl.isMoreItems == false) {
+                loadCount++;
+
+                if (loadCount > 20 || ctrl.isMoreItems == false) {
+                    ctrl.isLoadingDone = true;
                     return;
                 }
                 if (ctrl.pics.length < 20) {
-                    //newSectionArray.push(response.data);
-                    return ctrl.loadSection2();
+                    return ctrl.search();
                 }
-                //loadCount = 0;
-            });
-
-    };
-
-    ctrl.search = function () {
-        ctrl.loadSection2();
-        /**    
-          ctrl.runApiSearches(ctrl.interests).then(function (results) {
-              angular.forEach(results, function (item, key) {
-                  if (!ctrl.pics.find(ctrl.isDuplicate, item.title)) {
-                      ctrl.getThumbnail(item);
-                  }
-              });
-  
-             
-              if (ctrl.pics.length < 20) {
-                  ctrl.runApiSearches(ctrl.interests).then(function (results) {
-                      angular.forEach(results, function (item, key) {
-                          if (!ctrl.pics.find(ctrl.isDuplicate, item.title)) {
-                              ctrl.getThumbnail(item);
-                          }
-                      });
-                  })
-              }
-  
-          })
-  */
-
-        /** 
-        ctrl.isLoadingDone = false;
-        ctrl.page = ctrl.page + 1;
-        var interestOne = ctrl.interests[Math.floor(Math.random() * ctrl.interests.length)]; // just a random element from interest arr
-        NyplApiCalls.nyplSearch(interestOne.name, interestOne.page).then(function (response) {
-            ctrl.getItemThumbnails(response);
-            interestOne.page = interestOne.page + 1;
-            var interestTwo = ctrl.interests[Math.floor(Math.random() * ctrl.interests.length)];
-            NyplApiCalls.nyplSearch(interestTwo.name, interestTwo.page).then(function (response) {
-                ctrl.getItemThumbnails(response);
-                interestTwo.page = interestTwo.page + 1;
                 ctrl.isLoadingDone = true;
             });
- 
-        });
-        */
     }
 
-    ctrl.loadMore = function () {
+    ctrl.loadThumbnails = function () {
         console.log('firing load more');
         if (ctrl.isPaginationInfoRetrieved) {
             ctrl.search();
@@ -148,6 +127,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
 
     ctrl.getPics = function () {
         console.log(ctrl.pics);
+
     }
 
     ctrl.getThumbnail = function (item) {
@@ -168,58 +148,25 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
             thumbnail.imageID = item.imageID;
             ctrl.pics.push(thumbnail);
         }
-
-        ctrl.showSettings = function (ev) {
-            var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'));
-            $mdDialog.show({
-                controller: 'SettingsDialogCtrl',
-                controllerAs: 'settingsCtrl',
-                templateUrl: 'src/grid-list/settings-dialog.html',
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: true,
-                fullscreen: useFullScreen
-            })
-                .then(function (answer) {
-                    ctrl.status = 'You said the information was "' + answer + '".';
-                }, function () {
-                    ctrl.status = 'You cancelled the dialog.';
-                });
-        };
-
-        //results.push(thumbnail);
-        //console.log(item.title);
-        /** 
-        return NyplApiCalls.getImage(item)
-            .then(function (itemWithImageUrl) {
-                if (itemWithImageUrl != undefined) {
-                    //console.log(itemWithImageUrl);
-                    var thumbnail = {};
-                    thumbnail.data = itemWithImageUrl.item;
-                    thumbnail.image = itemWithImageUrl.thumbnailUrl;
-                    thumbnail.title = itemWithImageUrl.title;
- 
-                    var img = new Image();
-                    img.src = thumbnail.fullImageUrl;
-                    //thumbnail.actualHeight = img.height;//1032;//513;
-                    thumbnail.actualHeight = ~~(Math.random() * 500) + 100;
-                    thumbnail.actualWidth = img.width;//343;
-                    thumbnail.fullImageUrl = itemWithImageUrl.fullImageUrl;
-                    thumbnail.showImageDetail = ctrl.showImageDetail;
-                    //console.log(thumbnail.title);
-                    ctrl.pics.push(thumbnail);
-                    //results.push(thumbnail);
- 
-                }
-                return thumbnail;
- 
-            }).catch(function (error) {
-                console.log(error);
-            }).finally(function () {
- 
-            });
-            */
     }
+
+    ctrl.showSettings = function (ev) {
+        var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'));
+        $mdDialog.show({
+            controller: 'SettingsDialogCtrl',
+            controllerAs: 'settingsCtrl',
+            templateUrl: 'src/grid-list/settings-dialog.html',
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: true,
+            fullscreen: useFullScreen
+        })
+            .then(function (answer) {
+                ctrl.status = 'You said the information was "' + answer + '".';
+            }, function () {
+                ctrl.status = 'You cancelled the dialog.';
+            });
+    };
 
     ctrl.isDuplicate = function (item) {
         return (item.title === String(this));
@@ -310,24 +257,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
             if (!ctrl.pics.find(ctrl.isDuplicate, item.title)) {
                 ctrl.getThumbnail(item);
             }
-            //var itemCopy = item;
-            //promises.push(ctrl.getThumbnail(itemCopy, function (thumbnail) {
-            //ctrl.pics.push(thumbnail);
-            //}));
         });
-        //$q.all(promises).then(function () {
-        //callback();
-        //  console.log('fin...');
-        //});
-
-        //console.log(response);
-        //var deferred = $q.defer();
-        //var numReturned = 0;
-        //var results = [];
-        //angular.forEach(response, function (value, key) {
-
-        //});
-        //return deferred.promise;
     }
     ctrl.isImageClicked = false;
 
@@ -351,109 +281,8 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     }
 
     ctrl.showImageDetail = function (pic) {
-        // ctrl.fullImageUrl = pic.fullImageUrl;
         ctrl.isImageClicked = true;
         ctrl.showModal(pic);
-        // $state.go('image', { myParam: pic })
-        // var url = '/image/' + 999;
-        //$location.path(url);
     };
-
-    // ctrl.refresh = function () {
-    //   angularGridInstance.gallery.refresh();
-    //}
-
-    //ctrl.search();
 
 });
-/** 
-nyplViewer.controller('GridListCtrl', function ($http, NyplApiCalls, $mdMedia, $mdDialog, $location, $state) {
-    ctrl = this;
-    ctrl.year = 1776;
-
-    ctrl.showImageDialog = function (ev, tile) {
-        $state.go('image', {myParam: tile})
-        //var url = '/image/' + 999;
-        //$location.path(url);
-        //console.log(url);
-        /** 
-        console.log('running show dialog');
-        var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'));
-        $mdDialog.show({
-            locals:{event: ev, tile: tile},
-            controller: 'ImageDialogCtrl',
-            controllerAs: 'dialogCtrl',
-            templateUrl: 'src/grid-list/image-dialog.html',
-            parent: angular.element(document.body),
-            targetEvent: ev,
-            clickOutsideToClose: true,
-            fullscreen: useFullScreen
-        })
-            .then(function (answer) {
-                ctrl.status = 'You said the information was "' + answer + '".';
-            }, function () {
-                ctrl.status = 'You cancelled the dialog.';
-            });
-        
-    };
-
-    ctrl.nyplItems = NyplApiCalls.nyplSearch(ctrl.year)
-        .then(function (response) {
-            //console.log(response.length);
-            ctrl.tiles = buildGridModel({
-                icon: "avatar:svg-",
-                title: "Svg-",
-                background: "",
-                image: "",
-                showImageDialog: ctrl.showImageDialog
-            }, response);
-        }).catch(function (error) {
-            console.log(error);
-        }).finally(function () {
-
-        });
-
-    ctrl.refresh = function () {
-        ctrl.nyplItems = NyplApiCalls.nyplSearch(ctrl.year)
-            .then(function (response) {
-                //console.log(response.length);
-                ctrl.tiles = buildGridModel({
-                    icon: "avatar:svg-",
-                    title: "Svg-",
-                    background: "",
-                    image: ""
-                }, response);
-            }).catch(function (error) {
-                console.log(error);
-            }).finally(function () {
-
-            });
-    }
-
-    function buildGridModel(tileTmpl, response) {
-        var it, results = [];
-        angular.forEach(response, function (value, key) {
-
-            NyplApiCalls.getImage(value)
-                .then(function (itemWithImageUrl) {
-                    var item = itemWithImageUrl.item;
-                    it = angular.extend({}, tileTmpl);
-                    it.image = itemWithImageUrl.thumbnailUrl;
-                    it.title = itemWithImageUrl.title;
-                    it.fullImageUrl = itemWithImageUrl.fullImageUrl;
-
-                    //it.icon = it.icon + (j + 1);
-                    results.push(it);
-                }).catch(function (error) {
-                    console.log(error);
-                }).finally(function () {
-
-                });
-
-        });
-
-        return results;
-    }
-
-})
-*/
