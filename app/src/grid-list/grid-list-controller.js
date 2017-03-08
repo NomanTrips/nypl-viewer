@@ -7,24 +7,27 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     ctrl.isLoadingDone = true;
     ctrl.isStraightSearchModeOn = false;
     ctrl.modeDescription = 'Shuffle'
-    ctrl.interests = [
+    ctrl.searchItems = [
         {
-            name: 'steamboats',
+            searchTerm: 'steamboats',
             startPage: 1,
-            currentPage: 1,
+            nextPage: 1,
             totalPages: 0,
+            isMorePages: true,
         },
         {
-            name: 'firearms',
+            searchTerm: 'firearms',
             startPage: 1,
-            currentPage: 1,
+            nextPage: 1,
             totalPages: 0,
+            isMorePages: true,
         },
         {
-            name: 'george washington',
+            searchTerm: 'george washington',
             startPage: 1,
-            currentPage: 1,
+            nextPage: 1,
             totalPages: 0,
+            isMorePages: true,
         },
     ];
     ctrl.isPaginationInfoRetrieved = false;
@@ -41,12 +44,12 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         })
     };
 
-    ctrl.showInterests = function () {
-        console.log(ctrl.interests);
+    ctrl.showSearchItems = function () {
+        console.log(ctrl.searchItems);
     }
 
     ctrl.modeChange = function () {
-        ctrl.pics =[];
+        ctrl.pics = [];
         if (ctrl.isStraightSearchModeOn) {
             ctrl.modeDescription = 'Straight search';
             ctrl.searchTextChange();
@@ -57,9 +60,9 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     }
 
     ctrl.searchTextChange = function () {
-        ctrl.pics =[];
+        ctrl.pics = [];
         ctrl.isStraightSearchModeOn = true;
-        ctrl.interests = [
+        ctrl.searchItems = [
             {
                 name: ctrl.searchText,
                 startPage: 1,
@@ -75,54 +78,88 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         return lowRandomNum;
     }
 
-    ctrl.incrementCurrentPage = function (interest) {
-        var nextPageNum = interest.currentPage + 1;
-        if (nextPageNum > interest.totalPages) {
-            if (interest.startPage > 1) {
+    ctrl.incrementCurrentPage = function (searchItem) {
+        var nextPageNum = searchItem.currentPage + 1;
+        if (nextPageNum > searchItem.totalPages) {
+            if (searchItem.startPage > 1) {
                 nextPageNum = 1;
             } else {
                 nextPageNum = -1;
             }
         }
-        interest.currentPage = nextPageNum;
+        searchItem.currentPage = nextPageNum;
     }
 
-    ctrl.search = function () {
+    ctrl.search = function (searches) {
+        searchPromises = [];
+        angular.forEach(searches, function (search) {
+            var searchHttpCall = NyplApiCalls.nyplSearch(search.searchTerm, search.nextPage);
+            searchPromises.push(searchHttpCall);
+        });
+        return ctrl.runApiSearches(searchPromises);
+    }
+
+    ctrl.runApiSearches = function (searchPromises) {
+        var searchResults = [];
+        var defer = $q.defer();
+        $q.all(searchPromises).then(
+            function (results) {
+                angular.forEach(results, function (result, index) {
+                    var items = extract(result);
+                    angular.forEach(items, function (item, key) {
+                        searchResults.push(item);
+                    });
+                    //ctrl.interests[index].page = ctrl.interests[index].page + 1;
+                    ctrl.incrementCurrentPage(searchItems[index]);
+                });
+                defer.resolve(lodash.shuffle(searchResults));
+                // Handle success
+            }, function (err) {
+                // Handle errors
+            });
+
+        return defer.promise;
+    }
+
+    ctrl.loadThumbnails = function () {
         ctrl.isLoadingDone = false;
-        var loadCount = 0;
-        return ctrl.runApiSearches(ctrl.interests)
-            .then(function (results) {
-                console.log('api search returned');
-                angular.forEach(results, function (item, key) {
-                    if (!ctrl.pics.find(ctrl.isDuplicate, item.title)) {
-                        ctrl.getThumbnail(item);
+        var apiCalledCount = 0;
+        ctrl.getPageinationInfoForInterests(ctrl.searchItems, ctrl.isPaginationInfoRetrieved).then(function () {
+            ctrl.initStartPageNums(ctrl.searchItems);
+            searches = [];
+            angular.forEach(searchItems, function (searchItem) {
+                if (searchItem.isMorePages) {
+                    searches.push(searchItem);
+                }
+            })
+
+            if (searches.length == 0) { // no searches that will return items left to run...
+                ctrl.isMoreItems = false;
+                ctrl.showNoMoreResultsToast();
+                return;
+            }
+
+            ctrl.search(searches).then(function (searchResults) {
+                apiCalledCount++;
+                angular.forEach(searchResults, function (searchResult) {
+                    if (!ctrl.pics.find(ctrl.isDuplicate, searchResult.title)) {
+                        ctrl.getThumbnail(searchResult);
                     }
                 });
 
-                loadCount++;
-
-                if (loadCount > 20 || ctrl.isMoreItems == false) {
+                if (apiCalledCount > 20 || ctrl.isMoreItems == false) { // Only call api 20 times for items before quiting to prevent overloading
                     ctrl.isLoadingDone = true;
                     return;
                 }
                 if (ctrl.pics.length < 20) {
-                    return ctrl.search();
+                    return ctrl.search(searches);
                 }
+
                 ctrl.isLoadingDone = true;
             });
-    }
+        })
 
-    ctrl.loadThumbnails = function () {
-        console.log('firing load more');
-        if (ctrl.isPaginationInfoRetrieved) {
-            ctrl.search();
-        } else {
-            ctrl.getPageinationInfoForInterests(ctrl.interests).then(function () {
-                ctrl.initStartPageNums(ctrl.interests);
-                ctrl.search();
-                ctrl.isPaginationInfoRetrieved = true;
-            })
-        }
+
     }
 
     ctrl.getPics = function () {
@@ -180,21 +217,26 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         }
     }
 
-    ctrl.getPageinationInfoForInterests = function (interests) {
-        var promises = [];
-        angular.forEach(interests, function (interest) {
-            var search = NyplApiCalls.nyplSearch(interest.name, interest.currentPage);
-            promises.push(search);
+    ctrl.getPageinationInfoForInterests = function (searchItems, isPaginationInfoRetrieved) {
+        var defer = $q.defer();
+        if (isPaginationInfoRetrieved) {
+            defer.resolve();
+            return;
+        }
+
+        var searchPromises = [];
+        angular.forEach(searchItem, function (searchItem) {
+            var search = NyplApiCalls.nyplSearch(searchItem.name, searchItem.currentPage);
+            searchPromises.push(search);
         });
 
-        var defer = $q.defer();
-
-        $q.all(promises).then(
+        $q.all(searchPromises).then(
             function (results) {
                 angular.forEach(results, function (result, index) {
                     var totalPages = result.data.nyplAPI.request.totalPages;
-                    interests[index].totalPages = totalPages;
+                    searchItems[index].totalPages = totalPages;
                 });
+                isPaginationInfoRetrieved = true;
                 defer.resolve();
                 // Handle success
             }, function (err) {
@@ -212,43 +254,6 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
                 .hideDelay(1500)
         );
     };
-
-    ctrl.runApiSearches = function (interests) {
-        var promises = [];
-        var interestsResults = [];
-        var defer = $q.defer();
-        angular.forEach(interests, function (interest) {
-            if (interest.currentPage != -1) {
-                var search = NyplApiCalls.nyplSearch(interest.name, interest.currentPage);
-                promises.push(search);
-            }
-        });
-
-        if (promises.length == 0) {
-            ctrl.isMoreItems = false;
-            defer.resolve([]);
-            ctrl.showNoMoreResultsToast();
-        }
-
-
-        $q.all(promises).then(
-            function (results) {
-                angular.forEach(results, function (result, index) {
-                    var items = extract(result);
-                    angular.forEach(items, function (item, key) {
-                        interestsResults.push(item);
-                    });
-                    //ctrl.interests[index].page = ctrl.interests[index].page + 1;
-                    ctrl.incrementCurrentPage(interests[index]);
-                });
-                defer.resolve(lodash.shuffle(interestsResults));
-                // Handle success
-            }, function (err) {
-                // Handle errors
-            });
-
-        return defer.promise;
-    }
 
     ctrl.getItemThumbnails = function (response) {
         var promises = [];
