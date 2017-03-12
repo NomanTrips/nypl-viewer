@@ -65,7 +65,7 @@
 			<label>&nbsp;</label>
 			<input ng-model="gridList.searchText" placeholder="enter search" ng-change="gridList.searchTextChange()" ng-model-options="{updateOn : 'change blur'}">
 		</md-input-container>
-		<md-switch ng-model="gridList.isStraightSearchModeOn" ng-change="gridList.modeChange()" aria-label="Mode">
+		<md-switch ng-model="gridList.isSearchByInterestsModeOn" ng-change="gridList.modeChange()" aria-label="Mode">
 			Mode: {{ gridList.modeDescription }}
 		</md-switch>
 		<md-button class="md-icon-button" aria-label="Open Settings" ng-click="gridList.showSettings($event)">
@@ -78,6 +78,7 @@
 <md-content flex layout-padding="" id="inf-wrapper">
 
 	<button ng-click="gridList.showSearchItems()"></button>
+		<button ng-click="gridList.showPics()"></button>
 
 	<!--
 	<div class="row" style="padding-top:25px;padding-bottom:25px;">
@@ -104,7 +105,7 @@
 	</div>
 	-->
 
-	<div infinite-scroll="gridList.loadThumbnails()" infinite-scroll-distance="1" infinite-scroll-container="'#inf-wrapper'">
+	<div infinite-scroll="gridList.loadMore()" infinite-scroll-distance="1" infinite-scroll-container="'#inf-wrapper'">
 		<div masonry masonry-options="{ gutter: 20 }">
 			<div class="masonry-brick" ng-repeat="pic in gridList.pics" style="margin-bottom: 20px;" ng-click="pic.showImageDetail(pic)">
 				<img class="image" ng-src="{{ pic.cropped }}" data-original="{{pic.fullImageUrl}}" alt="{{pic.title}}" style="width:280px;height:{{pic.actualHeight}};border-radius:10px;">
