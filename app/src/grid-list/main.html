@@ -71,6 +71,29 @@
 		<md-button class="md-icon-button" aria-label="Open Settings" ng-click="gridList.showSettings($event)">
 			<md-icon md-svg-icon="settings"></md-icon>
 		</md-button>
+		<md-menu>
+			<md-button aria-label="Sign-in" class="md-fab md-mini md-primary" ng-click="gridList.openMenu($mdOpenMenu, $event)" ng-mouseenter="gridList.isOpen=true"
+				ng-mouseleave="gridList.isOpen=false">
+				<md-tooltip md-direction="top" md-visible="gridList.isOpen">{{gridList.account.tooltip}}</md-tooltip>
+				{{gridList.account.username}}
+				<md-icon md-svg-src="{{gridList.authItems.default.icon}}" md-menu-align-target="" ng-show="gridList.authItems.default.show">
+				</md-icon>
+				</md-button>
+				<md-menu-content width="4">
+					<md-menu-item ng-show="gridList.authItems.google.show">
+						<md-button ng-click="gridList.authEvent(gridList.authItems.google)">
+							<md-icon md-svg-src="{{gridList.authItems.google.icon}}" md-menu-align-target=""></md-icon>
+							Sign in using Google.
+						</md-button>
+					</md-menu-item>
+					<md-menu-item ng-show="gridList.authItems.signout.show">
+						<md-button ng-click="gridList.authEvent(gridList.authItems.signout)">
+							<md-icon md-svg-src="{{gridList.authItems.signout.icon}}"></md-icon>
+							Sign-out
+						</md-button>
+					</md-menu-item>
+				</md-menu-content>
+		</md-menu>
 	</div>
 
 </md-toolbar>
@@ -78,7 +101,7 @@
 <md-content flex layout-padding="" id="inf-wrapper">
 
 	<button ng-click="gridList.showSearchItems()"></button>
-		<button ng-click="gridList.showPics()"></button>
+	<button ng-click="gridList.showPics()"></button>
 
 	<!--
 	<div class="row" style="padding-top:25px;padding-bottom:25px;">

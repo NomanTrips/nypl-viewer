@@ -8,6 +8,7 @@ var nyplViewer = angular.module('nyplViewer', [
   'infinite-scroll',
   'wu.masonry',
   'ngLodash',
+  'firebase',
 ])
 angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
   .config(function ($stateProvider, $urlRouterProvider) {
@@ -19,6 +20,14 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
         templateUrl: 'src/grid-list/main.html',
         controller: 'GridListCtrl',
         controllerAs: 'gridList',
+        resolve: {
+          // controller will not be loaded until $waitForSignIn resolves
+          // Auth refers to our $firebaseAuth wrapper in the factory below
+          "currentAuth": ["Auth", function (Auth) {
+            // $waitForSignIn returns a promise so the resolve waits for it to complete
+            return Auth.authObj.$waitForSignIn();
+          }]
+        },
       })
       .state('image', {
         url: "/image/:id",
@@ -63,18 +72,21 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
         .icon("twitter", "./assets/svg/twitter.svg", 24)
         .icon("pen", "./assets/svg/fountain-pen.svg", 24)
         .icon("open-book", "./assets/svg/open-book.svg", 24)
+        .icon("google", "./assets/svg/google.svg", 24)
+        .icon("account", "./assets/svg/account.svg", 24)
+        .icon("sign-out", "./assets/svg/sign-out.svg", 24)
         .icon("phone", "./assets/svg/phone.svg", 24);
 
-    $mdThemingProvider.theme('default')
-    .primaryPalette('grey', {
-      'default': '400', // by default use shade 400 from the pink palette for primary intentions
-      'hue-1': '200', // use shade 100 for the <code>md-hue-1</code> class
-      'hue-2': '600', // use shade 600 for the <code>md-hue-2</code> class
-      'hue-3': '50' // use shade A100 for the <code>md-hue-3</code> class
-    })
-      .accentPalette('amber');
+      $mdThemingProvider.theme('default')
+        .primaryPalette('grey', {
+          'default': '400', // by default use shade 400 from the pink palette for primary intentions
+          'hue-1': '200', // use shade 100 for the <code>md-hue-1</code> class
+          'hue-2': '600', // use shade 600 for the <code>md-hue-2</code> class
+          'hue-3': '50' // use shade A100 for the <code>md-hue-3</code> class
+        })
+        .accentPalette('amber');
 
- 
+
 
       $mdThemingProvider.theme('dark-yellow').primaryPalette('yellow', {
         'default': '700'
@@ -84,10 +96,10 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
         'default': 'A100'
       });
 
- $mdThemingProvider.theme('input', 'default')
+      $mdThemingProvider.theme('input', 'default')
         .primaryPalette('grey')
 
-      
+
 
     }
   ]

@@ -1,4 +1,4 @@
-nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $location, $state, $scope, $mdMedia, $mdDialog, lodash, $mdToast) {
+nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $location, $state, $scope, $mdMedia, $mdDialog, lodash, $mdToast, Auth) {
 
     ctrl = this;
     ctrl.searchText = 'new york city 1776';
@@ -26,6 +26,72 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         },
     ];
     ctrl.searchItems = [];
+    var originatorEv;
+    ctrl.isOpen = false;
+    ctrl.connected = false;
+
+    ctrl.authItems = {
+        default: {name: "Default user", icon: "account", direction: "bottom", show: "true", username: "", tooltip: "Signed in as the Default user."},
+        google: { name: "Google", icon: "google", direction: "top", show: "true", username: "", tooltip: "" },
+        signout: { name: "Sign out", icon: "sign-out", direction: "bottom", show: "false" }
+    };
+
+    ctrl.account = ctrl.authItems.default;
+
+    ctrl.authEvent = function (authItem) {
+        console.log(authItem);
+        if (authItem.name == 'Sign out') {
+            Auth.authObj.$signOut();
+            ctrl.authItems.default.show = true;
+            ctrl.authItems.google.show = true;
+            ctrl.authItems.signout.show = false;
+            ctrl.account = ctrl.authItems.default;
+        } else {
+            Auth.authenticate(authItem.name).then(function (result) {
+                var firebaseUser = Auth.authObj.$getAuth();
+                console.log("Signed in as:", result.user.uid);
+                ctrl.authItems.default.show = false;
+                ctrl.authItems.google.show = false;
+                ctrl.authItems.signout.show = true;
+                var TruncatedUserName = firebaseUser.displayName.substring(0, 1);
+                ctrl.authItems.google.tooltip = "Signed in with Google: " + firebaseUser.email;
+                ctrl.authItems.google.username = TruncatedUserName;
+                ctrl.account = ctrl.authItems.google;
+            }).catch(function (error) {
+                console.error("Authentication failed:", error);
+            });
+        }
+    }
+
+    ctrl.openMenu = function ($mdOpenMenu, ev) {
+        originatorEv = ev;
+        $mdOpenMenu(ev);
+    };
+
+    ctrl.authenticate = function () {
+      Auth.authenticate();
+      //console.log(Auth.authObj);
+    }
+
+    ctrl.initProfile = function () {
+      var firebaseUser = Auth.authObj.$getAuth();
+      if (firebaseUser) {
+        console.log("Signed in as:", firebaseUser.uid);
+        ctrl.authItems.default.show = false;
+        ctrl.authItems.google.show = false;
+        //ctrl.authItems.github.show = false;
+        ctrl.authItems.signout.show = true;
+        var TruncatedUserName = firebaseUser.displayName.substring(0, 1);
+        ctrl.authItems.google.tooltip = "Signed in with Google: " + firebaseUser.email;
+        ctrl.authItems.google.username = TruncatedUserName;
+        ctrl.account = ctrl.authItems.google;
+      } else {
+        ctrl.authItems.signout.show = false;
+        ctrl.account = ctrl.authItems.default;
+        console.log("Signed out");
+      }
+
+    }
 
     ctrl.showSearchItems = function () {
         console.log(ctrl.interestSearches);
@@ -294,5 +360,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         ctrl.isImageClicked = true;
         ctrl.showModal(pic);
     };
+
+    ctrl.initProfile();
 
 });
