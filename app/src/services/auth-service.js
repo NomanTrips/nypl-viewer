@@ -19,6 +19,7 @@ nyplViewer.factory('Auth', function (firebase, $firebaseAuth, $firebaseObject) {
         firebase.database().ref('users/' + userId).set({
             name: name,
             email: email,
+            settings: {},
         });
     }
 
@@ -38,7 +39,7 @@ nyplViewer.factory('Auth', function (firebase, $firebaseAuth, $firebaseObject) {
         authenticate: function (authMethod) {
             if (authMethod == 'Google') {
                 return factory.authObj.$signInWithPopup("google").then(function (result) {
-                    if (! factory.checkForFirstTime(result.user.uid)) {
+                    if (!factory.checkForFirstTime(result.user.uid)) {
                         var user = result.user;
                         factory.writeUserData(user.uid, user.displayName, user.email);
                     }
@@ -51,19 +52,17 @@ nyplViewer.factory('Auth', function (firebase, $firebaseAuth, $firebaseObject) {
         },
         saveSettings: function (settingsData) {
             var firebaseUser = factory.authObj.$getAuth();
-            //rootRef.child("users").child(firebaseUser.uid).child("settings").set(settingsData);
-            rootRef.child("users").child(firebaseUser.uid).set({
-                settings: {
-
-                }
-                //some more user data
+            firebase.database().ref('users').child(firebaseUser.uid).set({
+                settings: settingsData,
             });
+            //some more user data      
         },
         getSettings: function () {
             var firebaseUser = factory.authObj.$getAuth();
-            var settingsPath = rootRef.child("users").child(firebaseUser.uid).child("settings");
-            var settingsObject = $firebaseObject(settingsPath);
-            return settingsObject;
+            return firebase.database().ref('users').child(firebaseUser.uid).child("settings").once('value').then(function (snapshot) {
+                var settings = snapshot.val();
+                return settings;
+            })
         },
         authObj: factory.authObj
     }
