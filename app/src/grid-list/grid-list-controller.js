@@ -31,7 +31,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     ctrl.connected = false;
 
     ctrl.authItems = {
-        default: {name: "Default user", icon: "account", direction: "bottom", show: "true", username: "", tooltip: "Signed in as the Default user."},
+        default: { name: "Default user", icon: "account", direction: "bottom", show: "true", username: "", tooltip: "Signed in as the Default user." },
         google: { name: "Google", icon: "google", direction: "top", show: "true", username: "", tooltip: "" },
         signout: { name: "Sign out", icon: "sign-out", direction: "bottom", show: "false" }
     };
@@ -48,15 +48,20 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
             ctrl.account = ctrl.authItems.default;
         } else {
             Auth.authenticate(authItem.name).then(function (result) {
-                var firebaseUser = Auth.authObj.$getAuth();
-                console.log("Signed in as:", result.user.uid);
-                ctrl.authItems.default.show = false;
-                ctrl.authItems.google.show = false;
-                ctrl.authItems.signout.show = true;
-                var TruncatedUserName = firebaseUser.displayName.substring(0, 1);
-                ctrl.authItems.google.tooltip = "Signed in with Google: " + firebaseUser.email;
-                ctrl.authItems.google.username = TruncatedUserName;
-                ctrl.account = ctrl.authItems.google;
+                if (result.user != undefined) {
+                    console.log("Signed in as:", result.user.uid);
+                    ctrl.authItems.default.show = false;
+                    ctrl.authItems.google.show = false;
+                    ctrl.authItems.signout.show = true;
+                    var TruncatedUserName = result.user.displayName.substring(0, 1);
+                    ctrl.authItems.google.tooltip = "Signed in with Google: " + result.user.email;
+                    ctrl.authItems.google.username = TruncatedUserName;
+                    ctrl.account = ctrl.authItems.google;
+                } else {
+                    console.log(result.errorCode + ' ' + result.errorMessage);
+                }
+                //var firebaseUser = Auth.authObj.$getAuth();
+
             }).catch(function (error) {
                 console.error("Authentication failed:", error);
             });
@@ -69,27 +74,27 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     };
 
     ctrl.authenticate = function () {
-      Auth.authenticate();
-      //console.log(Auth.authObj);
+        Auth.authenticate();
+        //console.log(Auth.authObj);
     }
 
     ctrl.initProfile = function () {
-      var firebaseUser = Auth.authObj.$getAuth();
-      if (firebaseUser) {
-        console.log("Signed in as:", firebaseUser.uid);
-        ctrl.authItems.default.show = false;
-        ctrl.authItems.google.show = false;
-        //ctrl.authItems.github.show = false;
-        ctrl.authItems.signout.show = true;
-        var TruncatedUserName = firebaseUser.displayName.substring(0, 1);
-        ctrl.authItems.google.tooltip = "Signed in with Google: " + firebaseUser.email;
-        ctrl.authItems.google.username = TruncatedUserName;
-        ctrl.account = ctrl.authItems.google;
-      } else {
-        ctrl.authItems.signout.show = false;
-        ctrl.account = ctrl.authItems.default;
-        console.log("Signed out");
-      }
+        var firebaseUser = Auth.authObj.$getAuth();
+        if (firebaseUser) {
+            console.log("Signed in as:", firebaseUser.uid);
+            ctrl.authItems.default.show = false;
+            ctrl.authItems.google.show = false;
+            //ctrl.authItems.github.show = false;
+            ctrl.authItems.signout.show = true;
+            var TruncatedUserName = firebaseUser.displayName.substring(0, 1);
+            ctrl.authItems.google.tooltip = "Signed in with Google: " + firebaseUser.email;
+            ctrl.authItems.google.username = TruncatedUserName;
+            ctrl.account = ctrl.authItems.google;
+        } else {
+            ctrl.authItems.signout.show = false;
+            ctrl.account = ctrl.authItems.default;
+            console.log("Signed out");
+        }
 
     }
 

@@ -1,10 +1,11 @@
 'use strict';
 
 nyplViewer.controller('SettingsDialogCtrl',
-  function ($mdDialog) {
+  function ($mdDialog, Auth) {
     var ctrl = this;
-    ctrl.interests = ['Steam engine', 'New York', 'Samurai', 'Dresses', 'Israel Putnam'];
-
+    //ctrl.interests = ['Steam engine', 'New York', 'Samurai', 'Dresses', 'Israel Putnam'];
+    ctrl.interests = Auth.getSettings();
+    
     ctrl.hide = function () {
       $mdDialog.hide();
     };
@@ -14,6 +15,7 @@ nyplViewer.controller('SettingsDialogCtrl',
     };
 
     ctrl.save = function () {
+      Auth.saveSettings(ctrl.interests);
       $mdDialog.hide();
     };
 
