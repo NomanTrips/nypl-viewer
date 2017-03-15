@@ -1,11 +1,11 @@
 'use strict';
 
 nyplViewer.controller('SettingsDialogCtrl',
-  function ($mdDialog, Auth, lodash) {
+  function ($mdDialog, lodash, DatabaseConnection) {
     var ctrl = this;
     ctrl.interests = [];
     //ctrl.interests = ['Steam engine', 'New York', 'Samurai', 'Dresses', 'Israel Putnam'];
-    Auth.getSettings().then(function (settings) {
+    DatabaseConnection.getSettings().then(function (settings) {
       ctrl.settings = settings;
       ctrl.interests = ctrl.settings.interests;
     })
@@ -19,7 +19,7 @@ nyplViewer.controller('SettingsDialogCtrl',
     };
 
     ctrl.save = function () {
-      Auth.saveSettings({
+      DatabaseConnection.saveSettings({
         interests: ctrl.interests,
       }
       );

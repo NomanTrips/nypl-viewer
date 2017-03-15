@@ -9,6 +9,7 @@ var nyplViewer = angular.module('nyplViewer', [
   'wu.masonry',
   'ngLodash',
   'firebase',
+  'ngStorage',
 ])
 angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
   .config(function ($stateProvider, $urlRouterProvider) {
