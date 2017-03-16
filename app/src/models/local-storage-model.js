@@ -18,13 +18,14 @@ nyplViewer.service('LocalStorageModel', function ($localStorage, $q) {
     return {
         getSettings: function () {
             var deferred = $q.defer();
-            if (service.$storage.userInfo == undefined) {
+            if (service.$storage.user == undefined) {
                 service.create();
             }
             deferred.resolve(service.$storage.user.settings); 
             return deferred.promise;
         },
         saveSettings: function (settingsData) {
+            console.log(settingsData);
             service.$storage.user.settings = settingsData;
             //return service.$storage.user;
         }
