@@ -11,7 +11,7 @@ nyplViewer.service('DatabaseConnection', function (FirebaseStorageModel, LocalSt
                 LocalStorageModel.saveSettings(serverObj);
             }
         },
-        getSettings: function (serverObj) {
+        getSettings: function () {
             if (Auth.authObj.$getAuth()) {  // update on firebase
                 return FirebaseStorageModel.getSettings();
             } else { //update local storage

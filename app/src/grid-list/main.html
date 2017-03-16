@@ -72,7 +72,7 @@
 			<md-icon md-svg-icon="settings"></md-icon>
 		</md-button>
 		<md-menu>
-			<md-button aria-label="Sign-in" class="md-icon-button md-primary" ng-click="gridList.openMenu($mdOpenMenu, $event)" ng-mouseenter="gridList.isOpen=true"
+			<md-button aria-label="Sign-in" class="md-fab md-mini md-primary" ng-click="gridList.openMenu($mdOpenMenu, $event)" ng-mouseenter="gridList.isOpen=true"
 				ng-mouseleave="gridList.isOpen=false">
 				<md-tooltip md-direction="top" md-visible="gridList.isOpen">{{gridList.account.tooltip}}</md-tooltip>
 				{{gridList.account.username}}

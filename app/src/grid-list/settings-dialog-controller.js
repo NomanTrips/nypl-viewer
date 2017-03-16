@@ -7,7 +7,12 @@ nyplViewer.controller('SettingsDialogCtrl',
     //ctrl.interests = ['Steam engine', 'New York', 'Samurai', 'Dresses', 'Israel Putnam'];
     DatabaseConnection.getSettings().then(function (settings) {
       ctrl.settings = settings;
-      ctrl.interests = ctrl.settings.interests;
+      if (ctrl.settings == null) {
+        ctrl.interests = [];
+      } else {
+        ctrl.interests = ctrl.settings.interests;
+      }
+
     })
 
     ctrl.hide = function () {
