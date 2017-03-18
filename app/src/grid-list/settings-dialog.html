@@ -14,14 +14,30 @@
             <div class="md-dialog-content">
                 <h4>Historical interests:</h4>
                 <form name="fruitForm">
+                    <!--
                     <md-chips ng-model="settingsCtrl.interests" name="interest" readonly="false" md-removable="true" md-max-chips="7"
                         placeholder="Enter a new interest...">
                         <md-chip-template>
                             <strong>{{$chip}}</strong>
                         </md-chip-template>
                         </md-chips>
+ -->
+                    <md-chips ng-model="settingsCtrl.selectedInterests" md-autocomplete-snap="" md-transform-chip="settingsCtrl.transformChip($chip)"
+                        md-require-match="settingsCtrl.autocompleteDemoRequireMatch">
+                        <md-autocomplete md-selected-item="settingsCtrl.selectedItem" md-search-text="settingsCtrl.searchText" md-items="item in settingsCtrl.querySearch(settingsCtrl.searchText)"
+                            md-item-text="item.name" placeholder="Search for a historical interest">
+                            <span md-highlight-text="settingsCtrl.searchText">{{item}}</span>
+                            </md-autocomplete>
+                            <md-chip-template>
+                                <span>
+                                    <strong>{{$chip.name}}</strong>
+                                    <em>({{$chip.type}})</em>
+                                </span>
+                            </md-chip-template>
+                    </md-chips>
 
-<!--
+
+                            <!--
                         <div class="errors" ng-messages="fruitForm.fruitName.$error">
                             <div ng-message="md-max-chips">Maximum number of chips reached.</div>
                         </div>
