@@ -24,6 +24,14 @@ nyplViewer.factory('FirebaseStorageModel', function (firebase, Auth) {
                 var topics = snapshot.val();
                 return topics;
             })
-        }
+        },
+        addTopic: function (topic) {
+            var firebaseUser = Auth.authObj.$getAuth();
+            var topicsRef = firebase.database().ref('topics').push();
+            topicsRef.set({
+                topicName: topic
+            });
+            //some more user data      
+        },
     }
 });

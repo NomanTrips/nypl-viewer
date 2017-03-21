@@ -11,8 +11,8 @@
         </md-toolbar>
 
         <md-dialog-content>
-            <div class="md-dialog-content">
-                <h4>Historical interests:</h4>
+            <div class="md-dialog-content" layout-padding="">
+                <md-subheader class="md-no-sticky">Historical interests</md-subheader>
                 <form name="fruitForm">
                     <!--
                     <md-chips ng-model="settingsCtrl.interests" name="interest" readonly="false" md-removable="true" md-max-chips="7"
@@ -22,21 +22,46 @@
                         </md-chip-template>
                         </md-chips>
  -->
-                    <md-chips ng-model="settingsCtrl.selectedInterests" md-autocomplete-snap="" md-transform-chip="settingsCtrl.transformChip($chip)"
-                        md-require-match="settingsCtrl.autocompleteDemoRequireMatch">
+                    <md-chips ng-model="settingsCtrl.selectedInterests" md-autocomplete-snap="" md-require-match="settingsCtrl.autocompleteDemoRequireMatch"
+                        layout-padding="">
                         <md-autocomplete md-selected-item="settingsCtrl.selectedItem" md-search-text="settingsCtrl.searchText" md-items="item in settingsCtrl.querySearch(settingsCtrl.searchText)"
-                            md-item-text="item.name" placeholder="Search for a historical interest">
-                            <span md-highlight-text="settingsCtrl.searchText">{{item}}</span>
+                            md-item-text="item.name" placeholder="Search...">
+                            <span md-highlight-text="settingsCtrl.searchText">{{item.topicName}}</span>
                             </md-autocomplete>
                             <md-chip-template>
                                 <span>
-                                    <strong>{{$chip.name}}</strong>
-                                    <em>({{$chip.type}})</em>
+                                    <strong>{{$chip}}</strong>
                                 </span>
                             </md-chip-template>
-                    </md-chips>
+                            </md-chips>
+                            <br>
+                            <br>
+                            <label layout-padding="">Don't see a topic you're interested in? Try creating a new one:</label>
+                            <div layout="row" flex layout-padding="">
+
+                                <md-input-container class="md-accent" flex style="height:40px;">
+                                    <label>New topic</label>
+                                    <input ng-model="settingsCtrl.newTopicName" maxlength="20" ng-change="settingsCtrl.newTopicSearchChange()" ng-model-options="{updateOn : 'change blur'}">
+
+                                    <div ng-show="settingsCtrl.isSearchRun && !settingsCtrl.isResultsForNewTopic">
+                                        <div style="color:red;">
+                                            No results found for that topic!
+                                        </div>
+                                    </div>
+                                    <div ng-show="settingsCtrl.isSearchRun && settingsCtrl.isResultsForNewTopic">
+                                        <div style="color:mediumspringgreen;">
+                                            {{settingsCtrl.newTopicResultCount}} results found for that topic.
+                                        </div>
+                                    </div>
+                                </md-input-container>
+                                <div>
+                                    <md-button ng-disabled="! settingsCtrl.isResultsForNewTopic" class="md-raised md-accent" aria-label="Add" ng-click="settingsCtrl.addTopic()">
+                                        <md-icon md-svg-icon="add"></md-icon>
+                                    </md-button>
+                                </div>
 
 
+                            </div>
                             <!--
                         <div class="errors" ng-messages="fruitForm.fruitName.$error">
                             <div ng-message="md-max-chips">Maximum number of chips reached.</div>

@@ -10,6 +10,7 @@ var nyplViewer = angular.module('nyplViewer', [
   'ngLodash',
   'firebase',
   'ngStorage',
+  'ngMessages',
 ])
 angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
   .config(function ($stateProvider, $urlRouterProvider) {
@@ -76,6 +77,7 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
         .icon("google", "./assets/svg/google.svg", 24)
         .icon("account", "./assets/svg/account.svg", 24)
         .icon("sign-out", "./assets/svg/sign-out.svg", 24)
+        .icon("add", "./assets/svg/add.svg", 24)
         .icon("phone", "./assets/svg/phone.svg", 24);
 
       $mdThemingProvider.theme('default')

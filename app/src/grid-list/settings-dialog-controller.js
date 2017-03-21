@@ -1,32 +1,24 @@
 'use strict';
 
 nyplViewer.controller('SettingsDialogCtrl',
-  function ($mdDialog, lodash, DatabaseConnection, $q) {
+  function ($mdDialog, lodash, DatabaseConnection, $q, NyplApiCalls) {
     var ctrl = this;
     ctrl.readonly = false;
     ctrl.selectedItem = null;
     ctrl.searchText = null;
-    //ctrl.querySearch = querySearch;
     ctrl.selectedInterests = [];
     ctrl.autocompleteDemoRequireMatch = true;
-    //ctrl.transformChip = transformChip;
     ctrl.topics = [];
+    ctrl.isResultsForNewTopic = false;
+    ctrl.isSearchRun = false;
+    ctrl.newTopicName = '';
+    ctrl.newTopicResultCount = 0;
 
-    ctrl.transformChip = function (chip) {
-      // If it is an object, it's already a known chip
-      if (angular.isObject(chip)) {
-        return chip;
-      }
-
-      // Otherwise, create a new one
-      return { name: chip, type: 'new' }
-    }
 
     ctrl.getTopics = function () {
       var deferred = $q.defer();
       if (ctrl.topics.length == 0) {
         DatabaseConnection.getTopics().then(function (result) {
-          console.log(result);
           ctrl.topics = result;
           deferred.resolve();
         })
@@ -47,23 +39,52 @@ nyplViewer.controller('SettingsDialogCtrl',
       var lowercaseQuery = angular.lowercase(query);
 
       return function filterFn(topic) {
-        return (topic.indexOf(lowercaseQuery) === 0) || (topic.indexOf(lowercaseQuery) === 0);
+        return (topic.topicName.indexOf(lowercaseQuery) === 0) || (topic.topicName.indexOf(lowercaseQuery) === 0);
       };
 
     }
-    /** 
-        ctrl.interests = [];
-        //ctrl.interests = ['Steam engine', 'New York', 'Samurai', 'Dresses', 'Israel Putnam'];
-        DatabaseConnection.getSettings().then(function (settings) {
-          ctrl.settings = settings;
-          if (ctrl.settings == null) {
-            ctrl.interests = [];
-          } else {
-            ctrl.interests = ctrl.settings.interests;
+
+    ctrl.addTopic = function () {
+      ctrl.selectedInterests.push(ctrl.newTopicName);
+      ctrl.isResultsForNewTopic = false;
+      ctrl.isSearchRun = false;
+      if ((lodash.find(ctrl.topics, ctrl.newTopicName)) == undefined) { // topic not in the firebase master list, add it
+        DatabaseConnection.addTopic(ctrl.newTopicName);
+      }
+      ctrl.newTopicName = '';
+    }
+
+    ctrl.newTopicSearchChange = function () {
+      ctrl.isSearchRun = false;
+      ctrl.isResultsForNewTopic = false;
+      if (ctrl.newTopicName != '') {
+        ctrl.isSearchRun = false;
+        NyplApiCalls.nyplSearch(ctrl.newTopicName, 1).then(function (results) {
+          var numResults = results.data.nyplAPI.response.numResults;
+          if (numResults > 0) {
+            ctrl.newTopicResultCount = numResults;
+            ctrl.isResultsForNewTopic = true;
           }
-    
+          ctrl.isSearchRun = true;
         })
-    */
+      }
+
+    }
+
+    //ctrl.interests = [];
+    //ctrl.interests = ['Steam engine', 'New York', 'Samurai', 'Dresses', 'Israel Putnam'];
+    ctrl.initSelectedInterests = function () {
+      DatabaseConnection.getSettings().then(function (settings) {
+        ctrl.settings = settings;
+        if (ctrl.settings == null) {
+          ctrl.selectedInterests = [];
+        } else {
+          ctrl.selectedInterests = ctrl.settings.interests;
+        }
+
+      })
+    }
+
     ctrl.hide = function () {
       $mdDialog.hide();
     };
@@ -74,10 +95,12 @@ nyplViewer.controller('SettingsDialogCtrl',
 
     ctrl.save = function () {
       DatabaseConnection.saveSettings({
-        interests: ctrl.interests,
+        interests: ctrl.selectedInterests,
       }
       );
       $mdDialog.hide();
     };
+
+    ctrl.initSelectedInterests();
 
   });
