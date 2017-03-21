@@ -1,7 +1,7 @@
 'use strict';
 
 nyplViewer.controller('SettingsDialogCtrl',
-  function ($mdDialog, lodash, DatabaseConnection, $q, NyplApiCalls) {
+  function ($mdDialog, lodash, DatabaseConnection, $q, NyplApiCalls, $mdToast) {
     var ctrl = this;
     ctrl.readonly = false;
     ctrl.selectedItem = null;
@@ -14,12 +14,15 @@ nyplViewer.controller('SettingsDialogCtrl',
     ctrl.newTopicName = '';
     ctrl.newTopicResultCount = 0;
 
-
     ctrl.getTopics = function () {
       var deferred = $q.defer();
+
       if (ctrl.topics.length == 0) {
         DatabaseConnection.getTopics().then(function (result) {
-          ctrl.topics = result;
+          //ctrl.topics = result;
+          angular.forEach(result, function (topic) {
+            ctrl.topics.push(topic);
+          })
           deferred.resolve();
         })
       } else {
@@ -29,12 +32,10 @@ nyplViewer.controller('SettingsDialogCtrl',
     }
 
     ctrl.querySearch = function (query) {
-      return ctrl.getTopics().then(function () {
         var results = query ? ctrl.topics.filter(ctrl.createFilterFor(query)) : [];
         return results;
-      })
-
     }
+
     ctrl.createFilterFor = function (query) {
       var lowercaseQuery = angular.lowercase(query);
 
@@ -44,14 +45,37 @@ nyplViewer.controller('SettingsDialogCtrl',
 
     }
 
+    ctrl.showToast = function (text) {
+        $mdToast.show(
+            $mdToast.simple()
+                .textContent(text)
+                .position('top right')
+                .hideDelay(1500)
+        );
+    };
+
+    ctrl.isDuplicateObject = function (collectionToCheck, key, value) {
+      return ( lodash.find(collectionToCheck, function(obj) { return obj.topicName == value; }) );
+    }
+
+    ctrl.isDuplicateArrayElement = function (array, value) {
+      return (lodash.find(array, function(ele) { return ele == value; }) != undefined);
+    }
+
     ctrl.addTopic = function () {
-      ctrl.selectedInterests.push(ctrl.newTopicName);
-      ctrl.isResultsForNewTopic = false;
-      ctrl.isSearchRun = false;
-      if ((lodash.find(ctrl.topics, ctrl.newTopicName)) == undefined) { // topic not in the firebase master list, add it
-        DatabaseConnection.addTopic(ctrl.newTopicName);
+      if (! ctrl.isDuplicateArrayElement(ctrl.selectedInterests, ctrl.newTopicName)) {
+        ctrl.selectedInterests.push(ctrl.newTopicName);
+        ctrl.isResultsForNewTopic = false;
+        ctrl.isSearchRun = false;
+        if (! ctrl.isDuplicateObject(ctrl.topics, 'topicName', ctrl.newTopicName)) { // topic not in the firebase master list, add it
+          DatabaseConnection.addTopic(ctrl.newTopicName);
+          ctrl.showToast('Topic sucessfully created.');
+        }
+        ctrl.newTopicName = '';
+      } else {
+        ctrl.showToast('Topic already in your Interests!');
       }
-      ctrl.newTopicName = '';
+
     }
 
     ctrl.newTopicSearchChange = function () {
@@ -101,6 +125,7 @@ nyplViewer.controller('SettingsDialogCtrl',
       $mdDialog.hide();
     };
 
+    ctrl.getTopics();
     ctrl.initSelectedInterests();
 
   });
