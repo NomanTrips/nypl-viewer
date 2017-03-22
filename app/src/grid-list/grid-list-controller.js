@@ -1,4 +1,4 @@
-nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $location, $state, $scope, $mdMedia, $mdDialog, lodash, $mdToast, Auth) {
+nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $location, $state, $scope, $mdMedia, $mdDialog, lodash, $mdToast, Auth, DatabaseConnection) {
 
     ctrl = this;
     ctrl.searchText = 'new york city 1776';
@@ -9,7 +9,9 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     ctrl.modeDescription = 'Shuffle'
     ctrl.isPageInfoRetrieved = false;
     ctrl.isMoreSearchItems = true;
-    ctrl.interestSearches = [
+    ctrl.interestSearches = [];
+    /** 
+    [
         {
             searchTerm: 'steamboats',
             startPage: 1,
@@ -25,10 +27,39 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
             isMorePages: true,
         },
     ];
+    */
     ctrl.searchItems = [];
     var originatorEv;
     ctrl.isOpen = false;
     ctrl.connected = false;
+
+    ctrl.initInterestSearches = function () {
+        deferred = $q.defer();
+        if (ctrl.interestSearches.length != 0) {
+            deferred.resolve();
+        } else {
+            DatabaseConnection.getSettings().then(function (settings) {
+                ctrl.settings = settings;
+                if (ctrl.settings == null) {
+                    ctrl.selectedInterests = [];
+                } else {
+                    console.log(ctrl.settings.interests);
+                    ctrl.selectedInterests = ctrl.settings.interests;
+                    angular.forEach(ctrl.selectedInterests, function (interest) {
+                        ctrl.interestSearches.push({
+                            searchTerm: interest,
+                            startPage: 1,
+                            page: 1,
+                            totalPages: 0,
+                            isMorePages: true,
+                        })
+                    })
+                }
+                deferred.resolve();
+            })
+        }
+        return deferred.promise;
+    }
 
     ctrl.authItems = {
         default: { name: "Default user", icon: "account", direction: "bottom", show: "true", username: "", tooltip: "Signed in as the Default user." },
@@ -190,40 +221,44 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     ctrl.searchByInterests = function (interestSearches) {
         ctrl.isLoadingDone = false;
         searches = [];
-        ctrl.getPageInfoForInterestSearches(interestSearches).then(function () {
-            if (ctrl.isSearchesExhausted(interestSearches)) { // no more pages for interest searches
-                ctrl.isMoreSearchItems = false;
-                ctrl.showNoMoreResultsToast();
-                ctrl.isLoadingDone = true;
-                return;
-            }
-            angular.forEach(interestSearches, function (interestSearch) {
-                if (interestSearch.isMorePages) { // only add the search to the q if there are more results for it
-                    var search = NyplApiCalls.nyplSearch(interestSearch.searchTerm, interestSearch.page);
-                    searches.push(search);
+        ctrl.initInterestSearches().then(function () {
+            console.log(ctrl.interestSearches);
+            ctrl.getPageInfoForInterestSearches(interestSearches).then(function () {
+                if (ctrl.isSearchesExhausted(interestSearches)) { // no more pages for interest searches
+                    ctrl.isMoreSearchItems = false;
+                    ctrl.showNoMoreResultsToast();
+                    ctrl.isLoadingDone = true;
+                    return;
                 }
-            })
-            return ctrl.runApiSearches(searches).then(function (results) {
-                angular.forEach(results, function (result, index) {
-                    ctrl.incrementInterestSearchPage(interestSearches[index]);
-                    var data = ctrl.extract(result);
-                    angular.forEach(data, function (item) {
-                        ctrl.searchItems.push(item);
-                    });
-                });
-                if (ctrl.searchItems.length < 20 && ctrl.isMoreSearchItems) {
-                    return ctrl.searchByInterests(interestSearches); // not enough thumbnails to fill page, run search again
-                }
-                ctrl.searchItems = lodash.shuffle(ctrl.searchItems); // randomize search results before making thumbnails
-                angular.forEach(ctrl.searchItems, function (item) {
-                    if (!ctrl.pics.find(ctrl.isDuplicate, item.title)) {
-                        ctrl.buildThumbnail(item);
+                angular.forEach(interestSearches, function (interestSearch) {
+                    if (interestSearch.isMorePages) { // only add the search to the q if there are more results for it
+                        var search = NyplApiCalls.nyplSearch(interestSearch.searchTerm, interestSearch.page);
+                        searches.push(search);
                     }
-                });
-                ctrl.isLoadingDone = true;
-            })
+                })
+                return ctrl.runApiSearches(searches).then(function (results) {
+                    angular.forEach(results, function (result, index) {
+                        ctrl.incrementInterestSearchPage(interestSearches[index]);
+                        var data = ctrl.extract(result);
+                        angular.forEach(data, function (item) {
+                            ctrl.searchItems.push(item);
+                        });
+                    });
+                    if (ctrl.searchItems.length < 20 && ctrl.isMoreSearchItems) {
+                        return ctrl.searchByInterests(interestSearches); // not enough thumbnails to fill page, run search again
+                    }
+                    ctrl.searchItems = lodash.shuffle(ctrl.searchItems); // randomize search results before making thumbnails
+                    angular.forEach(ctrl.searchItems, function (item) {
+                        if (!ctrl.pics.find(ctrl.isDuplicate, item.title)) {
+                            ctrl.buildThumbnail(item);
+                        }
+                    });
+                    ctrl.isLoadingDone = true;
+                })
 
+            })
         })
+
     }
 
     ctrl.isDuplicate = function (item) {
@@ -367,5 +402,4 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     };
 
     ctrl.initProfile();
-
 });
