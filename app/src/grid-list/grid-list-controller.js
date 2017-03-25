@@ -28,7 +28,29 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         },
     ];
     */
+    ctrl.themeItems = [
+        {
+            search: 'steamboats',
+            page: 1,
+            totalPages: null,
+            isPageInfoRetrieved: false,
+        },
+        {
+            search: 'railroads',
+            page: 1,
+            totalPages: null,
+            isPageInfoRetrieved: false,
+        },
+        {
+            search: 'andrew carnegie',
+            page: 1,
+            totalPages: null,
+            isPageInfoRetrieved: false,
+        },
+    ];
+
     ctrl.searchItems = [];
+    ctrl.searchResults = [];
     var originatorEv;
     ctrl.isOpen = false;
     ctrl.connected = false;
@@ -130,7 +152,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     }
 
     ctrl.showSearchItems = function () {
-        console.log(ctrl.interestSearches);
+        console.log(ctrl.themeItems);
     }
 
     ctrl.showPics = function () {
@@ -186,8 +208,10 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     ctrl.loadMore = function () {
         ctrl.apiLoadCount = 0;
         if (ctrl.isSearchByInterestsModeOn) {
-            ctrl.searchItems = [];
-            ctrl.searchByInterests(ctrl.interestSearches);
+            //ctrl.searchItems = [];
+            ctrl.searchResults = [];
+            ctrl.themeSearch();
+            //ctrl.searchByInterests(ctrl.interestSearches);
         } else {
             ctrl.search(ctrl.searchText);
         }
@@ -216,6 +240,43 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
             }
         })
         return result;
+    }
+
+    ctrl.themeSearch = function () {
+        searches = [];
+        angular.forEach(ctrl.themeItems, function (item) {
+            if (item.isPageInfoRetrieved == false || item.page <= item.totalPages) { // only add the search to the q if there are more results for it
+                var search = NyplApiCalls.nyplSearch(item.search, item.page);
+                item.page = item.page +1;
+                searches.push(search);
+            }
+        })
+        if (searches.length == 0) { // no more pages for the theme
+            ctrl.isMoreSearchItems = false;
+            ctrl.showNoMoreResultsToast();
+            ctrl.isLoadingDone = true;
+            return;
+        }
+        return ctrl.runApiSearches(searches).then(function (results) {
+            angular.forEach(results, function (result, index) {
+                ctrl.themeItems[index].totalPages = result.data.nyplAPI.request.totalPages;
+                ctrl.themeItems[index].isPageInfoRetrieved = true;
+                var data = ctrl.extract(result);
+                angular.forEach(data, function (item) {
+                    ctrl.searchResults.push(item);
+                });
+            });
+            if (ctrl.searchResults.length < 20 && ctrl.isMoreSearchItems) {
+                return ctrl.themeSearch(ctrl.themeItems); // not enough thumbnails to fill page, run search again
+            }
+            
+            ctrl.searchResults = lodash.shuffle(ctrl.searchResults); // randomize search results before making thumbnails
+            angular.forEach(ctrl.searchResults, function (searchResult) {
+                if (!ctrl.pics.find(ctrl.isDuplicate, searchResult.title)) {
+                    ctrl.buildThumbnail(searchResult);
+                }
+            });
+        })
     }
 
     ctrl.searchByInterests = function (interestSearches) {
@@ -312,10 +373,12 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     };
 
     ctrl.runApiSearches = function (searchPromises) {
+        ctrl.isLoadingDone = false;
         var searchResults = [];
         var defer = $q.defer();
         $q.all(searchPromises).then(
             function (results) {
+                ctrl.isLoadingDone = true;
                 defer.resolve(results);
                 // Handle success
             }, function (err) {
