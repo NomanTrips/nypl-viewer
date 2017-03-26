@@ -18,16 +18,16 @@ nyplViewer.service('DatabaseConnection', function (FirebaseStorageModel, LocalSt
                 return LocalStorageModel.getSettings();
             }
         },
-        getTopics: function () {
+        getThemes: function () {
             if (Auth.authObj.$getAuth()) {  // update on firebase
-                return FirebaseStorageModel.getTopics();
+                return FirebaseStorageModel.getThemes();
             } else { //update local storage
                 return [];
             }
         },
-        addTopic: function (topic) {
+        createTheme: function (theme) {
             if (Auth.authObj.$getAuth()) {  // update on firebase
-                return FirebaseStorageModel.addTopic(topic);
+                return FirebaseStorageModel.createTheme(theme);
             }
         },
     }

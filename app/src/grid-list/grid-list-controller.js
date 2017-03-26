@@ -28,26 +28,29 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         },
     ];
     */
-    ctrl.themeItems = [
-        {
-            search: 'steamboats',
-            page: 1,
-            totalPages: null,
-            isPageInfoRetrieved: false,
-        },
-        {
-            search: 'railroads',
-            page: 1,
-            totalPages: null,
-            isPageInfoRetrieved: false,
-        },
-        {
-            search: 'andrew carnegie',
-            page: 1,
-            totalPages: null,
-            isPageInfoRetrieved: false,
-        },
-    ];
+    ctrl.theme = {
+        name: 'Industrial revolution in America',
+        items: [
+            {
+                search: 'steamboats',
+                page: 1,
+                totalPages: null,
+                isPageInfoRetrieved: false,
+            },
+            {
+                search: 'railroads',
+                page: 1,
+                totalPages: null,
+                isPageInfoRetrieved: false,
+            },
+            {
+                search: 'andrew carnegie',
+                page: 1,
+                totalPages: null,
+                isPageInfoRetrieved: false,
+            },
+        ]
+    };
 
     ctrl.searchItems = [];
     ctrl.searchResults = [];
@@ -152,7 +155,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     }
 
     ctrl.showSearchItems = function () {
-        console.log(ctrl.themeItems);
+        console.log(ctrl.theme.items);
     }
 
     ctrl.showPics = function () {
@@ -244,10 +247,10 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
 
     ctrl.themeSearch = function () {
         searches = [];
-        angular.forEach(ctrl.themeItems, function (item) {
+        angular.forEach(ctrl.theme.items, function (item) {
             if (item.isPageInfoRetrieved == false || item.page <= item.totalPages) { // only add the search to the q if there are more results for it
                 var search = NyplApiCalls.nyplSearch(item.search, item.page);
-                item.page = item.page +1;
+                item.page = item.page + 1;
                 searches.push(search);
             }
         })
@@ -259,17 +262,17 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         }
         return ctrl.runApiSearches(searches).then(function (results) {
             angular.forEach(results, function (result, index) {
-                ctrl.themeItems[index].totalPages = result.data.nyplAPI.request.totalPages;
-                ctrl.themeItems[index].isPageInfoRetrieved = true;
+                ctrl.theme.items[index].totalPages = result.data.nyplAPI.request.totalPages;
+                ctrl.theme.items[index].isPageInfoRetrieved = true;
                 var data = ctrl.extract(result);
                 angular.forEach(data, function (item) {
                     ctrl.searchResults.push(item);
                 });
             });
             if (ctrl.searchResults.length < 20 && ctrl.isMoreSearchItems) {
-                return ctrl.themeSearch(ctrl.themeItems); // not enough thumbnails to fill page, run search again
+                return ctrl.themeSearch(ctrl.theme.items); // not enough thumbnails to fill page, run search again
             }
-            
+
             ctrl.searchResults = lodash.shuffle(ctrl.searchResults); // randomize search results before making thumbnails
             angular.forEach(ctrl.searchResults, function (searchResult) {
                 if (!ctrl.pics.find(ctrl.isDuplicate, searchResult.title)) {
@@ -465,4 +468,13 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     };
 
     ctrl.initProfile();
+    DatabaseConnection.getSettings().then(function (settings) {
+        ctrl.settings = settings;
+        if (ctrl.settings == null) {
+            console.log('No settings available  for this user!');
+        } else {
+            ctrl.theme = ctrl.settings.theme;
+        }
+
+    })
 });

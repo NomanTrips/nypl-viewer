@@ -5,23 +5,38 @@ nyplViewer.controller('SettingsDialogCtrl',
     var ctrl = this;
     ctrl.readonly = false;
     ctrl.selectedItem = null;
-    ctrl.searchText = null;
+    ctrl.searchText = '';
     ctrl.selectedInterests = [];
     ctrl.autocompleteDemoRequireMatch = true;
-    ctrl.topics = [];
-    ctrl.isResultsForNewTopic = false;
+    ctrl.themes = [];
+    ctrl.isResultsForNewThemeItem = false;
     ctrl.isSearchRun = false;
-    ctrl.newTopicName = '';
+    ctrl.newThemeItemName = '';
     ctrl.newTopicResultCount = 0;
 
-    ctrl.getTopics = function () {
-      var deferred = $q.defer();
 
-      if (ctrl.topics.length == 0) {
-        DatabaseConnection.getTopics().then(function (result) {
+    ctrl.theme = {
+      name: '',
+      items: [
+      ]
+    };
+
+    ctrl.newTheme = ctrl.theme;
+
+    ctrl.newThemeItem = {
+      search: '',
+      page: 1,
+      totalPages: null,
+      isPageInfoRetrieved: false,
+    };
+
+    ctrl.getThemes = function () {
+      var deferred = $q.defer();
+      if (ctrl.themes.length == 0) {
+        DatabaseConnection.getThemes().then(function (results) {
           //ctrl.topics = result;
-          angular.forEach(result, function (topic) {
-            ctrl.topics.push(topic);
+          angular.forEach(results, function (theme) {
+            ctrl.themes.push(theme);
           })
           deferred.resolve();
         })
@@ -31,68 +46,66 @@ nyplViewer.controller('SettingsDialogCtrl',
       return deferred.promise;
     }
 
-    ctrl.querySearch = function (query) {
-        var results = query ? ctrl.topics.filter(ctrl.createFilterFor(query)) : [];
-        return results;
-    }
-
-    ctrl.createFilterFor = function (query) {
-      var lowercaseQuery = angular.lowercase(query);
-
-      return function filterFn(topic) {
-        return (topic.topicName.indexOf(lowercaseQuery) === 0) || (topic.topicName.indexOf(lowercaseQuery) === 0);
-      };
-
-    }
-
     ctrl.showToast = function (text) {
-        $mdToast.show(
-            $mdToast.simple()
-                .textContent(text)
-                .position('top right')
-                .hideDelay(1500)
-        );
+      $mdToast.show(
+        $mdToast.simple()
+          .textContent(text)
+          .position('top right')
+          .hideDelay(1500)
+      );
     };
 
     ctrl.isDuplicateObject = function (collectionToCheck, key, value) {
-      return ( lodash.find(collectionToCheck, function(obj) { return obj.topicName == value; }) );
+      return (lodash.find(collectionToCheck, function (obj) { return obj.topicName == value; }));
     }
 
     ctrl.isDuplicateArrayElement = function (array, value) {
-      return (lodash.find(array, function(ele) { return ele == value; }) != undefined);
+      return (lodash.find(array, function (ele) { return ele == value; }) != undefined);
     }
 
-    ctrl.addTopic = function () {
-      if (! ctrl.isDuplicateArrayElement(ctrl.selectedInterests, ctrl.newTopicName)) {
-        ctrl.selectedInterests.push(ctrl.newTopicName);
-        ctrl.isResultsForNewTopic = false;
+    ctrl.addThemeItem = function () {
+      if (!ctrl.isDuplicateObject(ctrl.newTheme.items, 'search', ctrl.newThemeItem)) {
+        ctrl.newTheme.items.push(ctrl.newThemeItem);
+        ctrl.newThemeItem = {
+          search: '',
+          page: 1,
+          totalPages: null,
+          isPageInfoRetrieved: false,
+        };
+        ctrl.isResultsForNewThemeItem = false;
         ctrl.isSearchRun = false;
-        if (! ctrl.isDuplicateObject(ctrl.topics, 'topicName', ctrl.newTopicName)) { // topic not in the firebase master list, add it
-          DatabaseConnection.addTopic(ctrl.newTopicName);
-          ctrl.showToast('Topic sucessfully created.');
-        }
-        ctrl.newTopicName = '';
+      }
+      else {
+        ctrl.showToast('Theme item already in your theme!');
+      }
+    }
+
+    ctrl.createTheme = function () {
+      if (!ctrl.isDuplicateObject(ctrl.themes, 'name', ctrl.newTheme.name)) {
+        var themeStr = angular.toJson(ctrl.newTheme);
+        var themeJson = JSON.parse(themeStr); // Workaround to strip $$hash key from the properties
+        DatabaseConnection.createTheme(themeJson);
+        ctrl.showToast('Theme sucessfully created.');
       } else {
-        ctrl.showToast('Topic already in your Interests!');
+        ctrl.showToast('A theme with that name already exists!');
       }
 
     }
 
-    ctrl.newTopicSearchChange = function () {
+    ctrl.newThemeItemSearchChange = function () {
       ctrl.isSearchRun = false;
-      ctrl.isResultsForNewTopic = false;
-      if (ctrl.newTopicName != '') {
+      ctrl.isResultsForNewThemeItem = false;
+      if (ctrl.newThemeItem.search != '') {
         ctrl.isSearchRun = false;
-        NyplApiCalls.nyplSearch(ctrl.newTopicName, 1).then(function (results) {
+        NyplApiCalls.nyplSearch(ctrl.newThemeItem.search, 1).then(function (results) {
           var numResults = results.data.nyplAPI.response.numResults;
           if (numResults > 0) {
-            ctrl.newTopicResultCount = numResults;
-            ctrl.isResultsForNewTopic = true;
+            ctrl.newThemeItemResultCount = numResults;
+            ctrl.isResultsForNewThemeItem = true;
           }
           ctrl.isSearchRun = true;
         })
       }
-
     }
 
     //ctrl.interests = [];
@@ -109,6 +122,14 @@ nyplViewer.controller('SettingsDialogCtrl',
       })
     }
 
+    ctrl.selectedItemChange = function (item) {
+      ctrl.theme = item;
+    }
+
+    ctrl.searchTextChange = function (searchText) {
+
+    }
+
     ctrl.hide = function () {
       $mdDialog.hide();
     };
@@ -118,14 +139,27 @@ nyplViewer.controller('SettingsDialogCtrl',
     };
 
     ctrl.save = function () {
-      DatabaseConnection.saveSettings({
-        interests: ctrl.selectedInterests,
+      if (ctrl.theme != undefined) {
+        DatabaseConnection.saveSettings({
+          theme: ctrl.theme,
+        }
+        );
+        $mdDialog.hide();
+      } else {
+        ctrl.showToast('No theme selected. Save failed!');
       }
-      );
-      $mdDialog.hide();
+
     };
 
-    ctrl.getTopics();
-    ctrl.initSelectedInterests();
+    DatabaseConnection.getSettings().then(function (settings) {
+      ctrl.settings = settings;
+      if (ctrl.settings == null) {
+        console.log('No settings available  for this user!');
+      } else {
+        //ctrl.theme = ctrl.settings.theme;
+      }
+    })
+    ctrl.getThemes();
+    //ctrl.initSelectedInterests();
 
   });
