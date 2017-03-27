@@ -209,12 +209,32 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         })
     }
 
+    ctrl.getTheme = function () {
+        deferred = $q.defer();
+        if (ctrl.theme != null) {
+            deferred.resolve();
+        } else {
+            DatabaseConnection.getSettings().then(function (settings) {
+                ctrl.settings = settings;
+                if (ctrl.settings == null) {
+                    console.log('No settings available  for this user!');
+                } else {
+                    ctrl.theme = ctrl.settings.theme;
+                }
+                deferred.resolve();
+            })
+        }
+        return deferred.promise;
+    }
+
     ctrl.loadMore = function () {
         ctrl.apiLoadCount = 0;
         if (ctrl.isSearchByInterestsModeOn) {
             //ctrl.searchItems = [];
             ctrl.searchResults = [];
-            ctrl.themeSearch();
+            ctrl.getTheme().then(function () {
+                ctrl.themeSearch();
+            })
             //ctrl.searchByInterests(ctrl.interestSearches);
         } else {
             ctrl.search(ctrl.searchText);
@@ -469,13 +489,5 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     };
 
     ctrl.initProfile();
-    DatabaseConnection.getSettings().then(function (settings) {
-        ctrl.settings = settings;
-        if (ctrl.settings == null) {
-            console.log('No settings available  for this user!');
-        } else {
-            ctrl.theme = ctrl.settings.theme;
-        }
 
-    })
 });
