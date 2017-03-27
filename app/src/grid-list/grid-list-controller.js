@@ -28,6 +28,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         },
     ];
     */
+    /*
     ctrl.theme = {
         name: 'Industrial revolution in America',
         items: [
@@ -51,7 +52,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
             },
         ]
     };
-
+*/
     ctrl.searchItems = [];
     ctrl.searchResults = [];
     var originatorEv;

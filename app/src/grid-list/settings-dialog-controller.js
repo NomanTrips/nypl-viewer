@@ -26,7 +26,7 @@ nyplViewer.controller('SettingsDialogCtrl',
     ctrl.newThemeItem = {
       search: '',
       page: 1,
-      totalPages: null,
+      totalPages: 0,
       isPageInfoRetrieved: false,
     };
 
@@ -69,10 +69,9 @@ nyplViewer.controller('SettingsDialogCtrl',
         ctrl.newThemeItem = {
           search: '',
           page: 1,
-          totalPages: null,
+          totalPages: 0,
           isPageInfoRetrieved: false,
         };
-        ctrl.isResultsForNewThemeItem = false;
         ctrl.isSearchRun = false;
       }
       else {
@@ -102,6 +101,7 @@ nyplViewer.controller('SettingsDialogCtrl',
           if (numResults > 0) {
             ctrl.newThemeItemResultCount = numResults;
             ctrl.isResultsForNewThemeItem = true;
+            ctrl.addThemeItem();
           }
           ctrl.isSearchRun = true;
         })
