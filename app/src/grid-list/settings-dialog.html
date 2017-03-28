@@ -27,13 +27,15 @@
                         <br>
                         <br>
                         <label layout-padding="">Don't see a theme you're interested in? Try creating a new one:</label>
-                        <md-input-container class="md-block md-accent" flex="100" style="height:40px;">
-                            <label>Theme name</label>
-                            <input ng-model="settingsCtrl.newTheme.name" maxlength="120">
-                        </md-input-container>
-                        <div layout="row" flex >
+                        <div layout="row" flex>
+                            <md-input-container class="md-block md-accent" flex="100" style="height:40px;">
+                                <label>New theme name</label>
+                                <input ng-model="settingsCtrl.newTheme.name" maxlength="120">
+                            </md-input-container>
+                        </div>
+                        <div layout="row" flex>
                             <md-input-container class="md-accent" flex style="height:40px;">
-                                <label>Theme item search term....</label>
+                                <label>Search term</label>
                                 <input ng-model="settingsCtrl.newThemeItem.search" maxlength="20" ng-change="settingsCtrl.newThemeItemSearchChange()" ng-model-options="{updateOn : 'change blur'}">
 
                                 <div ng-show="settingsCtrl.isSearchRun && !settingsCtrl.isResultsForNewThemeItem">
@@ -43,11 +45,22 @@
                                 </div>
                                 <div ng-show="settingsCtrl.isSearchRun && settingsCtrl.isResultsForNewThemeItem">
                                     <div style="color:mediumspringgreen;">
-                                        {{settingsCtrl.newTopicResultCount}} results found for that theme item.
+                                        {{settingsCtrl.newThemeItemResultCount}} results found for that theme item.
                                     </div>
                                 </div>
                             </md-input-container>
-
+                            <div>
+                                <md-button ng-disabled="! settingsCtrl.isSearchRun && ! settingsCtrl.isResultsForNewThemeItem" class="md-raised md-accent" 
+                                aria-label="Add" ng-click="settingsCtrl.addThemeItem()" style="height:40px;">
+                                    <md-icon md-svg-icon="add"></md-icon>
+                                </md-button>
+                            </div>
+                            <div id="loadingcircle" ng-hide="settingsCtrl.isLoadingDone" layout-padding="">
+                                <md-progress-circular md-mode="indeterminate" md-theme="dark-yellow" md-diameter="20px">
+                                </md-progress-circular>
+                            </div>
+                            <div ng-hide="! settingsCtrl.isLoadingDone" style="width:36px;height:36px;">
+		                    </div>
                         </div>
                         <div layout="row" flex layout-padding="">
                             <div>
@@ -61,9 +74,10 @@
                                 </md-chips>
                             </div>
                             <div>
-                                <md-button ng-disabled="settingsCtrl.newTheme.items.length < 1 " class="md-raised md-accent" aria-label="Add" ng-click="settingsCtrl.createTheme()" style="height:40px;">
+                                <md-button ng-disabled="settingsCtrl.newTheme.items.length < 1 " class="md-raised md-accent" aria-label="Add" ng-click="settingsCtrl.createTheme()"
+                                    ng-show="settingsCtrl.newTheme.items.length > 0" style="height:40px;">
                                     Create theme
-                                </md-button>
+                                    </md-button>
                             </div>
                         </div>
                 </form>

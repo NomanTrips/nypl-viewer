@@ -12,16 +12,16 @@ nyplViewer.controller('SettingsDialogCtrl',
     ctrl.isResultsForNewThemeItem = false;
     ctrl.isSearchRun = false;
     ctrl.newThemeItemName = '';
-    ctrl.newTopicResultCount = 0;
+    ctrl.newThemeItemResultCount = 0;
+    ctrl.isLoadingDone = true;
 
+    ctrl.theme = null;
 
-    ctrl.theme = {
+    ctrl.newTheme = {
       name: '',
       items: [
       ]
     };
-
-    ctrl.newTheme = ctrl.theme;
 
     ctrl.newThemeItem = {
       search: '',
@@ -96,13 +96,14 @@ nyplViewer.controller('SettingsDialogCtrl',
       ctrl.isResultsForNewThemeItem = false;
       if (ctrl.newThemeItem.search != '') {
         ctrl.isSearchRun = false;
+        ctrl.isLoadingDone = false;
         NyplApiCalls.nyplSearch(ctrl.newThemeItem.search, 1).then(function (results) {
           var numResults = results.data.nyplAPI.response.numResults;
           if (numResults > 0) {
             ctrl.newThemeItemResultCount = numResults;
             ctrl.isResultsForNewThemeItem = true;
-            ctrl.addThemeItem();
           }
+          ctrl.isLoadingDone = true;
           ctrl.isSearchRun = true;
         })
       }
@@ -120,6 +121,25 @@ nyplViewer.controller('SettingsDialogCtrl',
         }
 
       })
+    }
+
+    ctrl.loadSelectedTheme = function () {
+        deferred = $q.defer();
+        if (ctrl.theme != null) {
+            deferred.resolve();
+        } else {
+            DatabaseConnection.getSettings().then(function (settings) {
+                ctrl.settings = settings;
+                if (ctrl.settings == null) {
+                    console.log('No settings available  for this user!');
+                } else {
+                    ctrl.theme = ctrl.settings.theme;
+                    ctrl.searchText = ctrl.theme.name;
+                }
+                deferred.resolve();
+            })
+        }
+        return deferred.promise;
     }
 
     ctrl.selectedItemChange = function (item) {
@@ -159,6 +179,8 @@ nyplViewer.controller('SettingsDialogCtrl',
         //ctrl.theme = ctrl.settings.theme;
       }
     })
+    
+    ctrl.loadSelectedTheme();
     ctrl.getThemes();
     //ctrl.initSelectedInterests();
 
