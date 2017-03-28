@@ -15,7 +15,7 @@ nyplViewer.controller('SettingsDialogCtrl',
     ctrl.newThemeItemResultCount = 0;
     ctrl.isLoadingDone = true;
 
-    ctrl.theme = null;
+    ctrl.theme = undefined;
 
     ctrl.newTheme = {
       name: '',
@@ -31,18 +31,15 @@ nyplViewer.controller('SettingsDialogCtrl',
     };
 
     ctrl.getThemes = function () {
+      ctrl.themes = [];
       var deferred = $q.defer();
-      if (ctrl.themes.length == 0) {
-        DatabaseConnection.getThemes().then(function (results) {
-          //ctrl.topics = result;
-          angular.forEach(results, function (theme) {
-            ctrl.themes.push(theme);
-          })
-          deferred.resolve();
+      DatabaseConnection.getThemes().then(function (results) {
+        //ctrl.topics = result;
+        angular.forEach(results, function (theme) {
+          ctrl.themes.push(theme);
         })
-      } else {
         deferred.resolve();
-      }
+      })
       return deferred.promise;
     }
 
@@ -56,7 +53,8 @@ nyplViewer.controller('SettingsDialogCtrl',
     };
 
     ctrl.isDuplicateObject = function (collectionToCheck, key, value) {
-      return (lodash.find(collectionToCheck, function (obj) { return obj.topicName == value; }));
+      console.log(lodash.find(collectionToCheck, function (obj) { return obj[key] == value; }));
+      return (lodash.find(collectionToCheck, function (obj) { return obj[key] == value; }));
     }
 
     ctrl.isDuplicateArrayElement = function (array, value) {
@@ -64,7 +62,7 @@ nyplViewer.controller('SettingsDialogCtrl',
     }
 
     ctrl.addThemeItem = function () {
-      if (!ctrl.isDuplicateObject(ctrl.newTheme.items, 'search', ctrl.newThemeItem)) {
+      if (!ctrl.isDuplicateObject(ctrl.newTheme.items, 'search', ctrl.newThemeItem.search)) {
         ctrl.newTheme.items.push(ctrl.newThemeItem);
         ctrl.newThemeItem = {
           search: '',
@@ -73,6 +71,7 @@ nyplViewer.controller('SettingsDialogCtrl',
           isPageInfoRetrieved: false,
         };
         ctrl.isSearchRun = false;
+        ctrl.isResultsForNewThemeItem = false;
       }
       else {
         ctrl.showToast('Theme item already in your theme!');
@@ -80,10 +79,23 @@ nyplViewer.controller('SettingsDialogCtrl',
     }
 
     ctrl.createTheme = function () {
+      if (ctrl.newTheme.name === '') {
+        ctrl.showToast('Theme name not entered. Save failed!');
+        return;
+      }
+      if (ctrl.newTheme.items.length < 1) {
+        ctrl.showToast('No new theme items present. Save failed!');
+        return;
+      }
+      if (ctrl.newTheme.items.length < 2) {
+        ctrl.showToast('A new theme must have at lease 2 theme items. Save failed!');
+        return;
+      }
       if (!ctrl.isDuplicateObject(ctrl.themes, 'name', ctrl.newTheme.name)) {
         var themeStr = angular.toJson(ctrl.newTheme);
         var themeJson = JSON.parse(themeStr); // Workaround to strip $$hash key from the properties
         DatabaseConnection.createTheme(themeJson);
+        ctrl.getThemes();
         ctrl.showToast('Theme sucessfully created.');
       } else {
         ctrl.showToast('A theme with that name already exists!');
@@ -124,22 +136,23 @@ nyplViewer.controller('SettingsDialogCtrl',
     }
 
     ctrl.loadSelectedTheme = function () {
-        deferred = $q.defer();
-        if (ctrl.theme != null) {
-            deferred.resolve();
-        } else {
-            DatabaseConnection.getSettings().then(function (settings) {
-                ctrl.settings = settings;
-                if (ctrl.settings == null) {
-                    console.log('No settings available  for this user!');
-                } else {
-                    ctrl.theme = ctrl.settings.theme;
-                    ctrl.searchText = ctrl.theme.name;
-                }
-                deferred.resolve();
-            })
-        }
-        return deferred.promise;
+      deferred = $q.defer();
+      if (ctrl.theme != undefined) {
+        deferred.resolve();
+      } else {
+        console.log('getting here');
+        DatabaseConnection.getSettings().then(function (settings) {
+          ctrl.settings = settings;
+          if (ctrl.settings == null) {
+            console.log('No settings available  for this user!');
+          } else {
+            ctrl.theme = ctrl.settings.theme;
+            ctrl.searchText = ctrl.theme.name;
+          }
+          deferred.resolve();
+        })
+      }
+      return deferred.promise;
     }
 
     ctrl.selectedItemChange = function (item) {
@@ -159,7 +172,7 @@ nyplViewer.controller('SettingsDialogCtrl',
     };
 
     ctrl.save = function () {
-      if (ctrl.theme != undefined) {
+      if (ctrl.theme != undefined && ctrl.selectedItem != null) {
         DatabaseConnection.saveSettings({
           theme: ctrl.theme,
         }
@@ -179,7 +192,7 @@ nyplViewer.controller('SettingsDialogCtrl',
         //ctrl.theme = ctrl.settings.theme;
       }
     })
-    
+
     ctrl.loadSelectedTheme();
     ctrl.getThemes();
     //ctrl.initSelectedInterests();
