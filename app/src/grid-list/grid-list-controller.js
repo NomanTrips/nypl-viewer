@@ -1,7 +1,7 @@
 nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $location, $state, $scope, $mdMedia, $mdDialog, lodash, $mdToast, Auth, DatabaseConnection) {
 
     ctrl = this;
-    ctrl.searchText = 'new york city 1776';
+    ctrl.searchText = '';
     ctrl.pics = [];
     ctrl.searchPage = 0;
     ctrl.isLoadingDone = true;
@@ -220,6 +220,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
                     console.log('No settings available  for this user!');
                 } else {
                     ctrl.theme = ctrl.settings.theme;
+                    ctrl.searchText = ctrl.theme.name;
                 }
                 deferred.resolve();
             })
