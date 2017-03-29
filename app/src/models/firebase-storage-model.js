@@ -5,7 +5,6 @@ nyplViewer.factory('FirebaseStorageModel', function (firebase, Auth) {
 
     return {
         saveSettings: function (settingsData) {
-            console.log(settingsData);
             var firebaseUser = Auth.authObj.$getAuth();
             firebase.database().ref('users').child(firebaseUser.uid).set({
                 settings: settingsData,

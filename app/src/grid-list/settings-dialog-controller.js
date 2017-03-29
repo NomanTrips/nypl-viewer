@@ -156,7 +156,7 @@ nyplViewer.controller('SettingsDialogCtrl',
     };
 
     ctrl.save = function () {
-      if (ctrl.theme != undefined && ctrl.selectedItem != null) {
+      if (ctrl.theme != undefined) {
         DatabaseConnection.saveSettings({
           theme: ctrl.theme,
         }
