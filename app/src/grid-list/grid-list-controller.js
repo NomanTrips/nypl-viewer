@@ -5,8 +5,8 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     ctrl.pics = [];
     ctrl.searchPage = 0;
     ctrl.isLoadingDone = true;
-    ctrl.isSearchByInterestsModeOn = true;
-    ctrl.modeDescription = 'Shuffle'
+    ctrl.isSearchByThemeModeOn = true;
+    ctrl.modeDescription = 'Theme'
     ctrl.isPageInfoRetrieved = false;
     ctrl.isMoreSearchItems = true;
     ctrl.interestSearches = [];
@@ -164,11 +164,11 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     }
 
     ctrl.modeChange = function () {
-        if (ctrl.isSearchByInterestsModeOn) {
+        if (ctrl.isSearchByThemeModeOn) {
             ctrl.pics = [];
             ctrl.isMoreSearchItems = true;
             ctrl.isPageInfoRetrieved = false;
-            ctrl.modeDescription = 'Shuffle';
+            ctrl.modeDescription = 'Theme';
             ctrl.loadMore();
         } else {
             ctrl.searchTextChange();
@@ -176,7 +176,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     }
 
     ctrl.searchTextChange = function () {
-        ctrl.isSearchByInterestsModeOn = false;
+        ctrl.isSearchByThemeModeOn = false;
         ctrl.pics = [];
         ctrl.isMoreSearchItems = true;
         ctrl.modeDescription = 'Search';
@@ -229,7 +229,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
 
     ctrl.loadMore = function () {
         ctrl.apiLoadCount = 0;
-        if (ctrl.isSearchByInterestsModeOn) {
+        if (ctrl.isSearchByThemeModeOn) {
             //ctrl.searchItems = [];
             ctrl.searchResults = [];
             ctrl.getTheme().then(function () {
