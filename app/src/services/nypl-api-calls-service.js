@@ -11,7 +11,7 @@ nyplViewer.factory('NyplApiCalls', function ($http, $q, $base64) {
             method: 'GET',
             url: url,
             headers: {
-                'Authorization': 'Basic ' + auth
+                'Authorization': 'Basic ' + auth,
             }
         }
     };

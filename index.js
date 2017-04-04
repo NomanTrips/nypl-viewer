@@ -3,7 +3,31 @@ var app = express();
 var http = require('http');
 var httpProxy = require('http-proxy');
 
-var proxy = httpProxy.createProxyServer({target: 'http://api.repo.nypl.org', changeOrigin: true}).listen(5050);
+var proxy = httpProxy.createProxyServer({});
+
+    proxy.on('proxyReq', function (proxyReq, req, res, options) {
+ 
+        proxyReq.setHeader('origin', 'http://localhost:5050');
+    });
+
+var server = http.createServer(function (req, res) {
+    // You can define here your custom logic to handle the request 
+    // and then proxy the request.
+    console.log(res.headers);
+    //req.setHeader('origin', 'http://localhost:5050');
+    //res.writeHead(200, { 'Access-Control-Allow-Origin': '*' });
+    req.headers.origin = 'http://localhost:5050';
+           console.log('King Jubba!!!');
+//console.log(req.headers);
+    proxy.web(req, res, { target: 'http://api.repo.nypl.org' });
+
+
+
+});
+server.listen(5050);
+
+
+
 /*
 proxy.on('proxyReq', function (proxyReq, req, res) {
     console.log('running proxy req');
@@ -15,9 +39,9 @@ proxy.on('proxyReq', function (proxyReq, req, res) {
 });
 */
 //proxy.on('proxyReq', function (proxyReq, req, res) {
-  //res.writeHead(200,{
-    //'Access-Control-Allow-Origin': '*'
-  //});
+//res.writeHead(200,{
+//'Access-Control-Allow-Origin': '*'
+//});
 //});
 
 
@@ -37,8 +61,17 @@ var server = http.createServer(function(req, res) {
 console.log("listening on port 5050")
 server.listen(5050);
 */
+/*
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+*/
 app.use(express.static('./')); // ← adjust
-app.listen(3000, function() { console.log('listening'); });
+
+
+app.listen(3000, function () { console.log('listening'); });
 
 /*
 var server = http.createServer(function(req, res) {
