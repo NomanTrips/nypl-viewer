@@ -1,7 +1,9 @@
+/*
 var express = require('express');
 var app = express();
 var http = require('http');
 var httpProxy = require('http-proxy');
+
 
 var proxy = httpProxy.createProxyServer({});
 
@@ -25,7 +27,7 @@ var server = http.createServer(function (req, res) {
 
 });
 server.listen(5050);
-
+*/
 
 
 /*
@@ -68,7 +70,27 @@ app.use(function(req, res, next) {
   next();
 });
 */
+var express = require('express');
+var app = express();
+var httpProxy = require('http-proxy');
+var apiProxy = httpProxy.createProxyServer({});
+
+/*
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+*/
+app.all("/api/*", function(req, res) {
+    console.log('redirecting to nypl api');
+    console.log(req.url);
+    apiProxy.web(req, res, {target: 'http://api.repo.nypl.org', changeOrigin: true});
+});
+
+
 app.use(express.static('./')); // ← adjust
+
 
 
 app.listen(3000, function () { console.log('listening'); });
