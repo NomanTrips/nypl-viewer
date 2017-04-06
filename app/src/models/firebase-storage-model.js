@@ -4,18 +4,16 @@ nyplViewer.factory('FirebaseStorageModel', function (firebase, Auth) {
     var factory = this;
 
     return {
-        saveSettings: function (settingsData) {
+        saveSelectedTheme: function (theme) {
             var firebaseUser = Auth.authObj.$getAuth();
-            firebase.database().ref('users').child(firebaseUser.uid).set({
-                settings: settingsData,
-            });
+            firebase.database().ref('users').child(firebaseUser.uid).child("selectedTheme").set(theme);
             //some more user data      
         },
-        getSettings: function () {
+        getUserInfo: function () {
             var firebaseUser = Auth.authObj.$getAuth();
-            return firebase.database().ref('users').child(firebaseUser.uid).child("settings").once('value').then(function (snapshot) {
-                var settings = snapshot.val();
-                return settings;
+            return firebase.database().ref('users').child(firebaseUser.uid).once('value').then(function (snapshot) {
+                var user = snapshot.val();
+                return user;
             })
         },
         getThemes: function () {
@@ -27,7 +25,7 @@ nyplViewer.factory('FirebaseStorageModel', function (firebase, Auth) {
         },
         createTheme: function (theme) {
             var firebaseUser = Auth.authObj.$getAuth();
-            var themesRef = firebase.database().ref('themes').push();
+            var themesRef = firebase.database().ref('users').child(firebaseUser.uid).child("themes").push();
             themesRef.set(theme);
             //some more user data      
         },

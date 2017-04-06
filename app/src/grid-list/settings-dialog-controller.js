@@ -95,9 +95,9 @@ nyplViewer.controller('SettingsDialogCtrl',
         var themeJson = JSON.parse(themeStr); // Workaround to strip $$hash key from the properties
         DatabaseConnection.createTheme(themeJson);
         ctrl.getThemes();
-        ctrl.showToast('Theme sucessfully created.');
+        ctrl.showToast('Theme sucessfully added to favorites.');
       } else {
-        ctrl.showToast('A theme with that name already exists!');
+        ctrl.showToast('A theme with that name already exists in your favorites!');
       }
 
     }
@@ -125,12 +125,11 @@ nyplViewer.controller('SettingsDialogCtrl',
       if (ctrl.theme != undefined) {
         deferred.resolve();
       } else {
-        DatabaseConnection.getSettings().then(function (settings) {
-          ctrl.settings = settings;
-          if (ctrl.settings == null) {
-            console.log('No settings available  for this user!');
+        DatabaseConnection.getUserInfo().then(function (user) {
+          if (user.selectedTheme == null) {
+            console.log('No selected theme for this user!');
           } else {
-            ctrl.theme = ctrl.settings.theme;
+            ctrl.theme = user.selectedTheme;
             ctrl.searchText = ctrl.theme.name;
           }
           deferred.resolve();
@@ -157,10 +156,7 @@ nyplViewer.controller('SettingsDialogCtrl',
 
     ctrl.save = function () {
       if (ctrl.theme != undefined) {
-        DatabaseConnection.saveSettings({
-          theme: ctrl.theme,
-        }
-        );
+        DatabaseConnection.saveSelectedTheme(ctrl.theme);
         $mdDialog.hide();
       } else {
         ctrl.showToast('No theme selected. Save failed!');

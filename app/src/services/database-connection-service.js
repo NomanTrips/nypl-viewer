@@ -4,18 +4,18 @@ nyplViewer.service('DatabaseConnection', function (FirebaseStorageModel, LocalSt
     var service = this;
 
     return {
-        saveSettings: function (serverObj) {
+        saveSelectedTheme: function (theme) {
             if (Auth.authObj.$getAuth()) {  // update on firebase
-                FirebaseStorageModel.saveSettings(serverObj);
+                FirebaseStorageModel.saveSelectedTheme(theme);
             } else { //update local storage
-                LocalStorageModel.saveSettings(serverObj);
+                LocalStorageModel.saveSelectedTheme(theme);
             }
         },
-        getSettings: function () {
+        getUserInfo: function () {
             if (Auth.authObj.$getAuth()) {  // update on firebase
-                return FirebaseStorageModel.getSettings();
+                return FirebaseStorageModel.getUserInfo();
             } else { //update local storage
-                return LocalStorageModel.getSettings();
+                return LocalStorageModel.getUserInfo();
             }
         },
         getThemes: function () {

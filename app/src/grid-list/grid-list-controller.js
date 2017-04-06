@@ -214,12 +214,11 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         if (ctrl.theme != null) {
             deferred.resolve();
         } else {
-            DatabaseConnection.getSettings().then(function (settings) {
-                ctrl.settings = settings;
-                if (ctrl.settings == null) {
+            DatabaseConnection.getUserInfo().then(function (user) {
+                if (user.selectedTheme == null) {
                     console.log('No settings available  for this user!');
                 } else {
-                    ctrl.theme = ctrl.settings.theme;
+                    ctrl.theme = user.selectedTheme;
                     ctrl.searchText = ctrl.theme.name;
                 }
                 deferred.resolve();

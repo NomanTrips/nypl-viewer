@@ -36,7 +36,7 @@ nyplViewer.factory('NyplApiCalls', function ($http, $q, $base64) {
             var pagingQueryParam = '';
             pagingQueryParam = '&page=' + page;
             //var nyplUrl = 'http://api.repo.nypl.org/api/v1/items/search?q=' + searchText  + pagingQueryParam + '&per_page=20'; //+'&field=topic';
-            var nyplUrl = 'http://54.70.21.3:3000/api/v1/items/search?q=' + searchText  + pagingQueryParam + '&per_page=20'; //+'&field=topic';
+            var nyplUrl = 'http://localhost:3000/api/v1/items/search?q=' + searchText  + pagingQueryParam + '&per_page=20'; //+'&field=topic';
             //factory.incrementResultPage();
             var deferred = $q.defer();
             var request = $http(buildHttpRequest(nyplUrl), { headers: headers });

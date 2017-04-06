@@ -19,7 +19,8 @@ nyplViewer.factory('Auth', function (firebase, $firebaseAuth, $firebaseObject) {
         firebase.database().ref('users/' + userId).set({
             name: name,
             email: email,
-            settings: {},
+            themes: [],
+            selectedTheme: {}
         });
     }
 
