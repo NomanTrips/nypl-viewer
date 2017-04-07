@@ -78,6 +78,8 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
         .icon("account", "./assets/svg/account.svg", 24)
         .icon("sign-out", "./assets/svg/sign-out.svg", 24)
         .icon("add", "./assets/svg/add.svg", 24)
+        .icon("edit", "./assets/svg/edit.svg", 24)
+        .icon("delete", "./assets/svg/delete.svg", 24)
         .icon("phone", "./assets/svg/phone.svg", 24);
 
       $mdThemingProvider.theme('default')

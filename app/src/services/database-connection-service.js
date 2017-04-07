@@ -4,6 +4,13 @@ nyplViewer.service('DatabaseConnection', function (FirebaseStorageModel, LocalSt
     var service = this;
 
     return {
+        deleteSelectedTheme: function (theme) {
+            if (Auth.authObj.$getAuth()) {  // update on firebase
+                FirebaseStorageModel.deleteSelectedTheme(theme);
+            } else { //update local storage
+                LocalStorageModel.deleteSelectedTheme(theme);
+            }
+        },
         saveSelectedTheme: function (theme) {
             if (Auth.authObj.$getAuth()) {  // update on firebase
                 FirebaseStorageModel.saveSelectedTheme(theme);

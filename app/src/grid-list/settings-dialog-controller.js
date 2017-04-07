@@ -35,6 +35,7 @@ nyplViewer.controller('SettingsDialogCtrl',
       DatabaseConnection.getThemes().then(function (results) {
         //ctrl.topics = result;
         angular.forEach(results, function (theme) {
+          console.log(theme);
           ctrl.themes.push(theme);
         })
         deferred.resolve();
@@ -52,7 +53,6 @@ nyplViewer.controller('SettingsDialogCtrl',
     };
 
     ctrl.isDuplicateObject = function (collectionToCheck, key, value) {
-      console.log(lodash.find(collectionToCheck, function (obj) { return obj[key] == value; }));
       return (lodash.find(collectionToCheck, function (obj) { return obj[key] == value; }));
     }
 
@@ -136,6 +136,13 @@ nyplViewer.controller('SettingsDialogCtrl',
         })
       }
       return deferred.promise;
+    }
+
+    ctrl.deleteTheme = function (){
+      if (ctrl.theme != undefined){
+        DatabaseConnection.deleteSelectedTheme(ctrl.theme);
+        ctrl.showToast('Theme deleted.');
+      }
     }
 
     ctrl.selectedItemChange = function (item) {

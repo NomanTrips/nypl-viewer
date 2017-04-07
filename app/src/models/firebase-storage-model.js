@@ -4,6 +4,11 @@ nyplViewer.factory('FirebaseStorageModel', function (firebase, Auth) {
     var factory = this;
 
     return {
+        deleteSelectedTheme: function (theme) {
+            console.log(theme);
+            var firebaseUser = Auth.authObj.$getAuth();
+            firebase.database().ref('users').child(firebaseUser.uid).child("themes").child(theme.name).remove();   
+        },
         saveSelectedTheme: function (theme) {
             var firebaseUser = Auth.authObj.$getAuth();
             firebase.database().ref('users').child(firebaseUser.uid).child("selectedTheme").set(theme);
@@ -18,8 +23,10 @@ nyplViewer.factory('FirebaseStorageModel', function (firebase, Auth) {
         },
         getThemes: function () {
             var firebaseUser = Auth.authObj.$getAuth();
-            return firebase.database().ref('themes').once('value').then(function (snapshot) {
+            return firebase.database().ref('users').child(firebaseUser.uid).child("themes").once('value').then(function (snapshot) {
+            //firebase.database().ref('themes').once('value').then(function (snapshot) {
                 var themes = snapshot.val();
+                console.log(themes);
                 return themes;
             })
         },
