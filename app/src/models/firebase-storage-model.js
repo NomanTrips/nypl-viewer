@@ -7,7 +7,7 @@ nyplViewer.factory('FirebaseStorageModel', function (firebase, Auth) {
         deleteSelectedTheme: function (theme) {
             console.log(theme);
             var firebaseUser = Auth.authObj.$getAuth();
-            firebase.database().ref('users').child(firebaseUser.uid).child("themes").child(theme.name).remove();   
+            firebase.database().ref('users').child(firebaseUser.uid).child("themes").child(theme.id).remove();   
         },
         saveSelectedTheme: function (theme) {
             var firebaseUser = Auth.authObj.$getAuth();

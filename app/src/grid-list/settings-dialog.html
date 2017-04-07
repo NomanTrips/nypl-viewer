@@ -17,7 +17,7 @@
                     <div layout="row" flex layout-padding="">
                         <div>
                             <md-autocomplete md-selected-item="settingsCtrl.selectedItem" md-search-text="settingsCtrl.searchText" md-search-text-change="ctrl.searchTextChange(ctrl.searchText)"
-                                md-items="item in settingsCtrl.themes | filter:settingsCtrl.searchText" md-item-text="item.name"
+                                md-items="item in settingsCtrl.filter(settingsCtrl.searchText)" md-item-text="item.name"
                                 placeholder="Search..." md-selected-item-change="settingsCtrl.selectedItemChange(item)" md-min-length="2">
                                 <md-item-template>
                                     <span md-highlight-text="ctrl.searchText" md-highlight-flags="^i">{{item.name}}</span>

@@ -29,15 +29,18 @@ nyplViewer.controller('SettingsDialogCtrl',
       isPageInfoRetrieved: false,
     };
 
+    ctrl.filter = function (searchStr) {
+      var results = lodash.filter(ctrl.themes, function (theme) { return theme.name.indexOf(searchStr) === 0; });
+      return results;
+    }
+
     ctrl.getThemes = function () {
-      ctrl.themes = [];
       var deferred = $q.defer();
       DatabaseConnection.getThemes().then(function (results) {
-        //ctrl.topics = result;
-        angular.forEach(results, function (theme) {
-          console.log(theme);
-          ctrl.themes.push(theme);
-        })
+        lodash.forEach(results, function (value, key) {
+          value['id'] = key
+          ctrl.themes.push(value);
+        });
         deferred.resolve();
       })
       return deferred.promise;
@@ -138,15 +141,15 @@ nyplViewer.controller('SettingsDialogCtrl',
       return deferred.promise;
     }
 
-    ctrl.deleteTheme = function (){
-      if (ctrl.theme != undefined){
+    ctrl.deleteTheme = function () {
+      if (ctrl.theme != undefined) {
         DatabaseConnection.deleteSelectedTheme(ctrl.theme);
         ctrl.showToast('Theme deleted.');
       }
     }
 
-    ctrl.selectedItemChange = function (item) {
-      ctrl.theme = item;
+    ctrl.selectedItemChange = function (value) {
+      ctrl.theme = value;
     }
 
     ctrl.searchTextChange = function (searchText) {
