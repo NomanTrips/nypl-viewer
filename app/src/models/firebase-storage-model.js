@@ -36,5 +36,13 @@ nyplViewer.factory('FirebaseStorageModel', function (firebase, Auth) {
             themesRef.set(theme);
             //some more user data      
         },
+        editTheme: function (theme) {
+            var firebaseUser = Auth.authObj.$getAuth();
+            firebase.database().ref('users').child(firebaseUser.uid).child("themes").child(theme.id).remove();
+            delete theme.id;
+            var themesRef = firebase.database().ref('users').child(firebaseUser.uid).child("themes").push();  
+            themesRef.set(theme);
+            //some more user data      
+        },
     }
 });

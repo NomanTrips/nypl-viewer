@@ -15,10 +15,10 @@
                 <md-subheader class="md-no-sticky">Selected Theme:</md-subheader>
                 <form>
                     <div layout="row" flex layout-padding="">
-                        <div>
+                        <div flex="75">
                             <md-autocomplete md-selected-item="settingsCtrl.selectedItem" md-search-text="settingsCtrl.searchText" md-search-text-change="ctrl.searchTextChange(ctrl.searchText)"
-                                md-items="item in settingsCtrl.filter(settingsCtrl.searchText)" md-item-text="item.name"
-                                placeholder="Search..." md-selected-item-change="settingsCtrl.selectedItemChange(item)" md-min-length="2">
+                                md-items="item in settingsCtrl.filter(settingsCtrl.searchText)" md-item-text="item.name" placeholder="Search..."
+                                md-selected-item-change="settingsCtrl.selectedItemChange(item)" md-min-length="2">
                                 <md-item-template>
                                     <span md-highlight-text="ctrl.searchText" md-highlight-flags="^i">{{item.name}}</span>
                                 </md-item-template>
@@ -34,64 +34,75 @@
                             <md-button class="md-icon-button md-warn" aria-label="Delete" ng-click="settingsCtrl.deleteTheme()">
                                 <md-icon md-svg-icon="delete"></md-icon>
                             </md-button>
-                        </div>
-                    </div>
-                    <br>
-                    <br>
-                    <label layout-padding="">Don't see a theme you're interested in? Try creating a new one:</label>
-                    <div layout="row" flex>
-                        <md-input-container class="md-block md-accent" flex="100" style="height:40px;">
-                            <label>New theme name</label>
-                            <input ng-model="settingsCtrl.newTheme.name" maxlength="120">
-                        </md-input-container>
-                    </div>
-                    <div layout="row" flex>
-                        <md-input-container class="md-accent" flex style="height:40px;">
-                            <label>Search term</label>
-                            <input ng-model="settingsCtrl.newThemeItem.search" maxlength="20" ng-change="settingsCtrl.newThemeItemSearchChange()" ng-model-options="{updateOn : 'change blur'}">
-
-                            <div ng-show="settingsCtrl.isSearchRun && !settingsCtrl.isResultsForNewThemeItem">
-                                <div style="color:red;">
-                                    No results found for that theme item!
-                                </div>
-                            </div>
-                            <div ng-show="settingsCtrl.isSearchRun && settingsCtrl.isResultsForNewThemeItem">
-                                <div style="color:mediumspringgreen;">
-                                    {{settingsCtrl.newThemeItemResultCount}} results found for that theme item.
-                                </div>
-                            </div>
-                        </md-input-container>
-                        <div>
-                            <md-button ng-disabled="! settingsCtrl.isSearchRun && ! settingsCtrl.isResultsForNewThemeItem" class="md-raised md-accent"
-                                aria-label="Add" ng-click="settingsCtrl.addThemeItem()" style="height:40px;">
+                            <md-button class="md-icon-button md-primary" aria-label="Add" ng-click="settingsCtrl.addTheme()">
                                 <md-icon md-svg-icon="add"></md-icon>
-                                </md-button>
-                        </div>
-                        <div id="loadingcircle" ng-hide="settingsCtrl.isLoadingDone" layout-padding="">
-                            <md-progress-circular md-mode="indeterminate" md-theme="dark-yellow" md-diameter="20px">
-                            </md-progress-circular>
-                        </div>
-                        <div ng-hide="! settingsCtrl.isLoadingDone" style="width:36px;height:36px;">
+                            </md-button>
                         </div>
                     </div>
-                    <div layout="row" flex layout-padding="">
-                        <div>
-                            <md-chips class="custom-chips" ng-model="settingsCtrl.newTheme.items" readonly="true" md-removable="true">
-                                <md-chip-template>
-                                    <span>
+                    <br>
+                    <br>
+                    <md-card ng-show="settingsCtrl.isEditing || settingsCtrl.isNew" md-theme="{{ showDarkTheme ? 'dark-grey' : 'default' }}" md-theme-watch="">
+                        <md-card-title>
+                            <md-card-title-text>
+                                <span  ng-show="settingsCtrl.isEditing" class="md-headline">Edit theme:</span>
+                                <span  ng-show="settingsCtrl.isNew" class="md-headline">Create theme:</span>
+                            </md-card-title-text>
+                        </md-card-title>
+                        <div layout="row" flex>
+                            <md-input-container class="md-block md-accent" flex="100" style="height:40px;">
+                                <label>Theme name</label>
+                                <input ng-model="settingsCtrl.newTheme.name" maxlength="120">
+                            </md-input-container>
+                        </div>
+                        <div layout="row" flex>
+                            <md-input-container class="md-accent" flex style="height:40px;">
+                                <label>Search term</label>
+                                <input ng-model="settingsCtrl.newThemeItem.search" maxlength="20" ng-change="settingsCtrl.newThemeItemSearchChange()" ng-model-options="{updateOn : 'change blur'}">
+
+                                <div ng-show="settingsCtrl.isSearchRun && !settingsCtrl.isResultsForNewThemeItem">
+                                    <div style="color:red;">
+                                        No results found for that theme item!
+                                    </div>
+                                </div>
+                                <div ng-show="settingsCtrl.isSearchRun && settingsCtrl.isResultsForNewThemeItem">
+                                    <div style="color:mediumspringgreen;">
+                                        {{settingsCtrl.newThemeItemResultCount}} results found for that theme item.
+                                    </div>
+                                </div>
+                            </md-input-container>
+                            <div>
+                                <md-button ng-disabled="! settingsCtrl.isSearchRun && ! settingsCtrl.isResultsForNewThemeItem" class="md-raised md-accent"
+                                    aria-label="Add" ng-click="settingsCtrl.addThemeItem()" style="height:40px;">
+                                    <md-icon md-svg-icon="add"></md-icon>
+                                    </md-button>
+                            </div>
+                            <div id="loadingcircle" ng-hide="settingsCtrl.isLoadingDone" layout-padding="">
+                                <md-progress-circular md-mode="indeterminate" md-theme="dark-yellow" md-diameter="20px">
+                                </md-progress-circular>
+                            </div>
+                            <div ng-hide="! settingsCtrl.isLoadingDone" style="width:36px;height:36px;">
+                            </div>
+                        </div>
+                        <div layout="row" flex layout-padding="">
+                            <div>
+                                <md-chips class="custom-chips" ng-model="settingsCtrl.newTheme.items" readonly="true" md-removable="true">
+                                    <md-chip-template>
+                                        <span>
           <strong>{{$chip.search}}</strong>
         </span>
-                                </md-chip-template>
+                                    </md-chip-template>
 
-                            </md-chips>
+                                </md-chips>
+                            </div>
+                            <div>
+                                <md-button ng-disabled="settingsCtrl.newTheme.items.length < 1 " class="md-raised md-accent" aria-label="Add" ng-click="settingsCtrl.saveTheme()"
+                                    ng-show="settingsCtrl.newTheme.items.length > 0" style="height:40px;">
+                                    <span ng-show="settingsCtrl.isNew">Create theme</span>
+                                    <span ng-show="settingsCtrl.isEditing">Save theme</span>
+                                    </md-button>
+                            </div>
                         </div>
-                        <div>
-                            <md-button ng-disabled="settingsCtrl.newTheme.items.length < 1 " class="md-raised md-accent" aria-label="Add" ng-click="settingsCtrl.createTheme()"
-                                ng-show="settingsCtrl.newTheme.items.length > 0" style="height:40px;">
-                                Create theme
-                                </md-button>
-                        </div>
-                    </div>
+                    </md-card>
                 </form>
 
             </div>

@@ -37,5 +37,10 @@ nyplViewer.service('DatabaseConnection', function (FirebaseStorageModel, LocalSt
                 return FirebaseStorageModel.createTheme(theme);
             }
         },
+        editTheme: function (theme) {
+            if (Auth.authObj.$getAuth()) {  // update on firebase
+                return FirebaseStorageModel.editTheme(theme);
+            }
+        },
     }
 });

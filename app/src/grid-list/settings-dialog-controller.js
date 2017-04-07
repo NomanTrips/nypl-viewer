@@ -13,6 +13,8 @@ nyplViewer.controller('SettingsDialogCtrl',
     ctrl.newThemeItemName = '';
     ctrl.newThemeItemResultCount = 0;
     ctrl.isLoadingDone = true;
+    ctrl.isEditingTheme = false;
+    ctrl.isNew = false;
 
     ctrl.theme = undefined;
 
@@ -28,6 +30,10 @@ nyplViewer.controller('SettingsDialogCtrl',
       totalPages: 0,
       isPageInfoRetrieved: false,
     };
+
+    ctrl.addTheme = function (){
+      ctrl.isNew = true;
+    }
 
     ctrl.filter = function (searchStr) {
       var results = lodash.filter(ctrl.themes, function (theme) { return theme.name.indexOf(searchStr) === 0; });
@@ -80,7 +86,7 @@ nyplViewer.controller('SettingsDialogCtrl',
       }
     }
 
-    ctrl.createTheme = function () {
+    ctrl.saveTheme = function () {
       if (ctrl.newTheme.name === '') {
         ctrl.showToast('Theme name not entered. Save failed!');
         return;
@@ -93,13 +99,32 @@ nyplViewer.controller('SettingsDialogCtrl',
         ctrl.showToast('A new theme must have at lease 2 theme items. Save failed!');
         return;
       }
-      if (!ctrl.isDuplicateObject(ctrl.themes, 'name', ctrl.newTheme.name)) {
+      if (!ctrl.isDuplicateObject(ctrl.themes, 'name', ctrl.newTheme.name) || ctrl.isEditingTheme) {
         var themeStr = angular.toJson(ctrl.newTheme);
         var themeJson = JSON.parse(themeStr); // Workaround to strip $$hash key from the properties
-        DatabaseConnection.createTheme(themeJson);
+        if (ctrl.isEditingTheme) {
+          DatabaseConnection.editTheme(themeJson);
+          ctrl.isEditing = false;
+        } else {
+          DatabaseConnection.createTheme(themeJson);
+          ctrl.isNew = false;
+        }
+        ctrl.newTheme = {
+          name: '',
+          items: [
+          ]
+        };
+
+        ctrl.newThemeItem = {
+          search: '',
+          page: 1,
+          totalPages: 0,
+          isPageInfoRetrieved: false,
+        };
         ctrl.getThemes();
-        ctrl.showToast('Theme sucessfully added to favorites.');
-      } else {
+        ctrl.showToast('Theme sucessfully saved to favorites.');
+      }
+      else {
         ctrl.showToast('A theme with that name already exists in your favorites!');
       }
 
@@ -139,6 +164,13 @@ nyplViewer.controller('SettingsDialogCtrl',
         })
       }
       return deferred.promise;
+    }
+
+    ctrl.editTheme = function () {
+      if (ctrl.theme != undefined) {
+        ctrl.newTheme = ctrl.theme;
+        ctrl.isEditing = true;
+      }
     }
 
     ctrl.deleteTheme = function () {
