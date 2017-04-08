@@ -41,6 +41,7 @@ nyplViewer.controller('SettingsDialogCtrl',
     }
 
     ctrl.getThemes = function () {
+      ctrl.themes = [];
       var deferred = $q.defer();
       DatabaseConnection.getThemes().then(function (results) {
         lodash.forEach(results, function (value, key) {
@@ -99,10 +100,10 @@ nyplViewer.controller('SettingsDialogCtrl',
         ctrl.showToast('A new theme must have at lease 2 theme items. Save failed!');
         return;
       }
-      if (!ctrl.isDuplicateObject(ctrl.themes, 'name', ctrl.newTheme.name) || ctrl.isEditingTheme) {
+      if (!ctrl.isDuplicateObject(ctrl.themes, 'name', ctrl.newTheme.name) || ctrl.isEditing) {
         var themeStr = angular.toJson(ctrl.newTheme);
         var themeJson = JSON.parse(themeStr); // Workaround to strip $$hash key from the properties
-        if (ctrl.isEditingTheme) {
+        if (ctrl.isEditing) {
           DatabaseConnection.editTheme(themeJson);
           ctrl.isEditing = false;
         } else {

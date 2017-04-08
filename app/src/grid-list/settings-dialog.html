@@ -57,7 +57,7 @@
                         <div layout="row" flex>
                             <md-input-container class="md-accent" flex style="height:40px;">
                                 <label>Search term</label>
-                                <input ng-model="settingsCtrl.newThemeItem.search" maxlength="20" ng-change="settingsCtrl.newThemeItemSearchChange()" ng-model-options="{updateOn : 'change blur'}">
+                                <input ng-model="settingsCtrl.newThemeItem.search" maxlength="120" ng-change="settingsCtrl.newThemeItemSearchChange()" ng-model-options="{updateOn : 'change blur'}">
 
                                 <div ng-show="settingsCtrl.isSearchRun && !settingsCtrl.isResultsForNewThemeItem">
                                     <div style="color:red;">

@@ -38,11 +38,9 @@ nyplViewer.factory('FirebaseStorageModel', function (firebase, Auth) {
         },
         editTheme: function (theme) {
             var firebaseUser = Auth.authObj.$getAuth();
-            firebase.database().ref('users').child(firebaseUser.uid).child("themes").child(theme.id).remove();
+            var id = theme.id;
             delete theme.id;
-            var themesRef = firebase.database().ref('users').child(firebaseUser.uid).child("themes").push();  
-            themesRef.set(theme);
-            //some more user data      
+            firebase.database().ref('users').child(firebaseUser.uid).child("themes").child(id).set(theme);     
         },
     }
 });
