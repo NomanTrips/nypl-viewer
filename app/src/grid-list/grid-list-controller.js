@@ -10,17 +10,18 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     ctrl.isPageInfoRetrieved = false;
     ctrl.isMoreSearchItems = true;
     ctrl.interestSearches = [];
-    
+    ctrl.isInitialLoad = true;
     //$scope.currentState = $transition$.to().name;
     //this.fetchSearchTerms = (barId) => {
     //  $scope.bar = null;
     //  $http.get('bars.json')
-      //  .then(resp => $scope.bar = resp.data.find(bar => bar.id == barId ))
+    //  .then(resp => $scope.bar = resp.data.find(bar => bar.id == barId ))
     //}
     //this.fetchSearchTerms($transition$.params().searchTerms);
     this.uiOnParamsChanged = (newParams) => {
-     // if (newParams.barId !== undefined) this.fetchBar(newParams.barId);
+        // if (newParams.barId !== undefined) this.fetchBar(newParams.barId);
     };
+
     /** 
     [
         {
@@ -218,31 +219,45 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         return deferred.promise;
     }
 
-    ctrl.setSearchState = function () {
-        //$state.transitionTo('/search/', { searchTerms: 'kingJubba' });
-        $state.go('.', { searchTerms: 'railroad,steamboats,cotton gin' }, {notify: false});
-        console.log($stateParams);
-        //$state.go('/search', { searchTerms: 'kingJubba' })
+    ctrl.setQueryParams = function () {
+        var queryParamsStr = '';
+        angular.forEach(ctrl.theme.items, function (item) {
+            if (queryParamsStr == '') {
+                queryParamsStr = item.search;
+            } else {
+                queryParamsStr = queryParamsStr + ',' + item.search;
+            }
+        });
+        $state.go('.', { searchTerms: queryParamsStr }, { notify: false });
     }
-
-    ctrl.uiOnParamsChanged = (newParams) => {
-        console.log(newParams);
-      //if (newParams.barId !== undefined) this.fetchBar(newParams.barId);
-    };
 
     ctrl.loadMore = function () {
         ctrl.apiLoadCount = 0;
+        if ($stateParams.searchTerms != null && ctrl.isInitialLoad == true) { // theme via url and not firebase
+            ctrl.theme = { name: 'custom', items: [] };
+            var searchTerms = $stateParams.searchTerms.split(',');
+            angular.forEach(searchTerms, function (searchTerm) {
+                var item = {
+                    search: searchTerm,
+                    page: 1,
+                    totalPages: null,
+                    isPageInfoRetrieved: false,
+                };
+                ctrl.theme.items.push(item);
+            });
+            ctrl.isInitialLoad = false;
+        }
         if (ctrl.isSearchByThemeModeOn) {
             //ctrl.searchItems = [];
             ctrl.searchResults = [];
             ctrl.getTheme().then(function () {
-                ctrl.setSearchState();
+                ctrl.setQueryParams();
                 ctrl.themeSearch();
             })
             //ctrl.searchByInterests(ctrl.interestSearches);
         } else {
             ctrl.search(ctrl.searchText);
-            ctrl.setSearchState();
+            ctrl.setQueryParams();
         }
     }
 

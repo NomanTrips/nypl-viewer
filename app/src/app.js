@@ -24,7 +24,7 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
         controllerAs: 'gridList',
         params: {
           searchTerms: {
-            value: "default",
+            value: null,
             dynamic: true
           }
         },
