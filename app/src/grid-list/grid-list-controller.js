@@ -221,6 +221,8 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
 
     ctrl.setQueryParams = function () {
         var queryParamsStr = '';
+        var name = '';
+        name = ctrl.theme.name;
         angular.forEach(ctrl.theme.items, function (item) {
             if (queryParamsStr == '') {
                 queryParamsStr = item.search;
@@ -228,13 +230,20 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
                 queryParamsStr = queryParamsStr + ',' + item.search;
             }
         });
-        $state.go('.', { searchTerms: queryParamsStr }, { notify: false });
+        $state.go('.', { themeName: name, searchTerms: queryParamsStr }, { notify: false });
     }
 
     ctrl.loadMore = function () {
         ctrl.apiLoadCount = 0;
         if ($stateParams.searchTerms != null && ctrl.isInitialLoad == true) { // theme via url and not firebase
-            ctrl.theme = { name: 'custom', items: [] };
+            var searchName = '';
+            if ($stateParams.themeName == null){
+                ctrl.searchText = $stateParams.searchTerms;
+                ctrl.isSearchByThemeModeOn = false;
+            } else {
+                ctrl.searchText = $stateParams.themeName;
+            }
+            ctrl.theme = { name: $stateParams.themeName, items: [] };
             var searchTerms = $stateParams.searchTerms.split(',');
             angular.forEach(searchTerms, function (searchTerm) {
                 var item = {
@@ -257,7 +266,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
             //ctrl.searchByInterests(ctrl.interestSearches);
         } else {
             ctrl.search(ctrl.searchText);
-            ctrl.setQueryParams();
+            $state.go('.', { themeName: null, searchTerms: ctrl.searchText }, { notify: false });
         }
     }
 

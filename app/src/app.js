@@ -18,15 +18,20 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
 
     $stateProvider
       .state('main', {
-        url: '/search?searchTerms',
+        url: '/search?themeName&searchTerms',
         templateUrl: 'src/grid-list/main.html',
         controller: 'GridListCtrl',
         controllerAs: 'gridList',
         params: {
+          themeName: {
+            value: null,
+            dynamic: true
+          },
           searchTerms: {
             value: null,
             dynamic: true
           }
+
         },
         resolve: {
           // controller will not be loaded until $waitForSignIn resolves
