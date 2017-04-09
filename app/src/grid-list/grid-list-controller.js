@@ -1,4 +1,4 @@
-nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $location, $state, $scope, $mdMedia, $mdDialog, lodash, $mdToast, Auth, DatabaseConnection) {
+nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $location, $state, $scope, $mdMedia, $mdDialog, lodash, $mdToast, Auth, DatabaseConnection, $stateParams) {
 
     ctrl = this;
     ctrl.searchText = '';
@@ -10,6 +10,17 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     ctrl.isPageInfoRetrieved = false;
     ctrl.isMoreSearchItems = true;
     ctrl.interestSearches = [];
+    
+    //$scope.currentState = $transition$.to().name;
+    //this.fetchSearchTerms = (barId) => {
+    //  $scope.bar = null;
+    //  $http.get('bars.json')
+      //  .then(resp => $scope.bar = resp.data.find(bar => bar.id == barId ))
+    //}
+    //this.fetchSearchTerms($transition$.params().searchTerms);
+    this.uiOnParamsChanged = (newParams) => {
+     // if (newParams.barId !== undefined) this.fetchBar(newParams.barId);
+    };
     /** 
     [
         {
@@ -135,26 +146,6 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         //console.log(Auth.authObj);
     }
 
-    ctrl.initProfile = function () {
-        var firebaseUser = Auth.authObj.$getAuth();
-        if (firebaseUser) {
-            console.log("Signed in as:", firebaseUser.uid);
-            ctrl.authItems.default.show = false;
-            ctrl.authItems.google.show = false;
-            //ctrl.authItems.github.show = false;
-            ctrl.authItems.signout.show = true;
-            var TruncatedUserName = firebaseUser.displayName.substring(0, 1);
-            ctrl.authItems.google.tooltip = "Signed in with Google: " + firebaseUser.email;
-            ctrl.authItems.google.username = TruncatedUserName;
-            ctrl.account = ctrl.authItems.google;
-        } else {
-            ctrl.authItems.signout.show = false;
-            ctrl.account = ctrl.authItems.default;
-            console.log("Signed out");
-        }
-
-    }
-
     ctrl.showSearchItems = function () {
         console.log(ctrl.theme.items);
     }
@@ -227,17 +218,31 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         return deferred.promise;
     }
 
+    ctrl.setSearchState = function () {
+        //$state.transitionTo('/search/', { searchTerms: 'kingJubba' });
+        $state.go('.', { searchTerms: 'railroad,steamboats,cotton gin' }, {notify: false});
+        console.log($stateParams);
+        //$state.go('/search', { searchTerms: 'kingJubba' })
+    }
+
+    ctrl.uiOnParamsChanged = (newParams) => {
+        console.log(newParams);
+      //if (newParams.barId !== undefined) this.fetchBar(newParams.barId);
+    };
+
     ctrl.loadMore = function () {
         ctrl.apiLoadCount = 0;
         if (ctrl.isSearchByThemeModeOn) {
             //ctrl.searchItems = [];
             ctrl.searchResults = [];
             ctrl.getTheme().then(function () {
+                ctrl.setSearchState();
                 ctrl.themeSearch();
             })
             //ctrl.searchByInterests(ctrl.interestSearches);
         } else {
             ctrl.search(ctrl.searchText);
+            ctrl.setSearchState();
         }
     }
 
@@ -267,6 +272,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     }
 
     ctrl.themeSearch = function () {
+        console.log('running theme search');
         searches = [];
         angular.forEach(ctrl.theme.items, function (item) {
             if (item.isPageInfoRetrieved == false || item.page <= item.totalPages) { // only add the search to the q if there are more results for it
@@ -488,6 +494,25 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         ctrl.showModal(pic);
     };
 
+    ctrl.initProfile = function () {
+        var firebaseUser = Auth.authObj.$getAuth();
+        if (firebaseUser) {
+            console.log("Signed in as:", firebaseUser.uid);
+            ctrl.authItems.default.show = false;
+            ctrl.authItems.google.show = false;
+            //ctrl.authItems.github.show = false;
+            ctrl.authItems.signout.show = true;
+            var TruncatedUserName = firebaseUser.displayName.substring(0, 1);
+            ctrl.authItems.google.tooltip = "Signed in with Google: " + firebaseUser.email;
+            ctrl.authItems.google.username = TruncatedUserName;
+            ctrl.account = ctrl.authItems.google;
+        } else {
+            ctrl.authItems.signout.show = false;
+            ctrl.account = ctrl.authItems.default;
+            console.log("Signed out");
+        }
+
+    }
     ctrl.initProfile();
 
 });

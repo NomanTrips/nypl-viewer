@@ -18,10 +18,16 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
 
     $stateProvider
       .state('main', {
-        url: '',
+        url: '/search?searchTerms',
         templateUrl: 'src/grid-list/main.html',
         controller: 'GridListCtrl',
         controllerAs: 'gridList',
+        params: {
+          searchTerms: {
+            value: "default",
+            dynamic: true
+          }
+        },
         resolve: {
           // controller will not be loaded until $waitForSignIn resolves
           // Auth refers to our $firebaseAuth wrapper in the factory below
