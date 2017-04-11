@@ -65,6 +65,22 @@ nyplViewer.factory('Auth', function (firebase, $firebaseAuth, $firebaseObject) {
                 return settings;
             })
         },
+        isLoggedInAdmin: function (uname, password) {
+            var firebaseUser = factory.authObj.$getAuth();
+            return firebase.database().ref('admin').child('credentials').once('value').then(function (snapshot) {
+                var creds = snapshot.val();
+                if (uname === creds.username && password === creds.password){
+                    return true;
+                } else {
+                    return false;
+                }
+
+            }).catch(function (error) {
+                console.log(error);
+                return false;
+            });
+        },
         authObj: factory.authObj
     }
 });
+

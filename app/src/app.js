@@ -48,7 +48,37 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
         controller: 'ImageViewerCtrl',
         controllerAs: 'imageViewer',
         params: { myParam: null },
+      })
+      .state('adminLogin', {
+        url:'/adminLogin',
+        templateUrl: 'src/admin/login.html',
+        controller: 'AdminLoginCtrl',
+        controllerAs: 'adminLogin'
+      })
+      .state('admin', {
+        url:'/admin',
+        templateUrl: 'src/admin/admin.html',
+        controller: 'AdminCtrl',
+        controllerAs: 'admin',
+        resolve: {
+          'currentUser': ['Auth', function (Auth) {
+            return Auth.$requireAuth();
+          }]
+        }
       });
+  })
+   .run(function ($rootScope, $location, Auth) {
+    // Redirect to login if route requires auth and you're not logged in
+        $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
+          Auth.isLoggedInAdmin(function(loggedIn) {
+            console.log(toState);
+            if (toState == 'admin' && !loggedIn) {
+                  $rootScope.returnToState = toState.url;
+                  $rootScope.returnToStateParams = toParams.Id;
+                  $location.path('/adminLogin');
+              }
+          });
+        });
   })
   .directive('stickyLoadingbar', function ($mdSticky, $compile) {
     var LOADINGBAR_TEMPLATE =
