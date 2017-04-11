@@ -36,7 +36,7 @@ nyplViewer.controller('SettingsDialogCtrl',
     }
 
     ctrl.filter = function (searchStr) {
-      var results = lodash.filter(ctrl.themes, function (theme) { return theme.name.indexOf(searchStr) === 0; });
+      var results = lodash.filter(ctrl.themes, function (theme) { return theme.name.indexOf(searchStr) > -1; });
       return results;
     }
 

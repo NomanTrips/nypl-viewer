@@ -20,7 +20,7 @@
                                 md-items="item in settingsCtrl.filter(settingsCtrl.searchText)" md-item-text="item.name" placeholder="Search..."
                                 md-selected-item-change="settingsCtrl.selectedItemChange(item)" md-min-length="2">
                                 <md-item-template>
-                                    <span md-highlight-text="ctrl.searchText" md-highlight-flags="^i">{{item.name}}</span>
+                                    <span class="highlight" md-highlight-text="settingsCtrl.searchText" md-highlight-flags="i">{{item.name}}</span>
                                 </md-item-template>
                                 <md-not-found>
                                     No themes matching "{{ctrl.searchText}}" were found.
