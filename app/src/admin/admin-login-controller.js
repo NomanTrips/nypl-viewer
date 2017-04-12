@@ -1,6 +1,11 @@
 'use strict';
 
 nyplViewer.controller('AdminLoginCtrl',
-  function ($mdDialog, lodash, DatabaseConnection, $q, NyplApiCalls, $mdToast) {
+  function (Auth, $mdToast) {
     var ctrl = this;
+    ctrl.username = '';
+    ctrl.password = '';
+    ctrl.login = function(){
+      Auth.isLoggedInAdmin(ctrl.username, ctrl.password);
+    }
   });
