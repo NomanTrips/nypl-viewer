@@ -19,6 +19,7 @@ nyplViewer.controller('SettingsDialogCtrl',
     ctrl.theme = undefined;
 
     ctrl.newTheme = {
+      isDefault: false,
       name: '',
       items: [
       ]
@@ -31,7 +32,7 @@ nyplViewer.controller('SettingsDialogCtrl',
       isPageInfoRetrieved: false,
     };
 
-    ctrl.addTheme = function (){
+    ctrl.addTheme = function () {
       ctrl.isNew = true;
     }
 
@@ -109,13 +110,18 @@ nyplViewer.controller('SettingsDialogCtrl',
         var themeStr = angular.toJson(ctrl.newTheme);
         var themeJson = JSON.parse(themeStr); // Workaround to strip $$hash key from the properties
         if (ctrl.isEditing) {
-          DatabaseConnection.editTheme(themeJson);
+          if (themeJson.isDefault) {
+            FirebaseStorageModel.editDefaultTheme(themeJson);
+          } else {
+            DatabaseConnection.editTheme(themeJson);
+          }
           ctrl.isEditing = false;
         } else {
           DatabaseConnection.createTheme(themeJson);
           ctrl.isNew = false;
         }
         ctrl.newTheme = {
+          isDefault: false,
           name: '',
           items: [
           ]

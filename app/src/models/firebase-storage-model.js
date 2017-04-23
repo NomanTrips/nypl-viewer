@@ -64,6 +64,12 @@ nyplViewer.factory('FirebaseStorageModel', function (firebase, Auth) {
             var firebaseUser = Auth.authObj.$getAuth();
             firebase.database().ref("submittedThemes").child(theme.id).remove();   
         },
+        editDefaultTheme: function (theme) {
+            var firebaseUser = Auth.authObj.$getAuth();
+            var id = theme.id;
+            delete theme.id;
+            firebase.database().ref("defaultThemes").child(id).set(theme);     
+        },
         editTheme: function (theme) {
             var firebaseUser = Auth.authObj.$getAuth();
             var id = theme.id;
