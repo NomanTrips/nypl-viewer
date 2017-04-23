@@ -210,7 +210,9 @@ nyplViewer.controller('SettingsDialogCtrl',
 
     ctrl.save = function () {
       if (ctrl.theme != undefined) {
-        DatabaseConnection.saveSelectedTheme(ctrl.theme);
+        var themeStr = angular.toJson(ctrl.theme);
+        var themeJson = JSON.parse(themeStr); // Workaround to strip $$hash key from the properties
+        DatabaseConnection.saveSelectedTheme(themeJson);
         $mdDialog.hide();
       } else {
         ctrl.showToast('No theme selected. Save failed!');
