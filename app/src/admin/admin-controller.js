@@ -4,14 +4,13 @@ nyplViewer.controller('AdminCtrl',
   function ($mdDialog, lodash, DatabaseConnection, $mdToast, FirebaseStorageModel, $q, $scope) {
     var ctrl = this;
     ctrl.submittedThemes = [];
-
     ctrl.getSubmittedThemes = function () {
 
       FirebaseStorageModel.getSubmittedThemes().then(function (results) {
       //ctrl.submittedThemes = [];
         lodash.forEach(results, function (value, key) {
           value['id'] = key
-          value['submitted'] = false;
+          value['selected'] = false;
           ctrl.submittedThemes.push(value);
         })
       $scope.$apply();
@@ -20,11 +19,13 @@ nyplViewer.controller('AdminCtrl',
     }
     ctrl.addToDefaults = function () {
       angular.forEach(ctrl.submittedThemes, function (theme) {
-        if (theme.submitted == true) {
+        if (theme.selected == true) {
           var themeStr = angular.toJson(theme);
           var themeJson = JSON.parse(themeStr); // Workaround to strip $$hash key from the properties
-          FirebaseStorageModel.createDefaultTheme(themeJson);
           FirebaseStorageModel.deleteSubmittedTheme(themeJson);
+          delete themeJson.id;
+          delete themeJson.selected;
+          FirebaseStorageModel.createDefaultTheme(themeJson);
         }
       })
       ctrl.showToast(ctrl.submittedThemes.length + ' themes added to defaults.');

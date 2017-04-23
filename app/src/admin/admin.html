@@ -10,14 +10,20 @@
 
 <md-content flex layout-padding="">
     <md-subheader class="md-no-sticky">New themes</md-subheader>
-    <md-button class="md-accent" ng-click="admin.addToDefaults()">
+    <md-button class="md-raised md-accent" aria-label="Add" ng-click="admin.addToDefaults()">
         Add Selected
     </md-button>
-    <md-list flex="">
-        <md-list-item ng-repeat="value in admin.submittedThemes">
-            <md-checkbox ng-model="value.selected"></md-checkbox>
-            <p>{{value.name}}</p>
+    <md-list>
+        <md-list-item class="md-3-line" ng-repeat="value in admin.submittedThemes">
+            <md-checkbox ng-model="value.selected" aria-label="Selected"></md-checkbox>
+            <div class="md-list-item-text" layout="column">
+                <h3>
+                  <b>  {{value.name}}</b>
+                </h3>             
+                <h4><span ng-repeat="searchTerm in value.items">{{searchTerm.search}} <span ng-hide="$last">,&nbsp;</span></span></h4>
+            </div>
             <md-icon class="md-secondary" ng-click="admin.deleteTheme(value)" aria-label="delete" md-svg-icon="delete"></md-icon>
+
         </md-list-item>
     </md-list>
 

@@ -30,12 +30,10 @@ nyplViewer.factory('FirebaseStorageModel', function (firebase, Auth) {
             })
         },
         getSubmittedThemes: function () {
-            console.log('running');
             var firebaseUser = Auth.authObj.$getAuth();
             return firebase.database().ref("submittedThemes").once('value').then(function (snapshot) {
             //firebase.database().ref('themes').once('value').then(function (snapshot) {
                 var getSubmittedThemes = snapshot.val();
-                console.log(getSubmittedThemes);
                 return getSubmittedThemes;
             })
         },
