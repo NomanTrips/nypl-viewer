@@ -21,6 +21,7 @@
                                 md-selected-item-change="settingsCtrl.selectedItemChange(item)" md-min-length="2">
                                 <md-item-template>
                                     <span class="highlight" md-highlight-text="settingsCtrl.searchText" md-highlight-flags="i">{{item.name}}</span>
+                                    <md-icon ng-show="item.isDefault" md-svg-icon="bookmark">Default theme</md-icon>
                                 </md-item-template>
                                 <md-not-found>
                                     No themes matching "{{ctrl.searchText}}" were found.

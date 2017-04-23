@@ -26,7 +26,24 @@ nyplViewer.factory('FirebaseStorageModel', function (firebase, Auth) {
             return firebase.database().ref('users').child(firebaseUser.uid).child("themes").once('value').then(function (snapshot) {
             //firebase.database().ref('themes').once('value').then(function (snapshot) {
                 var themes = snapshot.val();
-                console.log(themes);
+                return themes;
+            })
+        },
+        getSubmittedThemes: function () {
+            console.log('running');
+            var firebaseUser = Auth.authObj.$getAuth();
+            return firebase.database().ref("submittedThemes").once('value').then(function (snapshot) {
+            //firebase.database().ref('themes').once('value').then(function (snapshot) {
+                var getSubmittedThemes = snapshot.val();
+                console.log(getSubmittedThemes);
+                return getSubmittedThemes;
+            })
+        },
+        getDefaultThemes: function () {
+            var firebaseUser = Auth.authObj.$getAuth();
+            return firebase.database().ref("defaultThemes").once('value').then(function (snapshot) {
+            //firebase.database().ref('themes').once('value').then(function (snapshot) {
+                var themes = snapshot.val();
                 return themes;
             })
         },
@@ -34,7 +51,20 @@ nyplViewer.factory('FirebaseStorageModel', function (firebase, Auth) {
             var firebaseUser = Auth.authObj.$getAuth();
             var themesRef = firebase.database().ref('users').child(firebaseUser.uid).child("themes").push();
             themesRef.set(theme);
+            
+            var submittedThemesRef = firebase.database().ref("submittedThemes").push();
+            submittedThemesRef.set(theme);
             //some more user data      
+        },
+        createDefaultTheme: function (theme) {
+            var firebaseUser = Auth.authObj.$getAuth();
+            var themesRef = firebase.database().ref("defaultThemes").push();
+            themesRef.set(theme);
+            //some more user data      
+        },
+        deleteSubmittedTheme: function (theme) {
+            var firebaseUser = Auth.authObj.$getAuth();
+            firebase.database().ref("submittedThemes").child(theme.id).remove();   
         },
         editTheme: function (theme) {
             var firebaseUser = Auth.authObj.$getAuth();

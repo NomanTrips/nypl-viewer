@@ -49,36 +49,20 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
         controllerAs: 'imageViewer',
         params: { myParam: null },
       })
-      .state('adminLogin', {
-        url:'/adminLogin',
-        templateUrl: 'src/admin/login.html',
-        controller: 'AdminLoginCtrl',
-        controllerAs: 'adminLogin'
-      })
       .state('admin', {
         url:'/admin',
         templateUrl: 'src/admin/admin.html',
         controller: 'AdminCtrl',
         controllerAs: 'admin',
         resolve: {
-          'currentUser': ['Auth', function (Auth) {
-            return Auth.$requireAuth();
+          // controller will not be loaded until $waitForSignIn resolves
+          // Auth refers to our $firebaseAuth wrapper in the factory below
+          "currentAuth": ["Auth", function (Auth) {
+            // $waitForSignIn returns a promise so the resolve waits for it to complete
+            return Auth.authObj.$waitForSignIn();
           }]
         }
       });
-  })
-   .run(function ($rootScope, $location, Auth) {
-    // Redirect to login if route requires auth and you're not logged in
-        $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
-          Auth.isLoggedInAdmin(function(loggedIn) {
-            console.log(toState);
-            if (toState == 'admin' && !loggedIn) {
-                  $rootScope.returnToState = toState.url;
-                  $rootScope.returnToStateParams = toParams.Id;
-                  $location.path('/adminLogin');
-              }
-          });
-        });
   })
   .directive('stickyLoadingbar', function ($mdSticky, $compile) {
     var LOADINGBAR_TEMPLATE =
@@ -121,6 +105,7 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
         .icon("add", "./assets/svg/add.svg", 24)
         .icon("edit", "./assets/svg/edit.svg", 24)
         .icon("delete", "./assets/svg/delete.svg", 24)
+        .icon("bookmark", "./assets/svg/bookmark.svg", 24)
         .icon("phone", "./assets/svg/phone.svg", 24);
 
       $mdThemingProvider.theme('default')

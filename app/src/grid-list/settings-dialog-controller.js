@@ -1,7 +1,7 @@
 'use strict';
 
 nyplViewer.controller('SettingsDialogCtrl',
-  function ($mdDialog, lodash, DatabaseConnection, $q, NyplApiCalls, $mdToast) {
+  function ($mdDialog, lodash, DatabaseConnection, $q, NyplApiCalls, $mdToast, FirebaseStorageModel) {
     var ctrl = this;
     ctrl.readonly = false;
     ctrl.selectedItem = null;
@@ -42,15 +42,20 @@ nyplViewer.controller('SettingsDialogCtrl',
 
     ctrl.getThemes = function () {
       ctrl.themes = [];
-      var deferred = $q.defer();
-      DatabaseConnection.getThemes().then(function (results) {
+      DatabaseConnection.getThemes().then(function (results) { // first get user's themes
         lodash.forEach(results, function (value, key) {
           value['id'] = key
+          value['isDefault'] = false;
           ctrl.themes.push(value);
         });
-        deferred.resolve();
       })
-      return deferred.promise;
+      FirebaseStorageModel.getDefaultThemes().then(function (results) { // then get default themes
+        lodash.forEach(results, function (value, key) {
+          value['id'] = key
+          value['isDefault'] = true;
+          ctrl.themes.push(value);
+        });
+      })
     }
 
     ctrl.showToast = function (text) {
