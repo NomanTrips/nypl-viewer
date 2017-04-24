@@ -20,7 +20,7 @@
                                 md-items="item in settingsCtrl.querySearch(settingsCtrl.searchText) | orderBy:'name'" md-item-text="item.name" placeholder="Search..."
                                 md-selected-item-change="settingsCtrl.selectedItemChange(item)" md-min-length="0">
                                 <md-item-template>
-                                    <span class="highlight" md-highlight-text="settingsCtrl.searchText" md-highlight-flags="i">{{item.name}}</span>
+                                    <span md-highlight-text="settingsCtrl.searchText" md-highlight-flags="i">{{item.name}}</span>
                                     <md-icon ng-show="item.isDefault" md-svg-icon="bookmark"></md-icon>
                                     <span ng-show="item.isDefault"><i>Default</i></span>
                                 </md-item-template>

@@ -132,6 +132,11 @@ span.name {
   padding-left: 5px;
 }
 
+span.highlight {
+  font-weight: bold;
+  font-style: italic;
+}
+
 
 .gridListdemoDynamicTiles md-icon {
   width: 50%;
