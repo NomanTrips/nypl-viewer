@@ -41,6 +41,11 @@ nyplViewer.controller('SettingsDialogCtrl',
       return results;
     }
 
+    ctrl.querySearch = function (query) {
+      var results = query ? ctrl.filter(query) : ctrl.themes;
+      return results;
+    }
+
     ctrl.getThemes = function () {
       ctrl.themes = [];
       DatabaseConnection.getThemes().then(function (results) { // first get user's themes

@@ -17,8 +17,8 @@
                     <div layout="row" flex layout-padding="">
                         <div flex="75">
                             <md-autocomplete md-selected-item="settingsCtrl.selectedItem" md-search-text="settingsCtrl.searchText" md-search-text-change="ctrl.searchTextChange(ctrl.searchText)"
-                                md-items="item in settingsCtrl.filter(settingsCtrl.searchText)" md-item-text="item.name" placeholder="Search..."
-                                md-selected-item-change="settingsCtrl.selectedItemChange(item)" md-min-length="2">
+                                md-items="item in settingsCtrl.querySearch(settingsCtrl.searchText) | orderBy:'name'" md-item-text="item.name" placeholder="Search..."
+                                md-selected-item-change="settingsCtrl.selectedItemChange(item)" md-min-length="0">
                                 <md-item-template>
                                     <span class="highlight" md-highlight-text="settingsCtrl.searchText" md-highlight-flags="i">{{item.name}}</span>
                                     <md-icon ng-show="item.isDefault" md-svg-icon="bookmark"></md-icon>
