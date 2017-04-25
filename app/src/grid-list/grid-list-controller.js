@@ -101,6 +101,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
 
     ctrl.authItems = {
         default: { name: "Default user", icon: "account", direction: "bottom", show: "true", username: "", tooltip: "Signed in as the Default user." },
+        anonymous: { name: "Anonymous", icon: "account", direction: "bottom", show: "true", username: "", tooltip: "Signed in Anonymously." },
         google: { name: "Google", icon: "google", direction: "top", show: "true", username: "", tooltip: "" },
         signout: { name: "Sign out", icon: "sign-out", direction: "bottom", show: "false" }
     };
@@ -118,14 +119,24 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         } else {
             Auth.authenticate(authItem.name).then(function (result) {
                 if (result.user != undefined) {
-                    console.log("Signed in as:", result.user.uid);
-                    ctrl.authItems.default.show = false;
-                    ctrl.authItems.google.show = false;
-                    ctrl.authItems.signout.show = true;
-                    var TruncatedUserName = result.user.displayName.substring(0, 1);
-                    ctrl.authItems.google.tooltip = "Signed in with Google: " + result.user.email;
-                    ctrl.authItems.google.username = TruncatedUserName;
-                    ctrl.account = ctrl.authItems.google;
+                    console.log("Signed in as:", result.user);
+                    if (result.user.isAnonymous) {
+                        ctrl.authItems.default.show = false;
+                        ctrl.authItems.google.show = false;
+                        ctrl.authItems.anonymous.show = false;
+                        ctrl.authItems.signout.show = true;
+                        ctrl.authItems.google.username = TruncatedUserName;
+                        ctrl.account = ctrl.authItems.anonymous;
+                    } else {
+                        ctrl.authItems.default.show = false;
+                        ctrl.authItems.google.show = false;
+                        ctrl.authItems.signout.show = true;
+                        var TruncatedUserName = result.user.displayName.substring(0, 1);
+                        ctrl.authItems.google.tooltip = "Signed in with Google: " + result.user.email;
+                        ctrl.authItems.google.username = TruncatedUserName;
+                        ctrl.account = ctrl.authItems.google;
+                    }
+
                 } else {
                     console.log(result.errorCode + ' ' + result.errorMessage);
                 }
@@ -237,7 +248,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         ctrl.apiLoadCount = 0;
         if ($stateParams.searchTerms != null && ctrl.isInitialLoad == true) { // theme via url and not firebase
             var searchName = '';
-            if ($stateParams.themeName == null){
+            if ($stateParams.themeName == null) {
                 ctrl.searchText = $stateParams.searchTerms;
                 ctrl.isSearchByThemeModeOn = false;
             } else {
@@ -524,16 +535,24 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
             console.log("Signed in as:", firebaseUser.uid);
             ctrl.authItems.default.show = false;
             ctrl.authItems.google.show = false;
-            //ctrl.authItems.github.show = false;
+            ctrl.authItems.anonymous.show = false;
             ctrl.authItems.signout.show = true;
-            var TruncatedUserName = firebaseUser.displayName.substring(0, 1);
-            ctrl.authItems.google.tooltip = "Signed in with Google: " + firebaseUser.email;
-            ctrl.authItems.google.username = TruncatedUserName;
-            ctrl.account = ctrl.authItems.google;
+            if (firebaseUser.isAnonymous) {
+                ctrl.account = ctrl.authItems.anonymous;
+            } else {
+                var TruncatedUserName = firebaseUser.displayName.substring(0, 1);
+                ctrl.authItems.google.tooltip = "Signed in with Google: " + firebaseUser.email;
+                ctrl.authItems.google.username = TruncatedUserName;
+                ctrl.account = ctrl.authItems.google;
+            }
+
         } else {
-            ctrl.authItems.signout.show = false;
-            ctrl.account = ctrl.authItems.default;
-            console.log("Signed out");
+            Auth.authenticate('Anonymous').then(function (result) {
+                ctrl.authItems.signout.show = false;
+                ctrl.account = ctrl.authItems.anonymous;
+                console.log("Logged in as Anonymous");
+            });
+
         }
 
     }

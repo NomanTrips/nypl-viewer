@@ -49,6 +49,17 @@ nyplViewer.factory('Auth', function (firebase, $firebaseAuth, $firebaseObject) {
                 }).catch(function (error) {
                     return error;
                 });
+            } else if (authMethod == 'Anonymous'){
+                return firebase.auth().signInAnonymously().then(function (result) {
+                    return result;
+                })
+                .catch(function (error) {
+                    // Handle Errors here.
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    return error;
+                    // ...
+                });
             }
         },
         saveSettings: function (settingsData) {
@@ -64,21 +75,6 @@ nyplViewer.factory('Auth', function (firebase, $firebaseAuth, $firebaseObject) {
                 var settings = snapshot.val();
                 return settings;
             })
-        },
-        isLoggedInAdmin: function (uname, password) {
-            var firebaseUser = factory.authObj.$getAuth();
-            return firebase.database().ref('admin').child('credentials').once('value').then(function (snapshot) {
-                var creds = snapshot.val();
-                if (uname === creds.username && password === creds.password){
-                    return true;
-                } else {
-                    return false;
-                }
-
-            }).catch(function (error) {
-                console.log(error);
-                return false;
-            });
         },
         authObj: factory.authObj
     }
