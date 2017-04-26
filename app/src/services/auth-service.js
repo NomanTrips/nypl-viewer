@@ -15,9 +15,10 @@ nyplViewer.factory('Auth', function (firebase, $firebaseAuth, $firebaseObject) {
     firebase.initializeApp(config);
     factory.authObj = $firebaseAuth();
 
-    factory.writeUserData = function (userId, name, email) {
-        firebase.database().ref('users/' + userId).set({
-            name: name,
+    factory.writeUserData = function (uid, displayName, email) {
+        console.log('write user data');
+        firebase.database().ref('users/' + uid).set({
+            name: displayName,
             email: email,
             themes: [],
             selectedTheme: {}
@@ -25,8 +26,8 @@ nyplViewer.factory('Auth', function (firebase, $firebaseAuth, $firebaseObject) {
     }
 
     //var rootRef = firebase.database().ref();
-    factory.checkForFirstTime = function (userId) {
-        firebase.database().ref('users').child(userId).once('value', function (snapshot) {
+    factory.checkForFirstTime = function (uid) {
+        firebase.database().ref('users').child(uid).once('value', function (snapshot) {
             var exists = (snapshot.val() !== null);
             if (exists) {
                 return true;
@@ -40,9 +41,12 @@ nyplViewer.factory('Auth', function (firebase, $firebaseAuth, $firebaseObject) {
         authenticate: function (authMethod) {
             if (authMethod == 'Google') {
                 return factory.authObj.$signInWithPopup("google").then(function (result) {
-                    if (!factory.checkForFirstTime(result.user.uid)) {
+                    if (!factory.checkForFirstTime(uid)) {
                         var user = result.user;
-                        factory.writeUserData(user.uid, user.displayName, user.email);
+                        var uid = user.uid;
+                        var displayName = user.displayName;
+                        var email = user.email;
+                        factory.writeUserData(uid, displayName, email);
                     }
                     return result;
                     // ...
@@ -51,10 +55,18 @@ nyplViewer.factory('Auth', function (firebase, $firebaseAuth, $firebaseObject) {
                 });
             } else if (authMethod == 'Anonymous'){
                 return firebase.auth().signInAnonymously().then(function (result) {
+                    var uid = result.uid;
+                    var displayName = result.displayName;
+                    var email = result.email;
+                    if (!factory.checkForFirstTime(uid)) {
+                        var user = result.user;
+                        factory.writeUserData(uid, displayName, email);
+                    }
                     return result;
                 })
                 .catch(function (error) {
                     // Handle Errors here.
+                    console.log(error);
                     var errorCode = error.code;
                     var errorMessage = error.message;
                     return error;
