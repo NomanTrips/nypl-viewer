@@ -1,6 +1,6 @@
 'use strict';
 
-nyplViewer.factory('Auth', function (firebase, $firebaseAuth, $firebaseObject) {
+nyplViewer.factory('Auth', function (firebase, $firebaseAuth, $firebaseObject, lodash) {
     var factory = this;
 
     // Initialize Firebase
@@ -15,18 +15,33 @@ nyplViewer.factory('Auth', function (firebase, $firebaseAuth, $firebaseObject) {
     firebase.initializeApp(config);
     factory.authObj = $firebaseAuth();
 
+    factory.getDefaultThemes = function () {
+        var firebaseUser = factory.authObj.$getAuth();
+        return firebase.database().ref("defaultThemes").once('value').then(function (snapshot) {
+            //firebase.database().ref('themes').once('value').then(function (snapshot) {
+            var themes = snapshot.val();
+            return themes;
+        })
+    }
+
     factory.writeUserData = function (uid, displayName, email) {
-        console.log('write user data');
-        firebase.database().ref('users/' + uid).set({
-            name: displayName,
-            email: email,
-            themes: [],
-            selectedTheme: {}
-        });
+        factory.getDefaultThemes().then(function (results) { // then get default themes
+            var randomTheme = lodash.sample(results);
+            console.log(uid);
+            console.log(randomTheme);
+            firebase.database().ref('users/' + uid).set({
+                name: displayName,
+                email: email,
+                themes: [],
+                selectedTheme: {}
+            });
+        })
+
     }
 
     //var rootRef = firebase.database().ref();
     factory.checkForFirstTime = function (uid) {
+
         firebase.database().ref('users').child(uid).once('value', function (snapshot) {
             var exists = (snapshot.val() !== null);
             if (exists) {
@@ -53,7 +68,7 @@ nyplViewer.factory('Auth', function (firebase, $firebaseAuth, $firebaseObject) {
                 }).catch(function (error) {
                     return error;
                 });
-            } else if (authMethod == 'Anonymous'){
+            } else if (authMethod == 'Anonymous') {
                 return firebase.auth().signInAnonymously().then(function (result) {
                     var uid = result.uid;
                     var displayName = result.displayName;
@@ -64,14 +79,14 @@ nyplViewer.factory('Auth', function (firebase, $firebaseAuth, $firebaseObject) {
                     }
                     return result;
                 })
-                .catch(function (error) {
-                    // Handle Errors here.
-                    console.log(error);
-                    var errorCode = error.code;
-                    var errorMessage = error.message;
-                    return error;
-                    // ...
-                });
+                    .catch(function (error) {
+                        // Handle Errors here.
+                        console.log(error);
+                        var errorCode = error.code;
+                        var errorMessage = error.message;
+                        return error;
+                        // ...
+                    });
             }
         },
         saveSettings: function (settingsData) {
@@ -91,4 +106,3 @@ nyplViewer.factory('Auth', function (firebase, $firebaseAuth, $firebaseObject) {
         authObj: factory.authObj
     }
 });
-

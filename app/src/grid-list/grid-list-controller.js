@@ -1,4 +1,4 @@
-nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $location, $state, $scope, $mdMedia, $mdDialog, lodash, $mdToast, Auth, DatabaseConnection, $stateParams) {
+nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $location, $state, $scope, $mdMedia, $mdDialog, lodash, $mdToast, Auth, $stateParams, FirebaseStorageModel) {
 
     ctrl = this;
     ctrl.searchText = '';
@@ -65,6 +65,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         ]
     };
 */
+    
     ctrl.searchItems = [];
     ctrl.searchResults = [];
     var originatorEv;
@@ -76,7 +77,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         if (ctrl.interestSearches.length != 0) {
             deferred.resolve();
         } else {
-            DatabaseConnection.getSettings().then(function (settings) {
+            FirebaseStorageModel.getSettings().then(function (settings) {
                 ctrl.settings = settings;
                 if (ctrl.settings == null) {
                     ctrl.selectedInterests = [];
@@ -217,7 +218,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         if (ctrl.theme != null) {
             deferred.resolve();
         } else {
-            DatabaseConnection.getUserInfo().then(function (user) {
+            FirebaseStorageModel.getUserInfo().then(function (user) {
                 if (user.selectedTheme == null) {
                     console.log('No settings available  for this user!');
                 } else {

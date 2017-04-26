@@ -1,7 +1,7 @@
 'use strict';
 
 nyplViewer.controller('SettingsDialogCtrl',
-  function ($mdDialog, lodash, DatabaseConnection, $q, NyplApiCalls, $mdToast, FirebaseStorageModel) {
+  function ($mdDialog, lodash, $q, NyplApiCalls, $mdToast, FirebaseStorageModel) {
     var ctrl = this;
     ctrl.readonly = false;
     ctrl.selectedItem = null;
@@ -48,7 +48,7 @@ nyplViewer.controller('SettingsDialogCtrl',
 
     ctrl.getThemes = function () {
       ctrl.themes = [];
-      DatabaseConnection.getThemes().then(function (results) { // first get user's themes
+      FirebaseStorageModel.getThemes().then(function (results) { // first get user's themes
         lodash.forEach(results, function (value, key) {
           value['id'] = key
           value['isDefault'] = false;
@@ -118,11 +118,11 @@ nyplViewer.controller('SettingsDialogCtrl',
           if (themeJson.isDefault) {
             FirebaseStorageModel.editDefaultTheme(themeJson);
           } else {
-            DatabaseConnection.editTheme(themeJson);
+            FirebaseStorageModel.editTheme(themeJson);
           }
           ctrl.isEditing = false;
         } else {
-          DatabaseConnection.createTheme(themeJson);
+          FirebaseStorageModel.createTheme(themeJson);
           ctrl.isNew = false;
         }
         ctrl.newTheme = {
@@ -170,7 +170,7 @@ nyplViewer.controller('SettingsDialogCtrl',
       if (ctrl.theme != undefined) {
         deferred.resolve();
       } else {
-        DatabaseConnection.getUserInfo().then(function (user) {
+        FirebaseStorageModel.getUserInfo().then(function (user) {
           if (user.selectedTheme == null) {
             console.log('No selected theme for this user!');
           } else {
@@ -192,7 +192,7 @@ nyplViewer.controller('SettingsDialogCtrl',
 
     ctrl.deleteTheme = function () {
       if (ctrl.theme != undefined) {
-        DatabaseConnection.deleteSelectedTheme(ctrl.theme);
+        FirebaseStorageModel.deleteSelectedTheme(ctrl.theme);
         ctrl.showToast('Theme deleted.');
       }
     }
@@ -217,7 +217,7 @@ nyplViewer.controller('SettingsDialogCtrl',
       if (ctrl.theme != undefined) {
         var themeStr = angular.toJson(ctrl.theme);
         var themeJson = JSON.parse(themeStr); // Workaround to strip $$hash key from the properties
-        DatabaseConnection.saveSelectedTheme(themeJson);
+        FirebaseStorageModel.saveSelectedTheme(themeJson);
         $mdDialog.hide();
       } else {
         ctrl.showToast('No theme selected. Save failed!');
