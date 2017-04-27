@@ -536,9 +536,9 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
             console.log("Signed in as:", firebaseUser.uid);
             ctrl.authItems.default.show = false;
             ctrl.authItems.google.show = false;
-            ctrl.authItems.anonymous.show = false;
             ctrl.authItems.signout.show = true;
             if (firebaseUser.isAnonymous) {
+                ctrl.authItems.anonymous.show = true;
                 ctrl.account = ctrl.authItems.anonymous;
             } else {
                 var TruncatedUserName = firebaseUser.displayName.substring(0, 1);
