@@ -123,7 +123,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
                     console.log("Signed in as:", result.user);
                     if (result.user.isAnonymous) {
                         ctrl.authItems.default.show = false;
-                        ctrl.authItems.google.show = false;
+                        ctrl.authItems.google.show = true;
                         ctrl.authItems.anonymous.show = false;
                         ctrl.authItems.signout.show = true;
                         ctrl.authItems.google.username = TruncatedUserName;
@@ -539,6 +539,8 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
             ctrl.authItems.google.show = false;
             ctrl.authItems.signout.show = true;
             if (firebaseUser.isAnonymous) {
+                ctrl.authItems.google.show = true;
+                ctrl.authItems.signout.show = true;
                 ctrl.authItems.anonymous.show = true;
                 ctrl.account = ctrl.authItems.anonymous;
             } else {
