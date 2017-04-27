@@ -33,7 +33,7 @@ nyplViewer.factory('Auth', function (firebase, $firebaseAuth, $firebaseObject, l
                 name: displayName,
                 email: email,
                 themes: [],
-                selectedTheme: {}
+                selectedTheme: randomTheme
             });
         })
 

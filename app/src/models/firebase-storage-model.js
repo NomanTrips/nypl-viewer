@@ -16,6 +16,7 @@ nyplViewer.factory('FirebaseStorageModel', function (firebase, Auth) {
         },
         getUserInfo: function () {
             var firebaseUser = Auth.authObj.$getAuth();
+            console.log(firebaseUser);
             return firebase.database().ref('users').child(firebaseUser.uid).once('value').then(function (snapshot) {
                 var user = snapshot.val();
                 return user;
