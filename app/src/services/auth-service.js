@@ -27,8 +27,6 @@ nyplViewer.factory('Auth', function (firebase, $firebaseAuth, $firebaseObject, l
     factory.writeUserData = function (uid, displayName, email) {
         factory.getDefaultThemes().then(function (results) { // then get default themes
             var randomTheme = lodash.sample(results);
-            console.log(uid);
-            console.log(randomTheme);
             firebase.database().ref('users/' + uid).set({
                 name: displayName,
                 email: email,

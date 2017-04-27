@@ -215,7 +215,8 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
 
     ctrl.getTheme = function () {
         deferred = $q.defer();
-        if (ctrl.theme != null) {
+        var firebaseUser = Auth.authObj.$getAuth();
+        if (ctrl.theme != null || ! firebaseUser) {
             deferred.resolve();
         } else {
             FirebaseStorageModel.getUserInfo().then(function (user) {
