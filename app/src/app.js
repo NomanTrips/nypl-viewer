@@ -81,48 +81,104 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
       }
     };
   })
-.controller('ListBottomSheetCtrl', function($scope, $mdBottomSheet) {
+  .controller('ListBottomSheetCtrl', function ($scope, $mdBottomSheet) {
 
-  $scope.items = [
-    { name: 'Share', icon: 'share-arrow' },
-    { name: 'Upload', icon: 'upload' },
-    { name: 'Copy', icon: 'copy' },
-    { name: 'Print this page', icon: 'print' },
-  ];
+    $scope.items = [
+      { name: 'Share', icon: 'share-arrow' },
+      { name: 'Upload', icon: 'upload' },
+      { name: 'Copy', icon: 'copy' },
+      { name: 'Print this page', icon: 'print' },
+    ];
 
-  $scope.listItemClick = function($index) {
-    var clickedItem = $scope.items[$index];
-    $mdBottomSheet.hide(clickedItem);
-  };
-})
-  .directive('picViewer', function ($compile, $timeout, $mdBottomSheet, $mdToast, $mdDialog) {
+    $scope.listItemClick = function ($index) {
+      var clickedItem = $scope.items[$index];
+      $mdBottomSheet.hide(clickedItem);
+    };
+  })
+  .directive('picViewer', function ($compile, $timeout, $mdBottomSheet, $mdToast, $mdDialog, NyplApiCalls) {
     return {
-      restrict: 'A',
+      restrict: 'AE',
       scope: {
-        dataoriginal: '='
+        dataoriginal: '=',
       },
       link: function (scope, elem, attrs) {
+        scope.metadata = {};
+        scope.title;
+        scope.names;
+        scope.collection;
+        scope.startDate;
+        scope.endDate;
+        scope.physicalDescription;
+        scope.notes;
+        scope.genre;
         scope.showMeta = false;
+        scope.showMetaData = function () {
+          NyplApiCalls.getDetail(JSON.parse(attrs.picMetadata)).then(function (result) {
+            scope.metadata = result;
+            try {
+              scope.title = scope.metadata.nyplAPI.response.mods.titleInfo.title.$;
+            }
+            catch (err) {
+              scope.title = '';
+            }
+            try {
+              scope.names = scope.metadata.nyplAPI.response.mods.subject[0].name.namePart.$;
+            }
+            catch (err) {
+              scope.names = '';
+            }
+            try {
+              scope.collection = scope.metadata.nyplAPI.response.mods.location[0].physicalLocation[2].$;
+            }
+            catch (err) {
+              scope.collection = '';
+            }
+            try {
+              scope.startDate = scope.metadata.nyplAPI.response.mods.originInfo.dateCreated[0].$;
+            }
+            catch (err) {
+              scope.startDate = '';
+            }
+            try {
+              scope.endDate = scope.metadata.nyplAPI.response.mods.originInfo.dateCreated[1].$;
+            }
+            catch (err) {
+              scope.endDate = '';
+            }
+            try {
+              scope.notes = scope.metadata.nyplAPI.response.mods.note[2].$;
+            }
+            catch (err) {
+              scope.notes = '';
+            }
+            try {
+              scope.genre = scope.metadata.nyplAPI.response.mods.genre.$;
+            }
+            catch (err) {
+              scope.genre = '';
+            }
+            
+            scope.physicalDescription = '';
 
-        scope.showMetaData = function (){
-          console.log('running');
+          });
+
           scope.showMeta = !scope.showMeta;
         }
-       
+
         scope.showListBottomSheet = function (ev) {
           console.log('firing bottom sheet');
-        $mdDialog.show({
+          $mdDialog.show({
             controller: 'ListBottomSheetCtrl',
             templateUrl: 'src/grid-list/bottom-sheet-list-template.html',
             parent: angular.element(document.body),
             targetEvent: ev,
             clickOutsideToClose: true,
             fullscreen: true
-        })
+          })
             .then(function (answer) {
-                scope.status = 'You said the information was "' + answer + '".';
+              scope.status = 'You said the information was "' + answer + '".';
             }, function () {
-                scope.status = 'You cancelled the dialog.';
+              scope.status = 'You cancelled the dialog.';
             });
           /*
           scope.alert = '';

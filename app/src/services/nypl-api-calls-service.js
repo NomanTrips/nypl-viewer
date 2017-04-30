@@ -1,4 +1,4 @@
-nyplViewer.factory('NyplApiCalls', function ($http, $q, $base64) {
+nyplViewer.factory('NyplApiCalls', function ($http, $q, $base64, lodash) {
     var factory = this;
     factory.page = 1;
     factory.resultCount = 0;
@@ -86,6 +86,20 @@ nyplViewer.factory('NyplApiCalls', function ($http, $q, $base64) {
                 deferred.resolve(image);
             }, function errorCallback(response) {
                 console.log('error in servive');
+                deferred.reject(response);
+            });
+            return deferred.promise;
+        },
+        getDetail: function (item) {
+            var deferred = $q.defer();
+            var nyplUrl = 'http://localhost:3000/api/' + lodash.trim(item.apiItemDetailURL, 'http://api.repo.nypl.org');
+        
+            $http(buildHttpRequest(nyplUrl), { headers: headers }).then(function successCallback(response) {
+                console.log(response);
+                var data = response.data;
+                deferred.resolve(data);
+            }, function errorCallback(response) {
+                console.log('error in service');
                 deferred.reject(response);
             });
             return deferred.promise;
