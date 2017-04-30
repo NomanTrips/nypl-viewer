@@ -50,7 +50,7 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
         params: { myParam: null },
       })
       .state('admin', {
-        url:'/admin',
+        url: '/admin',
         templateUrl: 'src/admin/admin.html',
         controller: 'AdminCtrl',
         controllerAs: 'admin',
@@ -80,6 +80,122 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
         $mdSticky(scope, element, $compile(LOADINGBAR_TEMPLATE)(scope));
       }
     };
+  })
+.controller('ListBottomSheetCtrl', function($scope, $mdBottomSheet) {
+
+  $scope.items = [
+    { name: 'Share', icon: 'share-arrow' },
+    { name: 'Upload', icon: 'upload' },
+    { name: 'Copy', icon: 'copy' },
+    { name: 'Print this page', icon: 'print' },
+  ];
+
+  $scope.listItemClick = function($index) {
+    var clickedItem = $scope.items[$index];
+    $mdBottomSheet.hide(clickedItem);
+  };
+})
+  .directive('picViewer', function ($compile, $timeout, $mdBottomSheet, $mdToast, $mdDialog) {
+    return {
+      restrict: 'A',
+      scope: {
+        dataoriginal: '='
+      },
+      link: function (scope, elem, attrs) {
+        scope.showMeta = false;
+
+        scope.showMetaData = function (){
+          console.log('running');
+          scope.showMeta = !scope.showMeta;
+        }
+       
+        scope.showListBottomSheet = function (ev) {
+          console.log('firing bottom sheet');
+        $mdDialog.show({
+            controller: 'ListBottomSheetCtrl',
+            templateUrl: 'src/grid-list/bottom-sheet-list-template.html',
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: true,
+            fullscreen: true
+        })
+            .then(function (answer) {
+                scope.status = 'You said the information was "' + answer + '".';
+            }, function () {
+                scope.status = 'You cancelled the dialog.';
+            });
+          /*
+          scope.alert = '';
+          $mdBottomSheet.show({
+            templateUrl: 'src/grid-list/bottom-sheet-list-template.html',
+            controller: 'ListBottomSheetCtrl'
+          }).then(function (clickedItem) {
+            scope.alert = clickedItem['name'] + ' clicked!';
+          }).catch(function (error) {
+            // User clicked outside or hit escape
+          });
+          */
+        };
+
+        scope.logThis = function () {
+          console.log('king jubba');
+        }
+        var showViewer = function () {
+          var options = {
+            //minHeight: 500,
+            //minWidth: element.offsetWidth,
+            url: scope.original,
+            inline: false,
+            build: function (e) {
+              // console.log(e.type);
+
+              // ctrl.isViewerBuilt = false;
+            },
+            built: function (e) {
+              //var myEl = angular.element(elem[0].querySelector('.viewer-container'));
+              var myEl = document.getElementsByClassName("viewer-container");
+              var wrappedResult = angular.element(myEl);
+              /*
+        $(".viewer-container").each(function () {
+          console.log('running this');
+          var content = $(this);
+          angular.element(document).injector().invoke(function ($compile) {
+            var viewerscope = angular.element(content).scope();
+            $compile(content)(viewerscope);
+          });
+        });*/
+              console.log(wrappedResult);
+              $compile(wrappedResult)(scope);
+
+              // ctrl.isViewerBuilt = true;
+              scope.$apply();
+            },
+          };
+
+          $(elem).viewer(options);
+
+        }
+        var viewer;
+
+        // $compile(elem.viewer)(scope);
+        //elem.viewer("shown", function () {
+        //  console.log(this.viewer === viewer);
+        //console.log('done building');
+        //  $compile(this.viewer)(scope);
+        //});
+        elem.bind('click', function () {
+          console.log('jubba');
+          showViewer();
+        });
+
+      }
+    };
+  })
+  .controller('MyCtrl', function ($scope) {
+    $scope.anyFunc = function (var1, var2) {
+      alert("I am var1 = " + var1);
+      alert("I am var2 = " + var2);
+    }
   })
   .config(
   [
