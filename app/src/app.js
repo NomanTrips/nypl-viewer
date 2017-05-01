@@ -106,13 +106,32 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
         scope.title;
         scope.names;
         scope.collection;
-        scope.startDate;
-        scope.endDate;
+        //scope.startDate;
+        //scope.endDate;
+        scope.originInfo;
         scope.physicalDescription;
         scope.notes;
-        scope.genre;
+        scope.genres;
         scope.showMeta = false;
+        scope.values = '';
+        
+        scope.recursJsonPrint = function (obj) {
+          for (var key in obj) {
+            if (typeof (obj[key]) == 'object') {
+              scope.recursJsonPrint(obj[key]);
+            } else {
+              if (key == '$'){
+                scope.values = scope.values + (obj[key]) +' ';
+              }
+
+              //alert("Key: " + key + " Values: " + obj[key]);
+            }
+          }
+          return scope.values;
+        }
+
         scope.showMetaData = function () {
+          console.log(JSON.parse(attrs.picMetadata));
           NyplApiCalls.getDetail(JSON.parse(attrs.picMetadata)).then(function (result) {
             scope.metadata = result;
             try {
@@ -134,30 +153,64 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
               scope.collection = '';
             }
             try {
-              scope.startDate = scope.metadata.nyplAPI.response.mods.originInfo.dateCreated[0].$;
+              scope.values = '';
+              scope.originInfo = scope.recursJsonPrint(scope.metadata.nyplAPI.response.mods.originInfo);
+              //if (scope.metadata.nyplAPI.response.mods.originInfo.dateIssued.$ != undefined) {
+              //  scope.startDate = scope.metadata.nyplAPI.response.mods.originInfo.dateIssued.$
+             // } else if (scope.metadata.nyplAPI.response.mods.originInfo.dateCreated[0].$ != undefined) {
+              //  scope.startDate = scope.metadata.nyplAPI.response.mods.originInfo.dateCreated[0].$;
+              //}
+
             }
             catch (err) {
-              scope.startDate = '';
+              console.log(err);
+              scope.originInfo = '';
             }
+            /*
             try {
               scope.endDate = scope.metadata.nyplAPI.response.mods.originInfo.dateCreated[1].$;
             }
             catch (err) {
               scope.endDate = '';
             }
+            */
             try {
-              scope.notes = scope.metadata.nyplAPI.response.mods.note[2].$;
+              scope.values = '';
+              scope.notes = scope.recursJsonPrint(scope.metadata.nyplAPI.response.mods.note);
+              //var notes = '';
+              //angular.forEach(scope.metadata.nyplAPI.response.mods.note, function (note) {
+                //notes = notes + '  ' + note.$;
+              //})
+             // scope.notes = notes;
             }
             catch (err) {
               scope.notes = '';
             }
             try {
-              scope.genre = scope.metadata.nyplAPI.response.mods.genre.$;
+              scope.values = '';
+              scope.topics = scope.recursJsonPrint(scope.metadata.nyplAPI.response.mods.subject);
+              //var topics = '';
+              //angular.forEach(scope.metadata.nyplAPI.response.mods.subject, function (subject) {
+              //  topics = topics + ',' + subject.topic.$;
+              //})
+              //scope.topics = topics;
             }
             catch (err) {
-              scope.genre = '';
+              scope.topics = '';
             }
-            
+            try {
+              scope.values = '';
+              scope.genres = scope.recursJsonPrint(scope.metadata.nyplAPI.response.mods.genre);
+              //var genres = '';
+              //angular.forEach(scope.metadata.nyplAPI.response.mods.genre, function (genre) {
+               // genres = genres + ',' + genre.$;
+              //})
+              //scope.genres = genres;
+            }
+            catch (err) {
+              scope.genres = '';
+            }
+
             scope.physicalDescription = '';
 
           });
