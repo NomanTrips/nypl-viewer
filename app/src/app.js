@@ -114,14 +114,14 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
         scope.genres;
         scope.showMeta = false;
         scope.values = '';
-        
+
         scope.recursJsonPrint = function (obj) {
           for (var key in obj) {
             if (typeof (obj[key]) == 'object') {
               scope.recursJsonPrint(obj[key]);
             } else {
-              if (key == '$'){
-                scope.values = scope.values + (obj[key]) +' ';
+              if (key == '$') {
+                scope.values = scope.values + (obj[key]) + ' ';
               }
 
               //alert("Key: " + key + " Values: " + obj[key]);
@@ -135,21 +135,35 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
           NyplApiCalls.getDetail(JSON.parse(attrs.picMetadata)).then(function (result) {
             scope.metadata = result.nyplAPI.response.mods;
             try {
-              scope.title = scope.metadata.nyplAPI.response.mods.titleInfo.title.$;
+              scope.title = scope.metadata.titleInfo.title.$;
             }
             catch (err) {
               scope.title = '';
             }
             try {
-              if (scope.metadata.originInfo.hasOwnProperty('subject')){
-                if (scope.metadata.originInfo.subject.hasOwnProperty('name')){
-                  scope.names = scope.metadata.nyplAPI.response.mods.subject[0].name.namePart.$;
-                }
+
+              scope.values = '';
+              scope.subjectsStr = '';
+              if (scope.metadata.hasOwnProperty('subject')) {
+                angular.forEach(scope.metadata.subject, function (subject) {
+                  if (subject.hasOwnProperty('name')) {
+                    scope.subjectsStr = scope.subjectsStr + 'Name: ' + subject.name.namePart.$;
+                  }
+                  
+                  if (subject.hasOwnProperty('topic')) {
+                    scope.subjectsStr = scope.subjectsStr + 'Topic: ' + subject.topic.$ + ' ';
+                  }
+
+                  if (subject.hasOwnProperty('geographic')) {
+                    scope.subjectsStr = scope.subjectsStr + 'Geographic: ' + subject.geographic.$;
+                  }
+
+                })
               }
- 
+
             }
             catch (err) {
-              scope.names = '';
+              scope.subjectsStr = '';
             }
             try {
               scope.collection = scope.metadata.nyplAPI.response.mods.location[0].physicalLocation[2].$;
@@ -159,29 +173,34 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
             }
             try {
               scope.values = '';
-              if (scope.metadata.originInfo.hasOwnProperty('dateIssued')){
-                scope.originInfoStr = 'Date issued: ' + scope.metadata.originInfo.dateIssued.$;
-              }
-              if (scope.metadata.originInfo.hasOwnProperty('dateCreated')){
-                if (! Array.isArray(scope.metadata.originInfo.dateCreated) ){
-                  scope.originInfoStr = 'Created date: ' + scope.metadata.originInfo.dateCreated.$;
-                } else {
-                  scope.originInfoStr = 'Created date: ';
-                  angular.forEach(scope.metadata.originInfo.dateCreated, function (date) {
-                    if (date.hasOwnProperty('qualifier')){
-                      scope.originInfoStr = scope.originInfoStr + date.qualifier + ' ';
-                    }
-                    if (date.hasOwnProperty('point')){
-                      scope.originInfoStr = scope.originInfoStr + date.point + ' ';
-                    }
-                    if (date.hasOwnProperty('$')){
-                      scope.originInfoStr = scope.originInfoStr + date.$ + ' ';
-                    }
-        
-                  })    
+              if (scope.metadata.hasOwnProperty('originInfo')) {
+                if (scope.metadata.originInfo.hasOwnProperty('place')) {
+                  scope.originInfoStr = 'Place: ' + scope.metadata.originInfo.place.placeTerm.$ + ' ';
+                }
+                if (scope.metadata.originInfo.hasOwnProperty('dateIssued')) {
+                  scope.originInfoStr = 'Date issued: ' + scope.metadata.originInfo.dateIssued.$;
+                }
+                if (scope.metadata.originInfo.hasOwnProperty('dateCreated')) {
+                  if (!Array.isArray(scope.metadata.originInfo.dateCreated)) {
+                    scope.originInfoStr = 'Created date: ' + scope.metadata.originInfo.dateCreated.$;
+                  } else {
+                    scope.originInfoStr = 'Created date: ';
+                    angular.forEach(scope.metadata.originInfo.dateCreated, function (date) {
+                      if (date.hasOwnProperty('qualifier')) {
+                        scope.originInfoStr = scope.originInfoStr + date.qualifier + ' ';
+                      }
+                      if (date.hasOwnProperty('point')) {
+                        scope.originInfoStr = scope.originInfoStr + date.point + ' ';
+                      }
+                      if (date.hasOwnProperty('$')) {
+                        scope.originInfoStr = scope.originInfoStr + date.$ + ' ';
+                      }
+
+                    })
+
+                  }
 
                 }
-
               }
 
             }
@@ -202,9 +221,9 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
               scope.notes = scope.recursJsonPrint(scope.metadata.nyplAPI.response.mods.note);
               //var notes = '';
               //angular.forEach(scope.metadata.nyplAPI.response.mods.note, function (note) {
-                //notes = notes + '  ' + note.$;
+              //notes = notes + '  ' + note.$;
               //})
-             // scope.notes = notes;
+              // scope.notes = notes;
             }
             catch (err) {
               scope.notes = '';
@@ -226,7 +245,7 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
               scope.genres = scope.recursJsonPrint(scope.metadata.nyplAPI.response.mods.genre);
               //var genres = '';
               //angular.forEach(scope.metadata.nyplAPI.response.mods.genre, function (genre) {
-               // genres = genres + ',' + genre.$;
+              // genres = genres + ',' + genre.$;
               //})
               //scope.genres = genres;
             }
