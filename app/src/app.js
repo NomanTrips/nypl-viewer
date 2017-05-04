@@ -133,7 +133,7 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
         scope.showMetaData = function () {
           console.log(JSON.parse(attrs.picMetadata));
           NyplApiCalls.getDetail(JSON.parse(attrs.picMetadata)).then(function (result) {
-            scope.metadata = result;
+            scope.metadata = result.nyplAPI.response.mods;
             try {
               scope.title = scope.metadata.nyplAPI.response.mods.titleInfo.title.$;
             }
@@ -141,7 +141,12 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
               scope.title = '';
             }
             try {
-              scope.names = scope.metadata.nyplAPI.response.mods.subject[0].name.namePart.$;
+              if (scope.metadata.originInfo.hasOwnProperty('subject')){
+                if (scope.metadata.originInfo.subject.hasOwnProperty('name')){
+                  scope.names = scope.metadata.nyplAPI.response.mods.subject[0].name.namePart.$;
+                }
+              }
+ 
             }
             catch (err) {
               scope.names = '';
@@ -154,17 +159,35 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
             }
             try {
               scope.values = '';
-              scope.originInfo = scope.recursJsonPrint(scope.metadata.nyplAPI.response.mods.originInfo);
-              //if (scope.metadata.nyplAPI.response.mods.originInfo.dateIssued.$ != undefined) {
-              //  scope.startDate = scope.metadata.nyplAPI.response.mods.originInfo.dateIssued.$
-             // } else if (scope.metadata.nyplAPI.response.mods.originInfo.dateCreated[0].$ != undefined) {
-              //  scope.startDate = scope.metadata.nyplAPI.response.mods.originInfo.dateCreated[0].$;
-              //}
+              if (scope.metadata.originInfo.hasOwnProperty('dateIssued')){
+                scope.originInfoStr = 'Date issued: ' + scope.metadata.originInfo.dateIssued.$;
+              }
+              if (scope.metadata.originInfo.hasOwnProperty('dateCreated')){
+                if (! Array.isArray(scope.metadata.originInfo.dateCreated) ){
+                  scope.originInfoStr = 'Created date: ' + scope.metadata.originInfo.dateCreated.$;
+                } else {
+                  scope.originInfoStr = 'Created date: ';
+                  angular.forEach(scope.metadata.originInfo.dateCreated, function (date) {
+                    if (date.hasOwnProperty('qualifier')){
+                      scope.originInfoStr = scope.originInfoStr + date.qualifier + ' ';
+                    }
+                    if (date.hasOwnProperty('point')){
+                      scope.originInfoStr = scope.originInfoStr + date.point + ' ';
+                    }
+                    if (date.hasOwnProperty('$')){
+                      scope.originInfoStr = scope.originInfoStr + date.$ + ' ';
+                    }
+        
+                  })    
+
+                }
+
+              }
 
             }
             catch (err) {
               console.log(err);
-              scope.originInfo = '';
+              scope.originInfoStr = '';
             }
             /*
             try {
