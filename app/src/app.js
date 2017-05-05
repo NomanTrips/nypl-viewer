@@ -102,6 +102,8 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
         dataoriginal: '=',
       },
       link: function (scope, elem, attrs) {
+        scope.isLoadingDone = false;
+        scope.infoButtonText = 'Info';
         scope.metadata = {};
         scope.title;
         scope.names;
@@ -131,91 +133,71 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
         }
 
         scope.showMetaData = function () {
+          scope.showMeta = !scope.showMeta;
+          if (scope.showMeta) {
+            scope.infoButtonText = 'Hide info';
+          } else {
+            scope.infoButtonText = 'Info';
+          }
+
           console.log(JSON.parse(attrs.picMetadata));
-          NyplApiCalls.getDetail(JSON.parse(attrs.picMetadata)).then(function (result) {
-            scope.metadata = result.nyplAPI.response.mods;
-            try {
-              scope.title = scope.metadata.titleInfo.title.$;
-            }
-            catch (err) {
-              scope.title = '';
-            }
-            try {
-
-              scope.values = '';
-              scope.subjectsStr = '';
-              if (scope.metadata.hasOwnProperty('subject')) {
-                angular.forEach(scope.metadata.subject, function (subject) {
-                  if (subject.hasOwnProperty('name')) {
-                    scope.subjectsStr = scope.subjectsStr + 'Name: ' + subject.name.namePart.$ + ' ';
-                  }
-
-                  if (subject.hasOwnProperty('topic')) {
-                    scope.subjectsStr = scope.subjectsStr + 'Topic: ' + subject.topic.$ + ' ';
-                  }
-
-                  if (subject.hasOwnProperty('geographic')) {
-                    scope.subjectsStr = scope.subjectsStr + 'Geographic: ' + subject.geographic.$ + ' ';
-                  }
-
-                })
+          if (scope.showMeta) {
+            scope.isLoadingDone = false;
+            NyplApiCalls.getDetail(JSON.parse(attrs.picMetadata)).then(function (result) {
+              scope.metadata = result.nyplAPI.response.mods;
+              try {
+                scope.title = scope.metadata.titleInfo.title.$;
               }
+              catch (err) {
+                scope.title = '';
+              }
+              try {
 
-            }
-            catch (err) {
-              scope.subjectsStr = '';
-            }
-            try {
-              scope.collection = scope.metadata.nyplAPI.response.mods.location[0].physicalLocation[2].$;
-            }
-            catch (err) {
-              scope.collection = '';
-            }
-            try {
-              scope.values = '';
-              if (scope.metadata.hasOwnProperty('originInfo')) {
-                if (!Array.isArray(scope.metadata.originInfo)) {
-                  if (scope.metadata.originInfo.hasOwnProperty('place')) {
-                    scope.originInfoStr = 'Place: ' + scope.metadata.originInfo.place.placeTerm.$ + ' ';
-                  }
-                  if (scope.metadata.originInfo.hasOwnProperty('dateIssued')) {
-                    scope.originInfoStr = 'Date issued: ' + scope.metadata.originInfo.dateIssued.$;
-                  }
-                  if (scope.metadata.originInfo.hasOwnProperty('dateCreated')) {
-                    if (!Array.isArray(scope.metadata.originInfo.dateCreated)) {
-                      scope.originInfoStr = 'Created date: ' + scope.metadata.originInfo.dateCreated.$ + ' ';
-                    } else {
-                      scope.originInfoStr = 'Created date: ';
-                      angular.forEach(scope.metadata.originInfo.dateCreated, function (date) {
-                        if (date.hasOwnProperty('qualifier')) {
-                          scope.originInfoStr = scope.originInfoStr + date.qualifier + ' ';
-                        }
-                        if (date.hasOwnProperty('point')) {
-                          scope.originInfoStr = scope.originInfoStr + date.point + ' ';
-                        }
-                        if (date.hasOwnProperty('$')) {
-                          scope.originInfoStr = scope.originInfoStr + date.$ + ' ';
-                        }
-
-                      })
-
+                scope.values = '';
+                scope.subjectsStr = '';
+                if (scope.metadata.hasOwnProperty('subject')) {
+                  angular.forEach(scope.metadata.subject, function (subject) {
+                    if (subject.hasOwnProperty('name')) {
+                      scope.subjectsStr = scope.subjectsStr + 'Name: ' + subject.name.namePart.$ + ' ';
                     }
 
-                  }
-                } else {
-                  angular.forEach(scope.metadata.originInfo, function (originInfo) {
-                    if (originInfo.hasOwnProperty('place')) {
-                      scope.originInfoStr = 'Place: ' + originInfo.place.placeTerm.$ + ' ';
+                    if (subject.hasOwnProperty('topic')) {
+                      scope.subjectsStr = scope.subjectsStr + 'Topic: ' + subject.topic.$ + ' ';
                     }
-                    if (originInfo.hasOwnProperty('dateIssued')) {
-                      scope.originInfoStr = 'Date issued: ' + originInfo.dateIssued.$;
+
+                    if (subject.hasOwnProperty('geographic')) {
+                      scope.subjectsStr = scope.subjectsStr + 'Geographic: ' + subject.geographic.$ + ' ';
                     }
-                    if (originInfo.hasOwnProperty('dateCreated')) {
-                      if (!Array.isArray(originInfo.dateCreated)) {
-                        scope.originInfoStr = 'Created date: ' + originInfo.dateCreated.$ + ' ';
+
+                  })
+                }
+
+              }
+              catch (err) {
+                scope.subjectsStr = '';
+              }
+              try {
+                scope.collection = scope.metadata.nyplAPI.response.mods.location[0].physicalLocation[2].$;
+              }
+              catch (err) {
+                scope.collection = '';
+              }
+              try {
+                scope.values = '';
+                if (scope.metadata.hasOwnProperty('originInfo')) {
+                  if (!Array.isArray(scope.metadata.originInfo)) {
+                    if (scope.metadata.originInfo.hasOwnProperty('place')) {
+                      scope.originInfoStr = 'Place: ' + scope.metadata.originInfo.place.placeTerm.$ + ' ';
+                    }
+                    if (scope.metadata.originInfo.hasOwnProperty('dateIssued')) {
+                      scope.originInfoStr = 'Date issued: ' + scope.metadata.originInfo.dateIssued.$;
+                    }
+                    if (scope.metadata.originInfo.hasOwnProperty('dateCreated')) {
+                      if (!Array.isArray(scope.metadata.originInfo.dateCreated)) {
+                        scope.originInfoStr = 'Created date: ' + scope.metadata.originInfo.dateCreated.$ + ' ';
                       } else {
                         scope.originInfoStr = 'Created date: ';
-                        angular.forEach(originInfo, function (date) {
+                        angular.forEach(scope.metadata.originInfo.dateCreated, function (date) {
                           if (date.hasOwnProperty('qualifier')) {
                             scope.originInfoStr = scope.originInfoStr + date.qualifier + ' ';
                           }
@@ -231,62 +213,90 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
                       }
 
                     }
-                  })
+                  } else {
+                    angular.forEach(scope.metadata.originInfo, function (originInfo) {
+                      if (originInfo.hasOwnProperty('place')) {
+                        scope.originInfoStr = 'Place: ' + originInfo.place.placeTerm.$ + ' ';
+                      }
+                      if (originInfo.hasOwnProperty('dateIssued')) {
+                        scope.originInfoStr = 'Date issued: ' + originInfo.dateIssued.$;
+                      }
+                      if (originInfo.hasOwnProperty('dateCreated')) {
+                        if (!Array.isArray(originInfo.dateCreated)) {
+                          scope.originInfoStr = 'Created date: ' + originInfo.dateCreated.$ + ' ';
+                        } else {
+                          scope.originInfoStr = 'Created date: ';
+                          angular.forEach(originInfo, function (date) {
+                            if (date.hasOwnProperty('qualifier')) {
+                              scope.originInfoStr = scope.originInfoStr + date.qualifier + ' ';
+                            }
+                            if (date.hasOwnProperty('point')) {
+                              scope.originInfoStr = scope.originInfoStr + date.point + ' ';
+                            }
+                            if (date.hasOwnProperty('$')) {
+                              scope.originInfoStr = scope.originInfoStr + date.$ + ' ';
+                            }
+
+                          })
+
+                        }
+
+                      }
+                    })
+                  }
                 }
+
               }
+              catch (err) {
+                console.log(err);
+                scope.originInfoStr = '';
+              }
+              try {
+                scope.values = '';
 
-            }
-            catch (err) {
-              console.log(err);
-              scope.originInfoStr = '';
-            }
-            try {
-              scope.values = '';
-
-              if (scope.metadata.hasOwnProperty('note')) {
-                scope.noteStr = '';
-                if (!Array.isArray(scope.metadata.note)) {
-                  scope.noteStr = scope.metadata.note.$;
-                } else {
+                if (scope.metadata.hasOwnProperty('note')) {
                   scope.noteStr = '';
-                  angular.forEach(scope.metadata.note, function (note) {
-                    if (note.hasOwnProperty('$')) {
-                      scope.noteStr = scope.noteStr + note.$ + ', ';
-                    }
-                  })
+                  if (!Array.isArray(scope.metadata.note)) {
+                    scope.noteStr = scope.metadata.note.$;
+                  } else {
+                    scope.noteStr = '';
+                    angular.forEach(scope.metadata.note, function (note) {
+                      if (note.hasOwnProperty('$')) {
+                        scope.noteStr = scope.noteStr + note.$ + ', ';
+                      }
+                    })
+
+                  }
 
                 }
-
               }
-            }
-            catch (err) {
-              scope.noteStr = '';
-            }
-            try {
-              if (scope.metadata.hasOwnProperty('genre')) {
-                scope.genreStr = '';
-                if (!Array.isArray(scope.metadata.genre)) {
-                  scope.genreStr = scope.metadata.genre.$;
-                } else {
+              catch (err) {
+                scope.noteStr = '';
+              }
+              try {
+                if (scope.metadata.hasOwnProperty('genre')) {
                   scope.genreStr = '';
-                  angular.forEach(scope.metadata.genre, function (genre) {
-                    if (genre.hasOwnProperty('$')) {
-                      scope.genreStr = scope.genreStr + genre.$ + ', ';
-                    }
-                  })
+                  if (!Array.isArray(scope.metadata.genre)) {
+                    scope.genreStr = scope.metadata.genre.$;
+                  } else {
+                    scope.genreStr = '';
+                    angular.forEach(scope.metadata.genre, function (genre) {
+                      if (genre.hasOwnProperty('$')) {
+                        scope.genreStr = scope.genreStr + genre.$ + ', ';
+                      }
+                    })
 
+                  }
                 }
               }
-            }
-            catch (err) {
-              scope.genreStr = '';
-            }
+              catch (err) {
+                scope.genreStr = '';
+              }
 
-            scope.physicalDescription = '';
-
-          });
-
-          scope.showMeta = !scope.showMeta;
+              scope.physicalDescription = '';
+              scope.isLoadingDone = true;
+            });
+          }
         }
 
         scope.showListBottomSheet = function (ev) {
