@@ -175,7 +175,6 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
               scope.values = '';
               if (scope.metadata.hasOwnProperty('originInfo')) {
                 if (!Array.isArray(scope.metadata.originInfo)) {
-
                   if (scope.metadata.originInfo.hasOwnProperty('place')) {
                     scope.originInfoStr = 'Place: ' + scope.metadata.originInfo.place.placeTerm.$ + ' ';
                   }
@@ -205,7 +204,6 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
                   }
                 } else {
                   angular.forEach(scope.metadata.originInfo, function (originInfo) {
-                    console.log(originInfo);
                     if (originInfo.hasOwnProperty('place')) {
                       scope.originInfoStr = 'Place: ' + originInfo.place.placeTerm.$ + ' ';
                     }
