@@ -96,9 +96,13 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
     };
   })
   .directive('picViewer', function ($compile, $timeout, $mdBottomSheet, $mdToast, $mdDialog, NyplApiCalls) {
+    var pic_template =
+      '<img class="image" ng-src="{{ pic.cropped }}" data-original="{{pic.fullImageUrl}}" alt="{{pic.title}}" pic-metadata="{{pic.data}}" style="width:280px;height:{{pic.actualHeight}};border-radius:10px;">';
     return {
       restrict: 'AE',
+      template: pic_template,
       scope: {
+        pic: '=',
         dataoriginal: '=',
       },
       link: function (scope, elem, attrs) {
@@ -140,10 +144,10 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
             scope.infoButtonText = 'Info';
           }
 
-          console.log(JSON.parse(attrs.picMetadata));
+          console.log(JSON.parse(scope.pic.data));
           if (scope.showMeta) {
             scope.isLoadingDone = false;
-            NyplApiCalls.getDetail(JSON.parse(attrs.picMetadata)).then(function (result) {
+            NyplApiCalls.getDetail(JSON.parse(scope.pic.data)).then(function (result) {
               scope.metadata = result.nyplAPI.response.mods;
               try {
                 scope.title = scope.metadata.titleInfo.title.$;
@@ -299,42 +303,16 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
           }
         }
 
-        scope.showListBottomSheet = function (ev) {
-          console.log('firing bottom sheet');
-          $mdDialog.show({
-            controller: 'ListBottomSheetCtrl',
-            templateUrl: 'src/grid-list/bottom-sheet-list-template.html',
-            parent: angular.element(document.body),
-            targetEvent: ev,
-            clickOutsideToClose: true,
-            fullscreen: true
-          })
-            .then(function (answer) {
-              scope.status = 'You said the information was "' + answer + '".';
-            }, function () {
-              scope.status = 'You cancelled the dialog.';
-            });
-          /*
-          scope.alert = '';
-          $mdBottomSheet.show({
-            templateUrl: 'src/grid-list/bottom-sheet-list-template.html',
-            controller: 'ListBottomSheetCtrl'
-          }).then(function (clickedItem) {
-            scope.alert = clickedItem['name'] + ' clicked!';
-          }).catch(function (error) {
-            // User clicked outside or hit escape
-          });
-          */
-        };
-
         scope.logThis = function () {
           console.log('king jubba');
         }
         var showViewer = function () {
+          console.log(scope.pic.fullImageUrl);
+          //console.log(scope.dataoriginal);
           var options = {
             //minHeight: 500,
             //minWidth: element.offsetWidth,
-            url: scope.original,
+            url: 'data-original',
             inline: false,
             build: function (e) {
               // console.log(e.type);
@@ -354,7 +332,6 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
             $compile(content)(viewerscope);
           });
         });*/
-              console.log(wrappedResult);
               $compile(wrappedResult)(scope);
 
               // ctrl.isViewerBuilt = true;
@@ -362,7 +339,7 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
             },
           };
 
-          $(elem).viewer(options);
+          $('.image').viewer(options);
 
         }
         var viewer;
@@ -380,12 +357,6 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
 
       }
     };
-  })
-  .controller('MyCtrl', function ($scope) {
-    $scope.anyFunc = function (var1, var2) {
-      alert("I am var1 = " + var1);
-      alert("I am var2 = " + var2);
-    }
   })
   .config(
   [
