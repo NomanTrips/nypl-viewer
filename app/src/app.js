@@ -97,13 +97,14 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
   })
   .directive('picViewer', function ($compile, $timeout, $mdBottomSheet, $mdToast, $mdDialog, NyplApiCalls) {
     var pic_template =
-      '<img class="image" ng-src="{{ pic.cropped }}" data-original="{{pic.fullImageUrl}}" alt="{{pic.title}}" pic-metadata="{{pic.data}}" style="width:280px;height:{{pic.actualHeight}};border-radius:10px;">';
+      '<img class="image" ng-click="showViewer()" ng-src="{{ pic.cropped }}" data-original="{{pic.fullImageUrl}}" alt="{{pic.title}}" pic-metadata="{{pic.data}}" style="width:280px;height:{{pic.actualHeight}};border-radius:10px;">';
     return {
       restrict: 'AE',
       template: pic_template,
       scope: {
         pic: '=',
         dataoriginal: '=',
+        picmetadata: '=',
       },
       link: function (scope, elem, attrs) {
         scope.isLoadingDone = false;
@@ -144,10 +145,10 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
             scope.infoButtonText = 'Info';
           }
 
-          console.log(JSON.parse(scope.pic.data));
+          console.log(scope.pic.data);
           if (scope.showMeta) {
             scope.isLoadingDone = false;
-            NyplApiCalls.getDetail(JSON.parse(scope.pic.data)).then(function (result) {
+            NyplApiCalls.getDetail(scope.pic.data).then(function (result) {
               scope.metadata = result.nyplAPI.response.mods;
               try {
                 scope.title = scope.metadata.titleInfo.title.$;
@@ -306,7 +307,7 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
         scope.logThis = function () {
           console.log('king jubba');
         }
-        var showViewer = function () {
+        scope.showViewer = function () {
           console.log(scope.pic.fullImageUrl);
           //console.log(scope.dataoriginal);
           var options = {
@@ -350,10 +351,11 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
         //console.log('done building');
         //  $compile(this.viewer)(scope);
         //});
-        elem.bind('click', function () {
-          console.log('jubba');
-          showViewer();
-        });
+        
+        //elem.bind('click', function () {
+          //console.log('jubba');
+          //showViewer();
+       // });
 
       }
     };
