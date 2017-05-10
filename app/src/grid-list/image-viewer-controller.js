@@ -4,10 +4,8 @@ nyplViewer.controller('ImageViewerCtrl',
     var ctrl = this;
     ctrl.detailUrl = picInfo.apiItemDetailURL;
     ctrl.picData = picInfo;
-    console.log(ctrl.detailUrl);
     ctrl.title = picInfo.title;
-    ctrl.img = new Image();
-    ctrl.overlays = [{ x: 50, y: 155, w: 106, h: 29, color: '#00FF00' }];
+    console.log(ctrl.title);
 
     ctrl.file = picUrl;//fileInput;
     ctrl.options = {

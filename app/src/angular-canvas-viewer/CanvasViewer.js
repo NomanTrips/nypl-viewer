@@ -23,11 +23,19 @@ nyplViewer.directive('canvasViewer', ['$window', '$http', '$timeout', '$q', 'Nyp
 		template: '<div class="viewer-container">' +
 		'<md-card class="info-card" flex="25" ng-show="showInfoPanel" style="z-index: 15;position: absolute;top: 80px;left: 0;background-color:white;visibility:visible;">' +
 		'<div layout-padding="" >' +
-		'<div id="loadingcircle" ng-hide="true" layout-padding="">' +
+		'<div id="loadingcircle" ng-hide="isLoadingDone" layout-padding="">' +
 		'<md-progress-circular md-mode="indeterminate" md-theme="dark-yellow" md-diameter="20px">' +
 		' </md-progress-circular>' +
 		'</div>' +
-		'<h6>{{prettyMetadata}}</h6>'+
+		'<div ng-show="isLoadingDone">' +
+		'<h4><b>Title: </b>{{title}}</h4>' +
+		'<h6><b>Subject: </b>{{subjectsStr}}</h6>' +
+		'<h6><b>Collection: </b>{{collection}}</h6>' +
+		'<h6><b>Genres: </b>{{genreStr}}</h6>' +
+		'<h6><b>Origin info: </b>{{originInfoStr}}</h6>' +
+		'<h6><b>Physical description: </b>{{physicalDescription}}</h6>' +
+		'<h6><b>Notes: </b>{{noteStr}}</h6>' +
+		'</div>' +
 		'</div>' +
 		'</md-card>' +
 		'<div style="z-index : 15;position:absolute;top:0px;right:0px;visibility:visible;">' +
@@ -63,14 +71,164 @@ nyplViewer.directive('canvasViewer', ['$window', '$http', '$timeout', '$q', 'Nyp
 		// compile: function(tElement, tAttrs, function transclude(function(scope, cloneLinkingFn){ return function linking(scope, elm, attrs){}})),
 		link: function (scope, iElm, iAttrs, controller) {
 			scope.showInfoPanel = false;
+        	scope.isLoadingDone = false;
 
 			scope.showInfo = function () {
 				scope.showInfoPanel = !scope.showInfoPanel;
 				if (scope.showInfoPanel) {
-					console.log(scope.picData.apiItemDetailURL);
+					scope.isLoadingDone = false;
 					NyplApiCalls.getDetail(scope.picData.apiItemDetailURL).then(function (result) {
 						scope.metadata = result.nyplAPI.response.mods;
-						scope.prettyMetadata = JSON.stringify(scope.metadata, null, 2); 
+						try {
+							scope.title = scope.metadata.titleInfo.title.$;
+						}
+						catch (err) {
+							scope.title = '';
+						}
+						try {
+
+							scope.values = '';
+							scope.subjectsStr = '';
+							if (scope.metadata.hasOwnProperty('subject')) {
+								angular.forEach(scope.metadata.subject, function (subject) {
+									if (subject.hasOwnProperty('name')) {
+										scope.subjectsStr = scope.subjectsStr + 'Name: ' + subject.name.namePart.$ + ' ';
+									}
+
+									if (subject.hasOwnProperty('topic')) {
+										scope.subjectsStr = scope.subjectsStr + 'Topic: ' + subject.topic.$ + ' ';
+									}
+
+									if (subject.hasOwnProperty('geographic')) {
+										scope.subjectsStr = scope.subjectsStr + 'Geographic: ' + subject.geographic.$ + ' ';
+									}
+
+								})
+							}
+
+						}
+						catch (err) {
+							scope.subjectsStr = '';
+						}
+						try {
+							scope.collection = scope.metadata.nyplAPI.response.mods.location[0].physicalLocation[2].$;
+						}
+						catch (err) {
+							scope.collection = '';
+						}
+						try {
+							scope.values = '';
+							if (scope.metadata.hasOwnProperty('originInfo')) {
+								if (!Array.isArray(scope.metadata.originInfo)) {
+									if (scope.metadata.originInfo.hasOwnProperty('place')) {
+										scope.originInfoStr = 'Place: ' + scope.metadata.originInfo.place.placeTerm.$ + ' ';
+									}
+									if (scope.metadata.originInfo.hasOwnProperty('dateIssued')) {
+										scope.originInfoStr = 'Date issued: ' + scope.metadata.originInfo.dateIssued.$;
+									}
+									if (scope.metadata.originInfo.hasOwnProperty('dateCreated')) {
+										if (!Array.isArray(scope.metadata.originInfo.dateCreated)) {
+											scope.originInfoStr = 'Created date: ' + scope.metadata.originInfo.dateCreated.$ + ' ';
+										} else {
+											scope.originInfoStr = 'Created date: ';
+											angular.forEach(scope.metadata.originInfo.dateCreated, function (date) {
+												if (date.hasOwnProperty('qualifier')) {
+													scope.originInfoStr = scope.originInfoStr + date.qualifier + ' ';
+												}
+												if (date.hasOwnProperty('point')) {
+													scope.originInfoStr = scope.originInfoStr + date.point + ' ';
+												}
+												if (date.hasOwnProperty('$')) {
+													scope.originInfoStr = scope.originInfoStr + date.$ + ' ';
+												}
+
+											})
+
+										}
+
+									}
+								} else {
+									angular.forEach(scope.metadata.originInfo, function (originInfo) {
+										if (originInfo.hasOwnProperty('place')) {
+											scope.originInfoStr = 'Place: ' + originInfo.place.placeTerm.$ + ' ';
+										}
+										if (originInfo.hasOwnProperty('dateIssued')) {
+											scope.originInfoStr = 'Date issued: ' + originInfo.dateIssued.$;
+										}
+										if (originInfo.hasOwnProperty('dateCreated')) {
+											if (!Array.isArray(originInfo.dateCreated)) {
+												scope.originInfoStr = 'Created date: ' + originInfo.dateCreated.$ + ' ';
+											} else {
+												scope.originInfoStr = 'Created date: ';
+												angular.forEach(originInfo, function (date) {
+													if (date.hasOwnProperty('qualifier')) {
+														scope.originInfoStr = scope.originInfoStr + date.qualifier + ' ';
+													}
+													if (date.hasOwnProperty('point')) {
+														scope.originInfoStr = scope.originInfoStr + date.point + ' ';
+													}
+													if (date.hasOwnProperty('$')) {
+														scope.originInfoStr = scope.originInfoStr + date.$ + ' ';
+													}
+
+												})
+
+											}
+
+										}
+									})
+								}
+							}
+
+						}
+						catch (err) {
+							console.log(err);
+							scope.originInfoStr = '';
+						}
+						try {
+							scope.values = '';
+
+							if (scope.metadata.hasOwnProperty('note')) {
+								scope.noteStr = '';
+								if (!Array.isArray(scope.metadata.note)) {
+									scope.noteStr = scope.metadata.note.$;
+								} else {
+									scope.noteStr = '';
+									angular.forEach(scope.metadata.note, function (note) {
+										if (note.hasOwnProperty('$')) {
+											scope.noteStr = scope.noteStr + note.$ + ', ';
+										}
+									})
+
+								}
+
+							}
+						}
+						catch (err) {
+							scope.noteStr = '';
+						}
+						try {
+							if (scope.metadata.hasOwnProperty('genre')) {
+								scope.genreStr = '';
+								if (!Array.isArray(scope.metadata.genre)) {
+									scope.genreStr = scope.metadata.genre.$;
+								} else {
+									scope.genreStr = '';
+									angular.forEach(scope.metadata.genre, function (genre) {
+										if (genre.hasOwnProperty('$')) {
+											scope.genreStr = scope.genreStr + genre.$ + ', ';
+										}
+									})
+
+								}
+							}
+						}
+						catch (err) {
+							scope.genreStr = '';
+						}
+
+						scope.physicalDescription = '';
+						scope.isLoadingDone = true;
 					})
 				}
 			}
