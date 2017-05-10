@@ -1,3 +1,4 @@
+/**
 nyplViewer.controller('ImageViewerCtrl', function ($scope, $timeout, $stateParams) {
     ctrl = this;
     ctrl.fullImageUrl = $stateParams.myParam.fullImageUrl;
@@ -29,6 +30,7 @@ nyplViewer.controller('ImageViewerCtrl', function ($scope, $timeout, $stateParam
         ctrl.isTranscribe = true;
 
     }
+     */
     /**
      ctrl.openPhotoSwipe = function () {
          var pswpElement = document.querySelectorAll('.pswp')[0];
@@ -73,4 +75,4 @@ nyplViewer.controller('ImageViewerCtrl', function ($scope, $timeout, $stateParam
  */
     //document.getElementById('btn').onclick = openPhotoSwipe;
 
-});
+//});

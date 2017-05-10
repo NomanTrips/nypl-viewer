@@ -11,6 +11,8 @@ var nyplViewer = angular.module('nyplViewer', [
   'firebase',
   'ngStorage',
   'ngMessages',
+  'ngPintura',
+  'CanvasViewer',
 ])
 angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
   .config(function ($stateProvider, $urlRouterProvider) {
@@ -95,18 +97,35 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
       $mdBottomSheet.hide(clickedItem);
     };
   })
+  .directive('panel1', function ($compile) {
+       return {
+           restrict: "E",
+           transclude: true,
+           replace: true,
+           template: "<div id='wrappingDiv'></div>",
+           link: function (scope, element, attr, ctrl, linker) {
+               linker(function (clone) {
+                   element.append(clone);
+               });
+           }
+       }
+   })
   .directive('picViewer', function ($compile, $timeout, $mdBottomSheet, $mdToast, $mdDialog, NyplApiCalls) {
     var pic_template =
-      '<img class="image" ng-click="showViewer()" ng-src="{{ pic.cropped }}" data-original="{{pic.fullImageUrl}}" alt="{{pic.title}}" pic-metadata="{{pic.data}}" style="width:280px;height:{{pic.actualHeight}};border-radius:10px;">';
+      '<img class="image"  ng-click="showViewer()" ng-src="{{ pic.cropped }}" data-original="{{pic.fullImageUrl}}" alt="{{pic.title}}" pic-metadata="{{pic.data}}" style="width:280px;height:{{pic.actualHeight}};border-radius:10px;">';
     return {
       restrict: 'AE',
+      //replace:true,
+      //transclude: true,
       template: pic_template,
       scope: {
         pic: '=',
-        dataoriginal: '=',
-        picmetadata: '=',
+        picData: '=',
+        detailurl: '='
       },
       link: function (scope, elem, attrs) {
+        console.log(scope.pic);
+        scope.theUrl = scope.pic.data.apiItemDetailURL;
         scope.isLoadingDone = false;
         scope.infoButtonText = 'Info';
         scope.metadata = {};
@@ -121,7 +140,12 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
         scope.genres;
         scope.showMeta = false;
         scope.values = '';
-
+        var dataObj;
+        scope.apply = function (){
+          console.log('running close');
+    //scope.$apply();      
+    scope.$digest();
+        }
         scope.recursJsonPrint = function (obj) {
           for (var key in obj) {
             if (typeof (obj[key]) == 'object') {
@@ -137,7 +161,10 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
           return scope.values;
         }
 
-        scope.showMetaData = function () {
+        scope.showMetaData = function (picdataobj) {
+                        var myEl = document.getElementsByClassName("detail-url");
+              var wrappedResult = angular.element(myEl);
+              console.log(wrappedResult);
           scope.showMeta = !scope.showMeta;
           if (scope.showMeta) {
             scope.infoButtonText = 'Hide info';
@@ -145,10 +172,10 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
             scope.infoButtonText = 'Info';
           }
 
-          console.log(scope.pic.data);
+          //console.log(scope.pic.data);
           if (scope.showMeta) {
             scope.isLoadingDone = false;
-            NyplApiCalls.getDetail(scope.pic.data).then(function (result) {
+            NyplApiCalls.getDetail(wrappedResult.detailUrl).then(function (result) {
               scope.metadata = result.nyplAPI.response.mods;
               try {
                 scope.title = scope.metadata.titleInfo.title.$;
@@ -308,11 +335,14 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
           console.log('king jubba');
         }
         scope.showViewer = function () {
-          console.log(scope.pic.fullImageUrl);
+         // dataObj = scope.pic.data;
+          console.log(scope.pic.data.apiItemDetailURL);
+         // scope.showMetaData(scope.pic.data);
           //console.log(scope.dataoriginal);
           var options = {
             //minHeight: 500,
             //minWidth: element.offsetWidth,
+            detailUrl: scope.pic.data.apiItemDetailURL,
             url: 'data-original',
             inline: false,
             build: function (e) {
@@ -333,11 +363,26 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
             $compile(content)(viewerscope);
           });
         });*/
-              $compile(wrappedResult)(scope);
+              //$compile(wrappedResult)(scope);
+          //var content = $(this);
+          angular.element(myEl).injector().invoke(function ($compile) {
+            var viewerscope = angular.element(myEl).scope();
+           $compile(myEl)(viewerscope);
+          });
 
               // ctrl.isViewerBuilt = true;
               scope.$apply();
+              //scope.$digest();
             },
+            hide: function (e){
+              var myEl = document.getElementsByClassName("info-card");
+              var wrappedResult = angular.element(myEl);
+              console.log(wrappedResult);
+              wrappedResult.remove();
+              //console.log('running this');
+              //scope.$apply();
+             // scope.$digest();
+            }
           };
 
           $('.image').viewer(options);
@@ -385,6 +430,7 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
         .icon("edit", "./assets/svg/edit.svg", 24)
         .icon("delete", "./assets/svg/delete.svg", 24)
         .icon("bookmark", "./assets/svg/bookmark.svg", 24)
+        .icon("cancel", "./assets/svg/cancel_black.svg", 24)
         .icon("phone", "./assets/svg/phone.svg", 24);
 
       $mdThemingProvider.theme('default')

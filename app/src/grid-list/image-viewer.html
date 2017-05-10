@@ -1,0 +1,33 @@
+<md-dialog aria-label="Item image" flex="80" class="fullscreen-dialog">
+ 
+
+
+
+    <!--
+          <h2>{{viewer.detailUrl}}</h2>
+        <ng-pintura ngp-src="viewer.image.src" ngp-scaling="viewer.image.scaling" ngp-position="viewer.image.position"></ng-pintura>
+     
+
+    </div>
+    <md-dialog-content>
+
+      	<canvas-viewer src="viewer.file" title="This is a test HTML5 Canvas" overlays="viewer.overlays" options="viewer.options"></canvas-viewer>
+    </md-dialog-content>
+  -->
+    <md-dialog-content>
+      <div class="md-dialog-content" layout-padding="">
+        <canvas-viewer src="viewer.file" title="This is a test HTML5 Canvas"  options="viewer.options"
+          picdata="viewer.picData" close-modal="viewer.cancel()"></canvas-viewer>
+      </div>
+    </md-dialog-content>
+ 
+
+
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button  ng-click="viewer.cancel()">
+        Cancel
+      </md-button>
+    </md-dialog-actions>
+
+</md-dialog>

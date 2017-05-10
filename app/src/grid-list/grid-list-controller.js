@@ -65,7 +65,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         ]
     };
 */
-    
+
     ctrl.searchItems = [];
     ctrl.searchResults = [];
     var originatorEv;
@@ -216,7 +216,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     ctrl.getTheme = function () {
         deferred = $q.defer();
         var firebaseUser = Auth.authObj.$getAuth();
-        if (ctrl.theme != null || ! firebaseUser) {
+        if (ctrl.theme != null || !firebaseUser) {
             deferred.resolve();
         } else {
             FirebaseStorageModel.getUserInfo().then(function (user) {
@@ -506,6 +506,28 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         });
     }
     ctrl.isImageClicked = false;
+
+
+    ctrl.showViewer = function (ev, pic) {
+        var useFullScreen = true;
+
+        $mdDialog.show({
+            locals: { picInfo: pic.data, picUrl: pic.fullImageUrl },
+            controller: 'ImageViewerCtrl',
+            controllerAs: 'viewer',
+            templateUrl: 'src/grid-list/image-viewer.html',
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: true,
+            fullscreen: useFullScreen,
+        })
+            .then(function (answer) {
+                ctrl.status = 'You said the information was "' + answer + '".';
+            }, function () {
+                ctrl.status = 'You cancelled the dialog.';
+            });
+
+    }
 
     ctrl.showModal = function (pic) {
         var options = {
