@@ -12,7 +12,6 @@ var nyplViewer = angular.module('nyplViewer', [
   'ngStorage',
   'ngMessages',
   'ngPintura',
-  'CanvasViewer',
 ])
 angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
   .config(function ($stateProvider, $urlRouterProvider) {
@@ -430,7 +429,7 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
         .icon("edit", "./assets/svg/edit.svg", 24)
         .icon("delete", "./assets/svg/delete.svg", 24)
         .icon("bookmark", "./assets/svg/bookmark.svg", 24)
-        .icon("cancel", "./assets/svg/cancel_black.svg", 24)
+        .icon("cancel", "./assets/svg/cancel.svg", 36)
         .icon("phone", "./assets/svg/phone.svg", 24);
 
       $mdThemingProvider.theme('default')
