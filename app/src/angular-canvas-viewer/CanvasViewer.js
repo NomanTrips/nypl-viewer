@@ -51,19 +51,21 @@ nyplViewer.directive('canvasViewer', ['$window', '$http', '$timeout', '$q', 'Nyp
 		'ng-mousemove="mousedrag($event,canMove)">' +
 		'</canvas>' +
 		'<div class="title" ng-if="title!=null">{{title}}</div>' +
+		'<div class="statictitle"><h6 style="color:white;">{{title}}</h6></div>'+
 		'<div class="command" style="visibility:visible;" ng-if="options.controls.image">' +
-		'<div class="btn btn-info" ng-click="showInfo()" ><i class="fa fa-info-circle" aria-hidden="true"></i></div>' +
-		'<div class="btn btn-info" ng-click="options.controls.numPage=options.controls.numPage-1" ng-hide="options.controls.totalPage==1"><i class="fa fa-minus"></i></div>' +
-		'<div class="btn btn-info" ng-hide="options.controls.totalPage==1">{{options.controls.numPage}}/{{options.controls.totalPage}}</div>' +
-		'<div class="btn btn-info" ng-click="options.controls.numPage=options.controls.numPage+1" ng-hide="options.controls.totalPage==1"><i class="fa fa-plus"></i></div>' +
-		'<div class="btn btn-info" ng-click="resizeTo(\'page\')"><i class="fa fa-file-o"></i></div>' +
-		'<div class="btn btn-info" ng-click="rotate(-1)" ng-hide="options.controls.disableRotate"><i class="fa fa-rotate-left"></i></div>' +
-		'<div class="btn btn-info" ng-click="rotate(1)" ng-hide="options.controls.disableRotate"><i class="fa fa-rotate-right"></i></div>' +
-		'<div class="btn btn-info" ng-click="zoom(-1)" ng-hide="options.controls.disableZoom"><i class="fa fa-search-minus"></i></div>' +
-		'<div class="btn btn-info" ng-click="zoom(1)" ng-hide="options.controls.disableZoom"><i class="fa fa-search-plus"></i></div></div>' +
+		'<div class="btn btn-warning" ng-click="showInfo()" ><i class="fa fa-info-circle" aria-hidden="true"></i></div>' +
+		'<div class="btn btn-warning" ng-click="options.controls.numPage=options.controls.numPage-1" ng-hide="options.controls.totalPage==1"><i class="fa fa-minus"></i></div>' +
+		'<div class="btn btn-warning" ng-hide="options.controls.totalPage==1">{{options.controls.numPage}}/{{options.controls.totalPage}}</div>' +
+		'<div class="btn btn-warning" ng-click="options.controls.numPage=options.controls.numPage+1" ng-hide="options.controls.totalPage==1"><i class="fa fa-plus"></i></div>' +
+		'<div class="btn btn-warning" ng-click="resizeTo(\'page\')"><i class="fa fa-file-o"></i></div>' +
+		'<div class="btn btn-warning" ng-click="rotate(-1)" ng-hide="options.controls.disableRotate"><i class="fa fa-rotate-left"></i></div>' +
+		'<div class="btn btn-warning" ng-click="rotate(1)" ng-hide="options.controls.disableRotate"><i class="fa fa-rotate-right"></i></div>' +
+		'<div class="btn btn-warning" ng-click="zoom(-1)" ng-hide="options.controls.disableZoom"><i class="fa fa-search-minus"></i></div>' +
+		'<div class="btn btn-warning" ng-click="zoom(1)" ng-hide="options.controls.disableZoom"><i class="fa fa-search-plus"></i></div></div>' +
 		'<div class="command" ng-if="options.controls.sound">' +
-		'<div class="btn btn-info" ng-click="stop()"><i class="fa fa-stop"></i></div>' +
-		'<div class="btn btn-info" ng-click="play()"><i class="fa fa-play"></i></div></div>' +
+		'<div class="btn btn-warning" ng-click="stop()"><i class="fa fa-stop"></i></div>' +
+		'<div class="btn btn-warning" ng-click="play()"><i class="fa fa-play"></i></div>'+
+		'</div>'+
 		'</div>',
 		// templateUrl: '',
 		// replace: true,
@@ -234,7 +236,6 @@ nyplViewer.directive('canvasViewer', ['$window', '$http', '$timeout', '$q', 'Nyp
 			}
 
 			scope.logThis = function () {
-				console.log(scope.closeModal);
 				scope.closeModal();
 			}
 			var canvasEl = iElm.find('canvas')[0];
