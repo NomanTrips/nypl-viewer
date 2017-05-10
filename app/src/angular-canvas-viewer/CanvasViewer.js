@@ -40,7 +40,7 @@ nyplViewer.directive('canvasViewer', ['$window', '$http', '$timeout', '$q', 'Nyp
 		'</md-card>' +
 		'<div style="z-index : 15;position:absolute;top:0px;right:0px;visibility:visible;">' +
 		'<md-button  class="md-icon-button" ng-click="logThis()">' +
-		'<md-icon md-svg-icon="cancel" md-menu-align-target=""></md-icon>' +
+		'<md-icon style="color:height:36px;width:36px;" md-svg-icon="cancel" md-menu-align-target=""></md-icon>' +
 		'</md-button>' +
 		'</div>' +
 		'<canvas class="viewer" ' +

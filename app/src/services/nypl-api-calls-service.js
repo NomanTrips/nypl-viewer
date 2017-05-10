@@ -95,7 +95,6 @@ nyplViewer.factory('NyplApiCalls', function ($http, $q, $base64, lodash) {
             var nyplUrl = 'http://localhost:3000/api/' + lodash.trim(item, 'http://api.repo.nypl.org');
         
             $http(buildHttpRequest(nyplUrl), { headers: headers }).then(function successCallback(response) {
-                console.log(response);
                 var data = response.data;
                 deferred.resolve(data);
             }, function errorCallback(response) {

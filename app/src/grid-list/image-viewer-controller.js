@@ -5,7 +5,6 @@ nyplViewer.controller('ImageViewerCtrl',
     ctrl.detailUrl = picInfo.apiItemDetailURL;
     ctrl.picData = picInfo;
     ctrl.title = picInfo.title;
-    console.log(ctrl.title);
 
     ctrl.file = picUrl;//fileInput;
     ctrl.options = {
