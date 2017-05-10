@@ -51,7 +51,7 @@ nyplViewer.directive('canvasViewer', ['$window', '$http', '$timeout', '$q', 'Nyp
 		'ng-mousemove="mousedrag($event,canMove)">' +
 		'</canvas>' +
 		'<div class="title" ng-if="title!=null">{{title}}</div>' +
-		'<div class="statictitle"><h6 style="color:white;">{{title}}</h6></div>'+
+		'<div class="statictitle"><h6 style="color:white;">{{picData.title}}</h6></div>'+
 		'<div class="command" style="visibility:visible;" ng-if="options.controls.image">' +
 		'<div class="btn btn-warning" ng-click="showInfo()" ><i class="fa fa-info-circle" aria-hidden="true"></i></div>' +
 		'<div class="btn btn-warning" ng-click="options.controls.numPage=options.controls.numPage-1" ng-hide="options.controls.totalPage==1"><i class="fa fa-minus"></i></div>' +

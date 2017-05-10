@@ -3,6 +3,7 @@ nyplViewer.controller('ImageViewerCtrl',
   function ($mdDialog, picInfo, picUrl, $http, lodash) {
     var ctrl = this;
     ctrl.detailUrl = picInfo.apiItemDetailURL;
+    console.log(picInfo.title);
     ctrl.picData = picInfo;
     ctrl.title = picInfo.title;
 

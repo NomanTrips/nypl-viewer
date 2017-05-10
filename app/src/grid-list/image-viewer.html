@@ -17,7 +17,7 @@
     <md-dialog-content>
       <div class="md-dialog-content" layout-padding="">
         <canvas-viewer src="viewer.file" options="viewer.options"
-          picdata="viewer.picData" close-modal="viewer.cancel()" title="{{viewer.title}}"></canvas-viewer>
+          picdata="viewer.picData" close-modal="viewer.cancel()" ></canvas-viewer>
       </div>
     </md-dialog-content>
  
@@ -25,9 +25,11 @@
 
     <md-dialog-actions layout="row">
       <span flex></span>
+      <!--
       <md-button  ng-click="viewer.cancel()">
         Cancel
       </md-button>
+      -->
     </md-dialog-actions>
 
 </md-dialog>
