@@ -11,7 +11,6 @@ var nyplViewer = angular.module('nyplViewer', [
   'firebase',
   'ngStorage',
   'ngMessages',
-  'ngPintura',
 ])
 angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
   .config(function ($stateProvider, $urlRouterProvider) {
