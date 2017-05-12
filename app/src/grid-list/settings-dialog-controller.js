@@ -1,7 +1,7 @@
 'use strict';
 
 nyplViewer.controller('SettingsDialogCtrl',
-  function ($mdDialog, lodash, $q, NyplApiCalls, $mdToast, FirebaseStorageModel) {
+  function ($mdDialog, lodash, $q, NyplApiCalls, $mdToast, FirebaseStorageModel, $location) {
     var ctrl = this;
     ctrl.readonly = false;
     ctrl.selectedItem = null;
@@ -218,7 +218,12 @@ nyplViewer.controller('SettingsDialogCtrl',
         var themeStr = angular.toJson(ctrl.theme);
         var themeJson = JSON.parse(themeStr); // Workaround to strip $$hash key from the properties
         FirebaseStorageModel.saveSelectedTheme(themeJson);
+
+        $location.url($location.path()); // remove url params in order to load new theme
+        var url = '/search';
+        $location.path(url);
         $mdDialog.hide();
+
       } else {
         ctrl.showToast('No theme selected. Save failed!');
       }
