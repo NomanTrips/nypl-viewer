@@ -15,7 +15,7 @@
                 <md-subheader class="md-no-sticky">Selected Theme:</md-subheader>
                 <form>
                     <div layout="row" flex layout-padding="">
-                        <div flex="75">
+                        <div flex="50">
                             <md-autocomplete md-selected-item="settingsCtrl.selectedItem" md-search-text="settingsCtrl.searchText" md-search-text-change="ctrl.searchTextChange(ctrl.searchText)"
                                 md-items="item in settingsCtrl.querySearch(settingsCtrl.searchText) | orderBy:'name'" md-item-text="item.name" placeholder="Search..."
                                 md-selected-item-change="settingsCtrl.selectedItemChange(item)" md-min-length="0">
@@ -31,13 +31,16 @@
                         </div>
                         <div>
                             <md-button class="md-icon-button" aria-label="Edit" ng-click="settingsCtrl.editTheme()">
+                                <md-tooltip md-direction="top">Edit theme</md-tooltip>
                                 <md-icon md-svg-icon="edit"></md-icon>
                             </md-button>
                             <md-button class="md-icon-button md-warn" aria-label="Delete" ng-click="settingsCtrl.deleteTheme()">
+                                <md-tooltip md-direction="top">Delete theme</md-tooltip>
                                 <md-icon md-svg-icon="delete"></md-icon>
                             </md-button>
                             <md-button class="md-icon-button md-primary" aria-label="Add" ng-click="settingsCtrl.addTheme()">
-                                <md-icon md-svg-icon="add"></md-icon>
+                                <md-tooltip md-direction="top">Create new theme</md-tooltip>
+                                <md-icon md-svg-icon="add-new"></md-icon>
                             </md-button>
                         </div>
                     </div>
