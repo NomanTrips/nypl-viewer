@@ -169,12 +169,16 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
 
     ctrl.modeChange = function () {
         if (ctrl.isSearchByThemeModeOn) {
+            $location.url($location.path()); // remove url params in order to load new theme
+            //var url = '/search';
+            //$location.path(url);
             ctrl.pics = [];
             ctrl.isMoreSearchItems = true;
             ctrl.isPageInfoRetrieved = false;
             ctrl.modeDescription = 'Theme';
             ctrl.loadMore();
         } else {
+            ctrl.modeDescription = 'Search';
             ctrl.searchTextChange();
         }
     }
