@@ -10,7 +10,7 @@ nyplViewer.controller('ImageViewerCtrl',
     ctrl.options = {
       zoom: {
         value: 1.0,
-        step: 0.15
+        step: 0.10
       },
       rotate: {
         value: 90
