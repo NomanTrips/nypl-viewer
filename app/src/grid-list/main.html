@@ -61,7 +61,7 @@
 		<md-button class="md-icon-button" aria-label="Search" ng-click="gridList.searchTextChange()">
 			<md-icon md-svg-icon="search"></md-icon>
 		</md-button>
-		<md-input-container  class="md-accent" flex style="height:40px;">
+		<md-input-container class="md-accent" flex style="height:40px;">
 			<label>&nbsp;</label>
 			<input ng-model="gridList.searchText" placeholder="enter search" ng-change="gridList.searchTextChange()" ng-model-options="{updateOn : 'change blur'}">
 		</md-input-container>
@@ -128,17 +128,21 @@
 
 	<div infinite-scroll="gridList.loadMore()" infinite-scroll-distance="1" infinite-scroll-container="'#inf-wrapper'">
 		<div masonry masonry-options="{ gutter: 20 }">
-			<div class="masonry-brick" ng-repeat="pic in gridList.pics" style="margin-bottom: 20px;" >
-				
-				<img class="image"  ng-click="gridList.showViewer($event, pic)" ng-src="{{ pic.cropped }}" data-original="{{pic.fullImageUrl}}" alt="{{pic.title}}" pic-metadata="{{pic.data}}" style="width:280px;height:{{pic.actualHeight}};border-radius:10px;">
- 
-				<!--
+			<div class="masonry-brick" ng-repeat="pic in gridList.pics" style="margin-bottom: 20px;">
+
+				<img class="image" ng-click="gridList.showViewer($event, pic)" ng-src="{{ pic.cropped }}" data-original="{{pic.fullImageUrl}}"
+					alt="{{pic.title}}" pic-metadata="{{pic.data}}" style="width:280px;height:{{pic.actualHeight}};border-radius:10px;">
+
+					<!--
 				<pic-viewer pic="pic" pic-data="pic.data" detailurl="pic.data.detailUrl"></pic-viewer>
 				-->
 			</div>
 		</div>
+		<div layout="row" layout-align="space-around center" style="width:100%;" ng-show="gridList.isLoadingDone" layout-padding="">
+			<md-progress-circular md-mode="indeterminate" md-theme="dark-yellow">
+			</md-progress-circular>
+		</div>
 	</div>
-
 </md-content>
 
 <!--
