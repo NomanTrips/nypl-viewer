@@ -36,7 +36,8 @@ nyplViewer.factory('NyplApiCalls', function ($http, $q, $base64, lodash) {
             var pagingQueryParam = '';
             pagingQueryParam = '&page=' + page;
             //var nyplUrl = 'http://api.repo.nypl.org/api/v1/items/search?q=' + searchText  + pagingQueryParam + '&per_page=20'; //+'&field=topic';
-            var nyplUrl = 'http://localhost:3000/api/v1/items/search?q=' + searchText  + pagingQueryParam + '&per_page=20'; //+'&field=topic';
+            //var nyplUrl = 'http://localhost:3000/api/v1/items/search?q=' + searchText  + pagingQueryParam + '&per_page=20'; // dev
+            var nyplUrl = 'http://54.70.21.3:3000/api/v1/items/search?q=' + searchText  + pagingQueryParam + '&per_page=20'; // prod
             //factory.incrementResultPage();
             var deferred = $q.defer();
             var request = $http(buildHttpRequest(nyplUrl), { headers: headers });
@@ -92,7 +93,8 @@ nyplViewer.factory('NyplApiCalls', function ($http, $q, $base64, lodash) {
         },
         getDetail: function (item) {
             var deferred = $q.defer();
-            var nyplUrl = 'http://localhost:3000/api/' + lodash.trim(item, 'http://api.repo.nypl.org');
+            //var nyplUrl = 'http://localhost:3000/api/' + lodash.trim(item, 'http://api.repo.nypl.org'); dev
+            var nyplUrl = 'http://54.70.21.3:3000/api/' + lodash.trim(item, 'http://api.repo.nypl.org');
         
             $http(buildHttpRequest(nyplUrl), { headers: headers }).then(function successCallback(response) {
                 var data = response.data;
