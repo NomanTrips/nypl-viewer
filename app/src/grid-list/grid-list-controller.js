@@ -11,6 +11,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     ctrl.isMoreSearchItems = true;
     ctrl.interestSearches = [];
     ctrl.isInitialLoad = true;
+    ctrl.searchRanCount = 0;
     //$scope.currentState = $transition$.to().name;
     //this.fetchSearchTerms = (barId) => {
     //  $scope.bar = null;
@@ -193,9 +194,11 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     }
 
     ctrl.search = function (searchText) {
+        console.log('running straight search');
         ctrl.isLoadingDone = false;
         ctrl.searchPage++;
         return NyplApiCalls.nyplSearch(searchText, ctrl.searchPage).then(function (results) {
+            ctrl.searchRanCount = ctrl.searchRanCount + 1;
             var data = ctrl.extract(results);
             if (results.data.nyplAPI.response.result == undefined) {
                 ctrl.isMoreSearchItems = false;
@@ -208,10 +211,12 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
                         ctrl.buildThumbnail(item);
                     }
                 });
-                if (ctrl.pics.length < 20 && ctrl.isMoreSearchItems) {
-                    console.log(ctrl.searchPage);
-                    return ctrl.search(searchText, ctrl.searchPage); // not enough thumbnails to fill page, run search again
+                if (ctrl.searchRanCount < 3) {
+                    if (ctrl.pics.length < 20 && ctrl.isMoreSearchItems) {
+                        return ctrl.search(searchText, ctrl.searchPage); // not enough thumbnails to fill page, run search again
+                    }
                 }
+
             }
             ctrl.isLoadingDone = true;
         })
@@ -251,6 +256,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     }
 
     ctrl.loadMore = function () {
+        ctrl.searchRanCount = 0;
         ctrl.apiLoadCount = 0;
         if ($stateParams.searchTerms != null && ctrl.isInitialLoad == true) { // theme via url and not firebase
             var searchName = '';
@@ -329,6 +335,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
             return;
         }
         return ctrl.runApiSearches(searches).then(function (results) {
+            ctrl.searchRanCount = ctrl.searchRanCount +1;
             angular.forEach(results, function (result, index) {
                 ctrl.theme.items[index].totalPages = result.data.nyplAPI.request.totalPages;
                 ctrl.theme.items[index].isPageInfoRetrieved = true;
@@ -337,8 +344,10 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
                     ctrl.searchResults.push(item);
                 });
             });
-            if (ctrl.searchResults.length < 20 && ctrl.isMoreSearchItems) {
-                return ctrl.themeSearch(ctrl.theme.items); // not enough thumbnails to fill page, run search again
+            if (ctrl.searchRanCount < 3) { // stop running searches.... too few items for search
+                if (ctrl.searchResults.length < 20 && ctrl.isMoreSearchItems) {
+                    return ctrl.themeSearch(ctrl.theme.items); // not enough thumbnails to fill page, run search again
+                }
             }
 
             ctrl.searchResults = lodash.shuffle(ctrl.searchResults); // randomize search results before making thumbnails
