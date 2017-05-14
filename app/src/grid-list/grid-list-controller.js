@@ -1,12 +1,11 @@
 nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $location, $state, $scope, $mdMedia, $mdDialog, lodash, $mdToast, Auth, $stateParams, FirebaseStorageModel) {
 
     ctrl = this;
-    ctrl.searchText = '';
     ctrl.pics = [];
     ctrl.searchPage = 0;
     ctrl.isLoadingDone = true;
-    ctrl.isSearchByThemeModeOn = true;
-    ctrl.modeDescription = 'Theme'
+    ctrl.isSearchByThemeModeOn = false;
+    ctrl.modeDescription = 'Search'
     ctrl.isPageInfoRetrieved = false;
     ctrl.isMoreSearchItems = true;
     ctrl.interestSearches = [];
@@ -66,7 +65,8 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         ]
     };
 */
-
+    ctrl.defaultSearches = ['steamboats','American civil war','Samuel colt','Brooklyn bridge','firearms', 'rough riders', 'plains indians'];
+    ctrl.searchText = lodash.sample(ctrl.defaultSearches);
     ctrl.searchItems = [];
     ctrl.searchResults = [];
     var originatorEv;
