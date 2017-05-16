@@ -600,6 +600,6 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
         }
 
     }
-    ctrl.initProfile();
+    //ctrl.initProfile();
 
 });
