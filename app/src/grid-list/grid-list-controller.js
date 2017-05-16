@@ -2,6 +2,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
 
     ctrl = this;
     ctrl.pics = [];
+    ctrl.masonryImages = [];
     ctrl.searchPage = 0;
     ctrl.isLoadingDone = true;
     ctrl.isSearchByThemeModeOn = false;
@@ -174,6 +175,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
             //var url = '/search';
             //$location.path(url);
             ctrl.pics = [];
+            ctrl.masonryImages = [];
             ctrl.isMoreSearchItems = true;
             ctrl.isPageInfoRetrieved = false;
             ctrl.modeDescription = 'Theme';
@@ -187,6 +189,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     ctrl.searchTextChange = function () {
         ctrl.isSearchByThemeModeOn = false;
         ctrl.pics = [];
+        ctrl.masonryImages = [];
         ctrl.isMoreSearchItems = true;
         ctrl.modeDescription = 'Search';
         ctrl.searchPage = 0;
@@ -211,6 +214,8 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
                         ctrl.buildThumbnail(item);
                     }
                 });
+                ctrl.masonryImages = ctrl.masonryImages.concat(ctrl.pics);
+                ctrl.pics = [];
                 if (ctrl.searchRanCount < 3) {
                     if (ctrl.pics.length < 20 && ctrl.isMoreSearchItems) {
                         return ctrl.search(searchText, ctrl.searchPage); // not enough thumbnails to fill page, run search again
