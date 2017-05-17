@@ -198,10 +198,11 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     }
 
     ctrl.search = function (searchText) {
+        console.log(ctrl.metadataFilter);
         console.log('running straight search');
         ctrl.isLoadingDone = false;
         ctrl.searchPage++;
-        return NyplApiCalls.nyplSearch(searchText, ctrl.searchPage).then(function (results) {
+        return NyplApiCalls.nyplSearch(searchText, ctrl.searchPage, ctrl.metadataFilter).then(function (results) {
             ctrl.searchRanCount = ctrl.searchRanCount + 1;
             var data = ctrl.extract(results);
             if (results.data.nyplAPI.response.result == undefined) {

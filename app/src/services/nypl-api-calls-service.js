@@ -31,17 +31,32 @@ nyplViewer.factory('NyplApiCalls', function ($http, $q, $base64, lodash) {
     }
 
     return {
-        nyplSearch: function (searchText, page) {
+        nyplSearch: function (searchText, page, filter) {
+            var searchFilter ='';
+            switch (filter) {
+                case 'All':
+                    searchFilter = "";
+                    break;
+                case 'Topic':
+                    searchFilter = "&field=topic";
+                    break;
+                case 'Title':
+                    searchFilter = "&field=title";
+                    break;
+                case 'Geographic':
+                    searchFilter = "&field=geographic";
+                    break;
+            }
             //console.log(searchText);
             var pagingQueryParam = '';
             pagingQueryParam = '&page=' + page;
             //var nyplUrl = 'http://api.repo.nypl.org/api/v1/items/search?q=' + searchText  + pagingQueryParam + '&per_page=20'; //+'&field=topic';
-            var nyplUrl = 'http://localhost:3000/api/v1/items/search?q=' + searchText  + pagingQueryParam + '&per_page=20'; // dev
-            //var nyplUrl = 'http://54.70.21.3:3000/api/v1/items/search?q=' + searchText  + pagingQueryParam + '&per_page=20'; // prod
+            var nyplUrl = 'http://localhost:3000/api/v1/items/search?q=' + searchText + pagingQueryParam + '&per_page=20' + searchFilter; // dev
+            //var nyplUrl = 'http://54.70.21.3:3000/api/v1/items/search?q=' + searchText  + pagingQueryParam + '&per_page=20' + searchFilter; // prod
             //factory.incrementResultPage();
             var deferred = $q.defer();
             var request = $http(buildHttpRequest(nyplUrl), { headers: headers });
-            
+
             /** 
             .then(function successCallback(response) {       
                 deferred.resolve(extract(response));
@@ -58,16 +73,16 @@ nyplViewer.factory('NyplApiCalls', function ($http, $q, $base64, lodash) {
 
             $http(buildHttpRequest(item.apiItemDetailURL), { headers: headers }).then(function successCallback(response) {
                 var data = response.data;
-                var image ={};
+                var image = {};
                 if ((data.nyplAPI.response.sibling_captures.capture.imageLinks != undefined) &&
-                (data.nyplAPI.response.sibling_captures.capture.imageLinks.imageLink != undefined) &&
-                (Object.keys(data.nyplAPI.response.sibling_captures.capture.imageLinks.imageLink).length != 0)) {
-                    image.thumbnailUrl= data.nyplAPI.response.sibling_captures.capture.imageLinks.imageLink[4].$;
+                    (data.nyplAPI.response.sibling_captures.capture.imageLinks.imageLink != undefined) &&
+                    (Object.keys(data.nyplAPI.response.sibling_captures.capture.imageLinks.imageLink).length != 0)) {
+                    image.thumbnailUrl = data.nyplAPI.response.sibling_captures.capture.imageLinks.imageLink[4].$;
                     image.fullImageUrl = data.nyplAPI.response.sibling_captures.capture.imageLinks.imageLink[0].$;
                     image.title = item.title;
                 } else if ((data.nyplAPI.response.sibling_captures.capture[0] != undefined) &&
-                (data.nyplAPI.response.sibling_captures.capture[0].imageLinks.imageLink != undefined) &&
-                (Object.keys(data.nyplAPI.response.sibling_captures.capture[0].imageLinks.imageLink).length != 0)) {
+                    (data.nyplAPI.response.sibling_captures.capture[0].imageLinks.imageLink != undefined) &&
+                    (Object.keys(data.nyplAPI.response.sibling_captures.capture[0].imageLinks.imageLink).length != 0)) {
                     image.thumbnailUrl = data.nyplAPI.response.sibling_captures.capture[0].imageLinks.imageLink[4].$;
                     image.fullImageUrl = data.nyplAPI.response.sibling_captures.capture[0].imageLinks.imageLink[0].$;
                     image.title = item.title;
@@ -95,7 +110,7 @@ nyplViewer.factory('NyplApiCalls', function ($http, $q, $base64, lodash) {
             var deferred = $q.defer();
             var nyplUrl = 'http://localhost:3000/api/' + lodash.trim(item, 'http://api.repo.nypl.org'); //dev
             //var nyplUrl = 'http://54.70.21.3:3000/api/' + lodash.trim(item, 'http://api.repo.nypl.org');
-        
+
             $http(buildHttpRequest(nyplUrl), { headers: headers }).then(function successCallback(response) {
                 var data = response.data;
                 deferred.resolve(data);
