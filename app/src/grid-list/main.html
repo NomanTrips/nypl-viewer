@@ -65,6 +65,16 @@
 			<label>&nbsp;</label>
 			<input ng-model="gridList.searchText" placeholder="enter search" ng-change="gridList.searchTextChange()" ng-model-options="{updateOn : 'change blur'}">
 		</md-input-container>
+		<div layout="column" style="margin-left: 10px;">
+			<label style="font-size:11px;">Metadata field to search:</label>
+			<md-radio-group style="font-size:14px;" layout="row" layout-align="start center" ng-model="gridList.metadataFilter">
+
+				<md-radio-button value="All">All</md-radio-button>
+				<md-radio-button value="Topic">Topic</md-radio-button>
+				<md-radio-button value="Place">Place</md-radio-button>
+				<md-radio-button value="Genre">Genre</md-radio-button>
+			</md-radio-group>
+		</div>
 		<!--
 		<md-switch ng-model="gridList.isSearchByThemeModeOn" ng-change="gridList.modeChange()" aria-label="Mode">
 			Mode: {{ gridList.modeDescription }}
@@ -129,8 +139,8 @@
 	-->
 
 
-	<div infinite-scroll="gridList.loadMore()" infinite-scroll-distance="2" infinite-scroll-container="'#inf-wrapper'" >
-		<div masonry  load-images="true" masonry-options="{ gutter: 20 }">
+	<div infinite-scroll="gridList.loadMore()" infinite-scroll-distance="2" infinite-scroll-container="'#inf-wrapper'">
+		<div masonry load-images="true" masonry-options="{ gutter: 20 }">
 			<div class="masonry-brick" ng-repeat="pic in gridList.masonryImages" style="margin-bottom: 20px;">
 
 				<img class="image" ng-click="gridList.showViewer($event, pic)" ng-src="{{ pic.cropped }}" data-original="{{pic.fullImageUrl}}"

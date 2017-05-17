@@ -12,6 +12,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     ctrl.interestSearches = [];
     ctrl.isInitialLoad = true;
     ctrl.searchRanCount = 0;
+    ctrl.metadataFilter = 'All';
     //$scope.currentState = $transition$.to().name;
     //this.fetchSearchTerms = (barId) => {
     //  $scope.bar = null;
