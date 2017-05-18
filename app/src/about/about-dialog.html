@@ -1,0 +1,29 @@
+<md-dialog aria-label="About" flex="50">
+    <form ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>About</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="aboutCtrl.cancel()">
+                    <md-icon md-svg-icon="cancel" aria-label="Close dialog"></md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="md-dialog-content" layout-padding="">
+                <p>Monocular was built with <a href="https://angularjs.org/">Angular 1</a> and <a href="https://material.angularjs.org/latest/">Angular Material</a> for the UI</p>
+                <p>The grid layout was made using <a href="https://masonry.desandro.com/">Masonry</a>.</p>
+                <p>The backend is <a href="https://digitalcollections.nypl.org/">New York Public Library Digital Collections</a>
+                . All historical images and data come from their database and are exposed via their <a href="http://api.repo.nypl.org/">API.</a></p>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+            <span flex></span>
+            <md-button ng-click="aboutCtrl.cancel()">
+                Cancel
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

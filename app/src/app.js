@@ -100,6 +100,7 @@ angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 5000)
         .icon("delete", "./assets/svg/garbage.svg", 24)
         .icon("bookmark", "./assets/svg/bookmark.svg", 24)
         .icon("cancel", "./assets/svg/cancel.svg", 36)
+        .icon("about", "./assets/svg/about.svg", 24)
         .icon("phone", "./assets/svg/phone.svg", 24);
 
       $mdThemingProvider.theme('default')

@@ -515,6 +515,24 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
             });
     };
 
+    ctrl.showAbout = function (ev) {
+        var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'));
+        $mdDialog.show({
+            controller: 'AboutDialogCtrl',
+            controllerAs: 'aboutCtrl',
+            templateUrl: 'src/about/about-dialog.html',
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: true,
+            fullscreen: useFullScreen
+        })
+            .then(function (answer) {
+                ctrl.status = 'You said the information was "' + answer + '".';
+            }, function () {
+                ctrl.status = 'You cancelled the dialog.';
+            });
+    };
+
     ctrl.getItemThumbnails = function (response) {
         var promises = [];
         angular.forEach(response, function (item, key) {
