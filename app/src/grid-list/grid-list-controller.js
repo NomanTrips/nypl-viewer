@@ -198,7 +198,6 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     }
 
     ctrl.search = function (searchText) {
-        console.log(ctrl.metadataFilter);
         console.log('running straight search');
         ctrl.isLoadingDone = false;
         ctrl.searchPage++;
@@ -216,8 +215,8 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
                         ctrl.buildThumbnail(item);
                     }
                 });
-                ctrl.masonryImages = ctrl.masonryImages.concat(ctrl.pics);
-                ctrl.pics = [];
+               // ctrl.masonryImages = ctrl.masonryImages.concat(ctrl.pics);
+                //ctrl.pics = [];
                 if (ctrl.searchRanCount < 3) {
                     if (ctrl.pics.length < 20 && ctrl.isMoreSearchItems) {
                         return ctrl.search(searchText, ctrl.searchPage); // not enough thumbnails to fill page, run search again

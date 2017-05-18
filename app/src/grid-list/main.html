@@ -64,6 +64,9 @@
 		<md-input-container class="md-accent" flex style="height:40px;">
 			<label>&nbsp;</label>
 			<input ng-model="gridList.searchText" placeholder="enter search" ng-change="gridList.searchTextChange()" ng-model-options="{updateOn : 'change blur'}">
+			<div style="font-size:10px;text-align:center;" >
+				<a  href="http://api.repo.nypl.org/#">Images provided by the NYPL Digital Collections</a>
+			</div>
 		</md-input-container>
 		<div layout="column" style="margin-left: 10px;">
 			<label style="font-size:11px;">Metadata field to search:</label>
@@ -74,6 +77,9 @@
 				<md-radio-button value="Geographic">Geographic</md-radio-button>
 				<md-radio-button value="Title">Title</md-radio-button>
 			</md-radio-group>
+		</div>
+		<div class="md-accent">
+		
 		</div>
 		<!--
 		<md-switch ng-model="gridList.isSearchByThemeModeOn" ng-change="gridList.modeChange()" aria-label="Mode">
@@ -140,8 +146,8 @@
 
 
 	<div infinite-scroll="gridList.loadMore()" infinite-scroll-distance="2" infinite-scroll-container="'#inf-wrapper'">
-		<div masonry load-images="true" masonry-options="{ gutter: 20 }">
-			<div class="masonry-brick" ng-repeat="pic in gridList.masonryImages" style="margin-bottom: 20px;">
+		<div masonry  masonry-options="{ gutter: 20 }">
+			<div class="masonry-brick" ng-repeat="pic in gridList.pics" style="margin-bottom: 20px;">
 
 				<img class="image" ng-click="gridList.showViewer($event, pic)" ng-src="{{ pic.cropped }}" data-original="{{pic.fullImageUrl}}"
 					alt="{{pic.title}}" pic-metadata="{{pic.data}}" style="width:280px;height:{{pic.actualHeight}};border-radius:10px;">
