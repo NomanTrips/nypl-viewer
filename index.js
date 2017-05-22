@@ -9,4 +9,9 @@ app.all("/api/*", function(req, res) {
 
 app.use(express.static('./')); // ← adjust
 
+app.all('/app/*', function(req, res, next) {
+    // Just send the index.html for other files to support HTML5Mode
+    res.sendFile('index.html', { root: __dirname + '/app'});
+});
+
 app.listen(3000, function () { console.log('listening'); });
