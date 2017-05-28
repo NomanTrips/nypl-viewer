@@ -30,4 +30,4 @@ app.get('/*', function (req, res) {
   //  res.sendFile('index.html', { root: __dirname + '/app'});
 //});
 
-app.listen(3000, function () { console.log('listening'); });
+app.listen(80, function () { console.log('listening'); });
