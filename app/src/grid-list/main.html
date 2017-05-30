@@ -51,7 +51,7 @@
 		<div>
 			<md-icon md-svg-icon="binoculars" style="width:36px;height:36px;"></md-icon>
 		</div>
-		<h4 layout-padding="">Monocular</h4>
+		<h4 hide-xs layout-padding="">Monocular</h4>
 		<div id="loadingcircle" ng-hide="gridList.isLoadingDone" layout-padding="">
 			<md-progress-circular md-mode="indeterminate" md-theme="dark-yellow" md-diameter="20px">
 			</md-progress-circular>
@@ -64,11 +64,11 @@
 		<md-input-container class="md-accent" flex style="height:40px;">
 			<label>&nbsp;</label>
 			<input ng-model="gridList.searchText" placeholder="enter search" ng-change="gridList.searchTextChange()" ng-model-options="{updateOn : 'change blur'}">
-			<div style="font-size:10px;text-align:center;" >
+			<div hide-xs style="font-size:10px;text-align:center;" >
 				<a  href="http://api.repo.nypl.org/#">Images provided by the NYPL Digital Collections</a>
 			</div>
 		</md-input-container>
-		<div layout="column" style="margin-left: 10px;">
+		<div hide-xs layout="column" style="margin-left: 10px;">
 			<label style="font-size:11px;">Metadata field to search:</label>
 			<md-radio-group style="font-size:14px;" layout="row" layout-align="start center" ng-model="gridList.metadataFilter">
 
@@ -78,7 +78,7 @@
 				<md-radio-button value="Title">Title</md-radio-button>
 			</md-radio-group>
 		</div>
-		<md-button  style="width:36px;height:36px;" class="md-icon-button" aria-label="About" ng-click="gridList.showAbout($event)">
+		<md-button  hide-xs style="width:36px;height:36px;" class="md-icon-button" aria-label="About" ng-click="gridList.showAbout($event)">
 			<md-icon md-svg-icon="about"></md-icon>
 		</md-button>
 		<!--
