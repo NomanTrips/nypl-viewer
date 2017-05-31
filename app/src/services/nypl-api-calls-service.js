@@ -51,9 +51,9 @@ nyplViewer.factory('NyplApiCalls', function ($http, $q, $base64, lodash) {
             var pagingQueryParam = '';
             pagingQueryParam = '&page=' + page;
             //var nyplUrl = 'http://api.repo.nypl.org/api/v1/items/search?q=' + searchText  + pagingQueryParam + '&per_page=20'; //+'&field=topic';
-            //var nyplUrl = 'http://localhost:80/api/v1/items/search?q=' + searchText + pagingQueryParam + '&per_page=20' + searchFilter; // dev
+            var nyplUrl = 'http://localhost:80/api/v1/items/search?q=' + searchText + pagingQueryParam + '&per_page=20' + searchFilter; // dev
             //var nyplUrl = 'http://54.70.21.3:3000/api/v1/items/search?q=' + searchText  + pagingQueryParam + '&per_page=20' + searchFilter; // prod
-            var nyplUrl = 'http://history-monocular.com:80/api/v1/items/search?q=' + searchText  + pagingQueryParam + '&per_page=20' + searchFilter; // prod w domain
+            //var nyplUrl = 'http://history-monocular.com:80/api/v1/items/search?q=' + searchText  + pagingQueryParam + '&per_page=20' + searchFilter; // prod w domain
             //factory.incrementResultPage();
             var deferred = $q.defer();
             var request = $http(buildHttpRequest(nyplUrl), { headers: headers });
@@ -109,9 +109,9 @@ nyplViewer.factory('NyplApiCalls', function ($http, $q, $base64, lodash) {
         },
         getDetail: function (item) {
             var deferred = $q.defer();
-            //var nyplUrl = 'http://localhost:80/api/' + lodash.trim(item, 'http://api.repo.nypl.org'); //dev
+            var nyplUrl = 'http://localhost:80/api/' + lodash.trim(item, 'http://api.repo.nypl.org'); //dev
             //var nyplUrl = 'http://54.70.21.3:3000/api/' + lodash.trim(item, 'http://api.repo.nypl.org'); // prod
-            var nyplUrl = 'http://history-monocular.com:80/api/' + lodash.trim(item, 'http://api.repo.nypl.org'); // prod w domain
+            //var nyplUrl = 'http://history-monocular.com:80/api/' + lodash.trim(item, 'http://api.repo.nypl.org'); // prod w domain
 
             $http(buildHttpRequest(nyplUrl), { headers: headers }).then(function successCallback(response) {
                 var data = response.data;
