@@ -2,16 +2,14 @@ var gulp = require('gulp'),
     gutil = require('gulp-util'),
     $ = require('gulp-load-plugins')();
 
-gulp.task('default', function() {
+gulp.task('minify', function() {
     gulp.src('app/src/**/*.js')
         .pipe($.babel({
             presets: ['es2015']
         }))
         .pipe($.ngAnnotate())
-        .pipe($.sourcemaps.init())
-        .pipe($.concat('bundle.js'))
+        .pipe($.concat('NyplViewer.min.js'))
         .pipe($.uglify().on('error', gutil.log))
-        .pipe($.sourcemaps.write())
-        .pipe(gulp.dest('app/assets/js'));
+        .pipe(gulp.dest('dist/'));
         console.log('Done bundling....');
 })

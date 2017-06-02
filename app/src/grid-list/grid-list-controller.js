@@ -1,6 +1,6 @@
 nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $location, $state, $scope, $mdMedia, $mdDialog, lodash, $mdToast, Auth, $stateParams, FirebaseStorageModel) {
 
-    ctrl = this;
+    var ctrl = this;
     ctrl.pics = [];
     ctrl.masonryImages = [];
     ctrl.searchPage = 0;

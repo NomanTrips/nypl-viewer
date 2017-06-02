@@ -243,7 +243,7 @@ nyplViewer.directive('canvasViewer', ['$window', '$http', '$timeout', '$q', 'Nyp
 
 			// look for
 			var inNode = angular.element(iElm.find('div')[0])[0];
-			directiveParentNode = inNode.parentNode.parentNode;
+			var directiveParentNode = inNode.parentNode.parentNode;
 			// orce correct canvas size
 			var canvasSize = canvasEl.parentNode;
 			ctx.canvas.width = canvasSize.clientWidth;
@@ -623,7 +623,7 @@ nyplViewer.directive('canvasViewer', ['$window', '$http', '$timeout', '$q', 'Nyp
 				var centerX = ctx.canvas.width / 2;
 				var centerY = ctx.canvas.height / 2;
 				var picPosX = 0;
-				picPosY = centerY - (reader.height * scope.options.zoom.value) / 2;
+				var picPosY = centerY - (reader.height * scope.options.zoom.value) / 2;
 				picPosX = centerX - (reader.width * scope.options.zoom.value) / 2;
 				curPos = { x: picPosX, y: 0 };
 				picPos = { x: picPosX, y: picPosY };
