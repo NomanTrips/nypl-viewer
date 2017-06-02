@@ -485,8 +485,7 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
             //thumbnail.fullImageUrl = 'https://images.nypl.org/index.php?id=' + item.imageID + '&t=w';
             
             thumbnail.fullImageUrl = 'https://images.nypl.org/index.php?id=' + item.imageID + '&t=w';
-            if ( ($mdMedia('sm') || $mdMedia('xs')) ){
-                console.log('sm device...');
+            if ( ($mdMedia('sm') || $mdMedia('xs')) ){ // if runnin on mobile make thumbnails high res for zoom
                 thumbnail.cropped = thumbnail.fullImageUrl;
             } else {
             thumbnail.cropped = 'https://images.nypl.org/index.php?id=' + item.imageID + '&t=r';
@@ -555,7 +554,6 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
 
     ctrl.showViewer = function (ev, pic) {
         if ( ($mdMedia('sm') || $mdMedia('xs')) ){
-            console.log('sm device exiting...');
             return;
         }
         var useFullScreen = true;

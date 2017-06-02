@@ -52,11 +52,11 @@
 			<md-icon md-svg-icon="spyglass" style="width:36px;height:36px;"></md-icon>
 		</div>
 		<h4 hide-xs layout-padding="">Monocular</h4>
-		<div id="loadingcircle" ng-hide="gridList.isLoadingDone" layout-padding="">
+		<div hide-xs id="loadingcircle" ng-hide="gridList.isLoadingDone" layout-padding="">
 			<md-progress-circular md-mode="indeterminate" md-theme="dark-yellow" md-diameter="20px">
 			</md-progress-circular>
 		</div>
-		<div ng-hide="! gridList.isLoadingDone" style="width:36px;height:36px;">
+		<div hide-xs ng-hide="! gridList.isLoadingDone" style="width:36px;height:36px;">
 		</div>
 		<md-button class="md-icon-button" aria-label="Search" ng-click="gridList.searchTextChange()">
 			<md-icon md-svg-icon="search"></md-icon>
