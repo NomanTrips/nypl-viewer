@@ -18,7 +18,7 @@ nyplViewer.controller('GridListCtrl', function ($q, NyplApiCalls, $location, $st
         // if (newParams.barId !== undefined) this.fetchBar(newParams.barId);
     };
 
-    ctrl.defaultSearches = ['steamboats','American civil war','Samuel colt','Brooklyn bridge','firearms', 'rough riders', 'plains indians', 'American slavery', 'whaling', 'times square'];
+    ctrl.defaultSearches = ['steamboats','American civil war','Brooklyn bridge','firearms', 'rough riders', 'plains indians', 'American slavery', 'whaling', 'times square'];
     ctrl.searchText = lodash.sample(ctrl.defaultSearches);
     ctrl.searchItems = [];
     ctrl.searchResults = [];

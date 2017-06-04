@@ -2,17 +2,12 @@ nyplViewer.factory('NyplApiCalls', function ($http, $q, $base64, lodash) {
     var factory = this;
     factory.page = 1;
     factory.resultCount = 0;
-    var auth = $base64.encode("NomanTrips:water1bury");
-    var headers = { "Authorization": "Token " + "token=\"" + auth + "\"" };
-    //console.log(headers);
+    var headers = {};
+
     function buildHttpRequest(url) {
-        //console.log(url);
         return {
             method: 'GET',
             url: url,
-            headers: {
-                'Authorization': 'Basic ' + auth,
-            }
         }
     };
 

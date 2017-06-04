@@ -4,6 +4,7 @@ var httpProxy = require('http-proxy');
 var apiProxy = httpProxy.createProxyServer({});
 
 app.all("/api/*", function(req, res) {
+    req.headers["authorization"] = "Basic Tm9tYW5Ucmlwczp3YXRlcjFidXJ5"
     apiProxy.web(req, res, {target: 'http://api.repo.nypl.org', changeOrigin: true});
 });
 
