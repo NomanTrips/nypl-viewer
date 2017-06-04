@@ -5,7 +5,6 @@ nyplViewer.controller('ImageViewerCtrl',
     ctrl.detailUrl = picInfo.apiItemDetailURL;
     ctrl.picData = picInfo;
     ctrl.title = picInfo.title;
-console.log(ctrl.picData);
     ctrl.file = picUrl;//fileInput;
     ctrl.options = {
       zoom: {
@@ -16,7 +15,7 @@ console.log(ctrl.picData);
         value: 90
       },
       //controls : {
-      //fit : 'height'
+      //fit : 'page'
       //}
     };
 

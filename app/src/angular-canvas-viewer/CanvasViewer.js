@@ -644,11 +644,12 @@ nyplViewer.directive('canvasViewer', ['$window', '$http', '$timeout', '$q', 'Nyp
 					ratioW *= scope.options.zoom.value;
 				}
 				// Adjust value
+				console.log((Math.min(ratioH, ratioW) / 2));
 				switch (value) {
 					case 'width': scope.options.zoom.value = ratioW; break;
 					case 'height': scope.options.zoom.value = ratioH; break;
 					case 'page':
-					default: scope.options.zoom.value = (Math.min(ratioH, ratioW) / 2);
+					default: scope.options.zoom.value = .75;//(Math.min(ratioH, ratioW) / 2);
 				}
 				scope.$applyAsync(function () {
 					// Round zoom value

@@ -1,4 +1,4 @@
-nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $location, $state, $scope, $mdMedia, $mdDialog, lodash, $mdToast, Auth, $stateParams, FirebaseStorageModel) {
+nyplViewer.controller('GridListCtrl', function ($q, NyplApiCalls, $location, $state, $scope, $mdMedia, $mdDialog, lodash, $mdToast, Auth, $stateParams, FirebaseStorageModel) {
 
     var ctrl = this;
     ctrl.pics = [];
@@ -13,61 +13,12 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
     ctrl.isInitialLoad = true;
     ctrl.searchRanCount = 0;
     ctrl.metadataFilter = 'All';
-    //$scope.currentState = $transition$.to().name;
-    //this.fetchSearchTerms = (barId) => {
-    //  $scope.bar = null;
-    //  $http.get('bars.json')
-    //  .then(resp => $scope.bar = resp.data.find(bar => bar.id == barId ))
-    //}
-    //this.fetchSearchTerms($transition$.params().searchTerms);
+
     this.uiOnParamsChanged = (newParams) => {
         // if (newParams.barId !== undefined) this.fetchBar(newParams.barId);
     };
 
-    /** 
-    [
-        {
-            searchTerm: 'steamboats',
-            startPage: 1,
-            page: 1,
-            totalPages: 0,
-            isMorePages: true,
-        },
-        {
-            searchTerm: 'firearms',
-            startPage: 1,
-            page: 1,
-            totalPages: 0,
-            isMorePages: true,
-        },
-    ];
-    */
-    /*
-    ctrl.theme = {
-        name: 'Industrial revolution in America',
-        items: [
-            {
-                search: 'steamboats',
-                page: 1,
-                totalPages: null,
-                isPageInfoRetrieved: false,
-            },
-            {
-                search: 'railroads',
-                page: 1,
-                totalPages: null,
-                isPageInfoRetrieved: false,
-            },
-            {
-                search: 'andrew carnegie',
-                page: 1,
-                totalPages: null,
-                isPageInfoRetrieved: false,
-            },
-        ]
-    };
-*/
-    ctrl.defaultSearches = ['steamboats','American civil war','Samuel colt','Brooklyn bridge','firearms', 'rough riders', 'plains indians'];
+    ctrl.defaultSearches = ['steamboats','American civil war','Samuel colt','Brooklyn bridge','firearms', 'rough riders', 'plains indians', 'American slavery', 'whaling', 'times square'];
     ctrl.searchText = lodash.sample(ctrl.defaultSearches);
     ctrl.searchItems = [];
     ctrl.searchResults = [];
@@ -485,12 +436,12 @@ nyplViewer.controller('GridListCtrl', function ($q, $http, NyplApiCalls, $locati
             //thumbnail.fullImageUrl = 'https://images.nypl.org/index.php?id=' + item.imageID + '&t=w';
             
             thumbnail.fullImageUrl = 'https://images.nypl.org/index.php?id=' + item.imageID + '&t=w';
-            if ( ($mdMedia('sm') || $mdMedia('xs')) ){ // if runnin on mobile make thumbnails high res for zoom
-                thumbnail.cropped = thumbnail.fullImageUrl;
-            } else {
-            thumbnail.cropped = 'https://images.nypl.org/index.php?id=' + item.imageID + '&t=r';
-            }
-
+            //if ( ($mdMedia('sm') || $mdMedia('xs')) ){ // if runnin on mobile make thumbnails high res for zoom
+              //  thumbnail.cropped = thumbnail.fullImageUrl;
+            //} else {
+            //thumbnail.cropped = 'https://images.nypl.org/index.php?id=' + item.imageID + '&t=r';
+            //}
+            thumbnail.cropped = thumbnail.fullImageUrl;
             
             var img = new Image();
             img.src = thumbnail.fullImageUrl;
